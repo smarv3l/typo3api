@@ -1,0 +1,20 @@
+{
+    "name" : "mp_typo3api",
+    "type": "typo3-cms-extension",
+    "authors": [
+        {
+            "name": "Marco Pfeiffer",
+            "role": "Developer",
+            "homepage": "https://www.marco.zone/"
+        }
+    ],
+    "require": {
+        "typo3/cms": "^8.6",
+        "symfony/options-resolver": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mp\\MpTypo3Api\\": "Classes"
+        }
+    }
+}
