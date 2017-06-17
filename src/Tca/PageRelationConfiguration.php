@@ -6,7 +6,7 @@
  * Time: 19:34
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;

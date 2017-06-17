@@ -6,7 +6,7 @@
  * Time: 20:16
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 class LanguageConfiguration implements TcaConfiguration

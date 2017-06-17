@@ -6,7 +6,7 @@
  * Time: 23:02
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 class EnableFieldConfiguration implements TcaConfiguration

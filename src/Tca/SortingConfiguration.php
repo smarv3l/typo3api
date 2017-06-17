@@ -6,7 +6,7 @@
  * Time: 22:02
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 class SortingConfiguration implements TcaConfiguration

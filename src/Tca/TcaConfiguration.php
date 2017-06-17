@@ -6,7 +6,7 @@
  * Time: 19:13
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 interface TcaConfiguration

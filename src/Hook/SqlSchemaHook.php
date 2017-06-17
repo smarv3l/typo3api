@@ -6,10 +6,13 @@
  * Time: 21:03
  */
 
-namespace Mp\MpTypo3Api\Hook;
+namespace Typo3Api\Hook;
 
 
-use Mp\MpTypo3Api\Tca\TcaConfiguration;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
+use Typo3Api\Tca\TcaConfiguration;
 
 class SqlSchemaHook
 {
@@ -18,6 +21,11 @@ class SqlSchemaHook
      */
     private static $tableConfigurations = [];
 
+    /**
+     * @var bool
+     */
+    private static $eventAttached = false;
+
     public static function addTableConfiguration(string $tableName, TcaConfiguration $configuration)
     {
         if (!isset(self::$tableConfigurations[$tableName])) {
@@ -25,6 +33,24 @@ class SqlSchemaHook
         }
 
         self::$tableConfigurations[$tableName][] = $configuration;
+    }
+
+    public static function attach()
+    {
+        if (self::$eventAttached) {
+            return;
+        }
+
+        /** @var Dispatcher $signalSlotDispatcher */
+        $dispatcherClass = Dispatcher::class;
+        $signalSlotDispatcher = GeneralUtility::makeInstance($dispatcherClass);
+        $signalSlotDispatcher->connect(
+            SqlExpectedSchemaService::class,
+            'tablesDefinitionIsBeingBuilt',
+            SqlSchemaHook::class,
+            'modifyTablesDefinitionString'
+        );
+        self::$eventAttached = true;
     }
 
     public function modifyTablesDefinitionString(array $sqlStrings)

@@ -6,7 +6,7 @@
  * Time: 21:57
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 use Symfony\Component\OptionsResolver\OptionsResolver;

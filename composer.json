@@ -1,6 +1,5 @@
 {
-    "name" : "mp_typo3api",
-    "type": "typo3-cms-extension",
+    "name" : "typo3api",
     "authors": [
         {
             "name": "Marco Pfeiffer",
@@ -14,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Mp\\MpTypo3Api\\": "Classes"
+            "Typo3Api\\": "Classes"
         }
     }
 }

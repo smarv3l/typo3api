@@ -6,7 +6,7 @@
  * Time: 09:55
  */
 
-namespace Mp\MpTypo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;

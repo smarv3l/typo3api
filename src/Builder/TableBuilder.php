@@ -6,11 +6,11 @@
  * Time: 19:51
  */
 
-namespace Mp\MpTypo3Api\Builder;
+namespace Typo3Api\Builder;
 
 
-use Mp\MpTypo3Api\Hook\SqlSchemaHook;
-use Mp\MpTypo3Api\Tca\TcaConfiguration;
+use Typo3Api\Hook\SqlSchemaHook;
+use Typo3Api\Tca\TcaConfiguration;
 
 class TableBuilder
 {
@@ -27,6 +27,7 @@ class TableBuilder
     {
         $this->name = $name;
         $this->configureTableIfNotPresent();
+        SqlSchemaHook::attach();
     }
 
     public static function create(string $extkey, string $name)
