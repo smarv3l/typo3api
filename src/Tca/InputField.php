@@ -58,7 +58,7 @@ class InputField extends TcaField
             'size' => $this->getOption('visibleSize'),
             'max' => $this->getOption('maxLength'),
             'default' => $this->getOption('defaultValue'),
-            'eval' => implode(',', array_filter('is_string', [
+            'eval' => implode(',', array_filter([
                 $this->getOption('trim') ? 'trim' : null,
                 $this->getOption('required') ? 'required' : null,
                 $this->getOption('eval')
