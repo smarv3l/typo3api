@@ -35,6 +35,12 @@ class IrreField extends TcaField
                     return "SMALLINT(5) UNSIGNED DEFAULT '0' NOT NULL";
                 }
 
+                // really? more than 65535 records in inline editing? are you insane?
+
+                if ($maxItems < 1 << 24) {
+                    return "MEDIUMINT(7) UNSIGNED DEFAULT '0' NOT NULL";
+                }
+
                 return "INT(10) UNSIGNED DEFAULT '0' NOT NULL";
             },
         ]);
