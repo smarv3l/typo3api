@@ -6,7 +6,7 @@
  * Time: 21:57
  */
 
-namespace Typo3Api\Tca;
+namespace Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\Options;

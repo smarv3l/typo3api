@@ -6,11 +6,12 @@
  * Time: 19:19
  */
 
-namespace Typo3Api\Tca;
+namespace Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Typo3Api\Tca\TcaConfiguration;
 
 abstract class TcaField implements TcaConfiguration
 {
@@ -48,14 +49,14 @@ abstract class TcaField implements TcaConfiguration
             'exclude' => true,
             'dbType' => "VARCHAR(255) DEFAULT '' NOT NULL",
             'localize' => true,
-            'displayCond' => '',
+            'displayCond' => null,
         ]);
 
         $resolver->setAllowedTypes('label', 'string');
         $resolver->setAllowedTypes('exclude', 'bool');
         $resolver->setAllowedTypes('dbType', 'string');
         $resolver->setAllowedTypes('localize', 'bool');
-        $resolver->setAllowedTypes('displayCond', 'string');
+        $resolver->setAllowedTypes('displayCond', ['string', 'null']);
     }
 
     public function getOptions()
