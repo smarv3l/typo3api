@@ -80,6 +80,7 @@ abstract class TcaField implements TcaConfiguration
                 'exclude' => $this->options['exclude'],
                 'config' => $this->getFieldTcaConfig($tableName),
                 'l10n_mode' => $this->getOption('localize') ? '' : 'exclude',
+                'l10n_display' => $this->getOption('localize') ? '' : 'defaultAsReadonly',
                 'displayCond' => $this->getOption('displayCond'),
             ]
         ];
