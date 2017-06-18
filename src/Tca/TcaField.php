@@ -38,7 +38,7 @@ abstract class TcaField implements TcaConfiguration
         $this->options = $optionResolver->resolve($options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'label' => function (Options $options) {
