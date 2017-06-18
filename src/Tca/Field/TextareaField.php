@@ -34,6 +34,12 @@ class TextareaField extends TcaField
                 if ($maxLength < 1 << 10) {
                     // text types don't have a default value and therefor default to null
                     // because of this, i make the varchar version also default to null for consistent behavior
+
+                    // the reason i don't use tinytext is that in typo3, most of the time, every column is requested
+                    // getting a column that is stored outside the table has a performance impact
+                    // therefor varchar should generally perform better
+                    // however, storing everything in varchar might break the limit of 65535 bytes per row
+
                     return "VARCHAR($maxLength) DEFAULT NULL";
                 }
 
@@ -83,7 +89,8 @@ class TextareaField extends TcaField
             'eval' => implode(',', array_filter([
                 $this->getOption('trim') ? 'trim' : null,
                 $this->getOption('required') ? 'required' : null,
-                $this->getOption('eval')
+                $this->getOption('eval'),
+                // i'd love to define null here, but this will render a checkbox which i don't want
             ])),
         ];
     }
