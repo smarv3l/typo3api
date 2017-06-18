@@ -12,6 +12,7 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use Typo3Api\Utility\DbFieldDefinition;
 
 class FileField extends TcaField
 {
@@ -30,23 +31,7 @@ class FileField extends TcaField
                 return $options['minItems'] === 0;
             },
             'dbType' => function (Options $options) {
-                $maxItems = $options['maxItems'];
-
-                if ($maxItems < 1 << 8) {
-                    return "TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL";
-                }
-
-                if ($maxItems < 1 << 16) {
-                    return "SMALLINT(5) UNSIGNED DEFAULT '0' NOT NULL";
-                }
-
-                // really? more than 65535 records in inline editing? are you insane?
-
-                if ($maxItems < 1 << 24) {
-                    return "MEDIUMINT(7) UNSIGNED DEFAULT '0' NOT NULL";
-                }
-
-                return "INT(10) UNSIGNED DEFAULT '0' NOT NULL";
+                return DbFieldDefinition::getIntForNumberRange(0, $options['maxItems']);
             },
         ]);
     }
