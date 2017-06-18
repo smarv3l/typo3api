@@ -61,18 +61,30 @@ class TableBuilder
      */
     public function configure(TcaConfiguration $configuration)
     {
-        SqlSchemaHook::addTableConfiguration($this->getName(), $configuration);
+        $tableName = $this->getName();
 
-        $configuration->modifyTca($GLOBALS['TCA'][$this->getName()], $this->getName());
+        $configuration->modifyCtrl($GLOBALS['TCA'][$tableName]['ctrl'], $tableName);
 
-        $showItemString = $configuration->getShowItemString();
+        $columns = $configuration->getColumns($tableName);
+        foreach ($columns as $key => $value) {
+            $GLOBALS['TCA'][$tableName]['columns'][$key] = $value;
+        }
+
+        $palettes = $configuration->getPalettes($tableName);
+        foreach ($palettes as $key => $palette) {
+            $GLOBALS['TCA'][$tableName]['palettes'][$key] = $palette;
+        }
+
+        $showItemString = $configuration->getShowItemString($tableName);
         if (strlen($showItemString) > 0) {
-            if (!isset($GLOBALS['TCA'][$this->getName()]['types']['1']['showitem'])) {
-                $GLOBALS['TCA'][$this->getName()]['types']['1']['showitem'] = $showItemString;
+            if (!isset($GLOBALS['TCA'][$tableName]['types']['1']['showitem'])) {
+                $GLOBALS['TCA'][$tableName]['types']['1']['showitem'] = $showItemString;
             } else {
-                $GLOBALS['TCA'][$this->getName()]['types']['1']['showitem'] .= ', ' . $showItemString;
+                $GLOBALS['TCA'][$tableName]['types']['1']['showitem'] .= ', ' . $showItemString;
             }
         }
+
+        SqlSchemaHook::addTableConfiguration($tableName, $configuration);
 
         return $this;
     }
@@ -114,10 +126,5 @@ class TableBuilder
         ];
 
         return true;
-    }
-
-    public function __toString(): string
-    {
-        return $this->getName();
     }
 }

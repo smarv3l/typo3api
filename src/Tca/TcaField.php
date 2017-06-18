@@ -55,18 +55,27 @@ abstract class TcaField implements TcaConfiguration
         return $this->options[$name];
     }
 
-    public function modifyTca(array &$tca, string $tableName)
+    public function modifyCtrl(array &$ctrl, string $tableName)
     {
-        $tca['columns'][$this->getName()] = [
+    }
+
+    public function getColumns(string $tableName): array
+    {
+        return [$this->getName() => [
             'label' => $this->options['label'],
             'exclude' => $this->options['exclude'],
             'config' => $this->getFieldTcaConfig($tableName)
-        ];
+        ]];
+    }
+
+    public function getPalettes(string $tableName): array
+    {
+        return [];
     }
 
     abstract public function getFieldTcaConfig(string $tableName);
 
-    public function getDbTableDefinitions($tableName): array
+    public function getDbTableDefinitions(string $tableName): array
     {
         $name = addslashes($this->getName());
         return [$tableName => ["`$name` " . $this->getDbFieldDefinition()]];
@@ -74,10 +83,7 @@ abstract class TcaField implements TcaConfiguration
 
     abstract public function getDbFieldDefinition(): string;
 
-    /**
-     * @return string
-     */
-    public function getShowItemString(): string
+    public function getShowItemString(string $tableName): string
     {
         return $this->getName();
     }

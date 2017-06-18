@@ -21,22 +21,43 @@ class SelectField extends TcaField
 
         $resolver->setRequired('items');
         $resolver->setAllowedTypes('items', 'array');
-        $resolver->setNormalizer('items', function (Options $options, $value) {
-            // ensure at least one value
-            if (empty($value)) {
-                $value = [['', '']];
-            }
 
-            return $value;
-        });
+        $resolver->setDefaults([
+            'values' => function (Options $options) {
+                $values = array_column($options['items'], 1);
+                $values = array_filter($values, function ($value) {
+                    return $value !== '--div--';
+                });
+                return $values;
+            },
+            'is_int' => function (Options $options) {
+                foreach ($options['values'] as $value) {
+                    if (!preg_match('/^[0-9]+$/', $value)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            },
+            'required' => false,
+            // overwrite default exclude default depending on required option
+            'exclude' => function (Options $options) {
+                return $options['required'] == false;
+            },
+        ]);
 
         $resolver->setAllowedTypes('values', 'array');
-        $resolver->setDefault('values', function (Options $options) {
-            $values = array_column($options['items'], 1);
-            $values = array_filter($values, function ($value) {
-                return $value !== '--div--';
-            });
+        $resolver->setAllowedTypes('is_int', 'bool');
+
+        $resolver->setNormalizer('items', function (Options $options, $items) {
+            // ensure at least one value, or an empty value if not required
+            if (empty($items) || $options['required'] === false) {
+                array_unshift($items, [['', '']]);
+            }
+
+            return $items;
         });
+
         $resolver->setNormalizer('values', function (Options $options, $values) {
             $maxLength = max(array_map('strlen', $values));
             if ($maxLength > 255) {
@@ -45,27 +66,11 @@ class SelectField extends TcaField
 
             foreach ($values as $value) {
                 if (preg_match('/[|,;]/', $value)) {
-                    throw new InvalidOptionsException("The valine in an select must not contain the chars '|,;'.");
+                    throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
                 }
             }
 
             return $values;
-        });
-
-        $resolver->setAllowedTypes('is_int', 'bool');
-        $resolver->setDefault('is_int', function (Options $options) {
-            foreach ($options['values'] as $value) {
-                if (!preg_match('/^[0-9]+$/', $value)) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-
-        // overwrite default exclude default depending on required option
-        $resolver->setDefault('exclude', function (Options $options) {
-            return $options['required'] == false;
         });
     }
 

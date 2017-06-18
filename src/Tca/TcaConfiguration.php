@@ -11,9 +11,13 @@ namespace Typo3Api\Tca;
 
 interface TcaConfiguration
 {
-    public function modifyTca(array &$tca, string $tableName);
+    public function modifyCtrl(array &$ctrl, string $tableName);
 
-    public function getShowItemString(): string;
+    public function getColumns(string $tableName): array;
 
-    public function getDbTableDefinitions($tableName): array;
+    public function getPalettes(string $tableName): array;
+
+    public function getShowItemString(string $tableName): string;
+
+    public function getDbTableDefinitions(string $tableName): array;
 }

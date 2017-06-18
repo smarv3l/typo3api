@@ -21,13 +21,13 @@ class IrreField extends TcaField
         $resolver->setDefaults([
             'foreignField' => 'parent_uid',
             'maxItems' => 100, // at some point, inline record editing doesn't make sense anymore
-            'initializeCollapsed' => true
+            'collapseAll' => true
         ]);
     }
 
     public function getFieldTcaConfig(string $tableName)
     {
-        $foreignTable = $this->getForeignTable();
+        $foreignTable = $this->getOption('foreignTable');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
             throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tableName");
         }
@@ -45,7 +45,7 @@ class IrreField extends TcaField
             'maxitems' => $this->getOption('maxItems'),
             'behaviour' => ['enableCascadingDelete' => TRUE],
             'appearance' => [
-                'collapseAll' => $this->getOption('initializeCollapsed') ? 1 : 0,
+                'collapseAll' => $this->getOption('collapseAll') ? 1 : 0,
                 'useSortable' => $sortby === 'sorting',
                 'showSynchronizationLink' => $canLocalize,
                 'showPossibleLocalizationRecords' => $canLocalize,
@@ -68,24 +68,24 @@ class IrreField extends TcaField
         $maxItems = $this->getOption('maxItems');
 
         if ($maxItems < 1 << 8) {
-            return "TINYINT(3) UNSIGEND DEFAULT '0' NOT NULL";
+            return "TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL";
         }
 
         if ($maxItems < 1 << 16) {
-            return "SMALLINT(5) UNSIGEND DEFAULT '0' NOT NULL";
+            return "SMALLINT(5) UNSIGNED DEFAULT '0' NOT NULL";
         }
 
         return "INT(10) UNSIGNED DEFAULT '0' NOT NULL";
     }
 
-    public function getDbTableDefinitions($tableName): array
+    public function getDbTableDefinitions(string $tableName): array
     {
         $tableDefinitions = parent::getDbTableDefinitions($tableName);
 
         // define the field on the other side
         // TODO somewhere it should be checked if this field is already defined
-        $foreignField = addslashes($this->getForeignField());
-        $tableDefinitions[$this->getForeignTable()] = [
+        $foreignField = addslashes($this->getOption('foreignField'));
+        $tableDefinitions[$this->getOption('foreignTable')] = [
             "`$foreignField` INT(11) DEFAULT '0' NOT NULL"
         ];
 

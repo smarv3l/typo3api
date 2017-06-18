@@ -11,32 +11,45 @@ namespace Typo3Api\Tca;
 
 class EnableFieldConfiguration implements TcaConfiguration
 {
-    public function modifyTca(array &$tca, string $tableName)
+    public function modifyCtrl(array &$ctrl, string $tableName)
     {
-        $tca['ctrl']['delete'] = 'deleted';
-        $tca['ctrl']['enablecolumns']['disabled'] = 'hidden';
-        $tca['ctrl']['enablecolumns']['starttime'] = 'starttime';
-        $tca['ctrl']['enablecolumns']['endtime'] = 'endtime';
+        $ctrl['deleted'] = 'deleted';
+        if (!isset($ctrl['enablecolumns'])) {
+            $ctrl['enablecolumns'] = [];
+        }
+        $ctrl['enablecolumns']['disabled'] = 'hidden';
+        $ctrl['enablecolumns']['starttime'] = 'starttime';
+        $ctrl['enablecolumns']['endtime'] = 'endtime';
+    }
 
-        $tca['columns']['hidden'] = $GLOBALS['TCA']['tt_content']['columns']['hidden'];
-        $tca['columns']['starttime'] = $GLOBALS['TCA']['tt_content']['columns']['starttime'];
-        $tca['columns']['endtime'] = $GLOBALS['TCA']['tt_content']['columns']['endtime'];
-
-        $tca['palettes']['access'] = [
-            'showitem' => implode(', ', [
-                'hidden',
-                'starttime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel',
-                'endtime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel',
-            ])
+    public function getColumns(string $tableName): array
+    {
+        return [
+            'hidden' => $GLOBALS['TCA']['tt_content']['columns']['hidden'],
+            'starttime' => $GLOBALS['TCA']['tt_content']['columns']['starttime'],
+            'endtime' => $GLOBALS['TCA']['tt_content']['columns']['endtime'],
         ];
     }
 
-    public function getShowItemString(): string
+    public function getPalettes(string $tableName): array
+    {
+        return [
+            'access' => [
+                'showitem' => implode(', ', [
+                    'hidden',
+                    'starttime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel',
+                    'endtime;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel',
+                ])
+            ]
+        ];
+    }
+
+    public function getShowItemString(string $tableName): string
     {
         return '--palette--;; access';
     }
 
-    public function getDbTableDefinitions($tableName): array
+    public function getDbTableDefinitions(string $tableName): array
     {
         return [
             $tableName => [

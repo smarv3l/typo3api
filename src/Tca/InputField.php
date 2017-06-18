@@ -51,6 +51,27 @@ class InputField extends TcaField
         });
     }
 
+    public function modifyCtrl(array &$ctrl, string $tableName)
+    {
+        parent::modifyCtrl($ctrl, $tableName);
+
+        if (!isset($ctrl['label'])) {
+            $ctrl['label'] = $this->getName();
+        } else {
+            if (!isset($ctrl['label_alt'])) {
+                $ctrl['label_alt'] = $this->getName();
+            } else {
+                $ctrl['label_alt'] .= ', ' . $this->getName();
+            }
+        }
+
+        if (!isset($ctrl['searchFields'])) {
+            $ctrl['searchFields'] = $this->getName();
+        } else {
+            $ctrl['searchFields'] .= ', ' . $this->getName();
+        }
+    }
+
     public function getFieldTcaConfig(string $tableName)
     {
         return [
@@ -64,21 +85,6 @@ class InputField extends TcaField
                 $this->getOption('eval')
             ])),
         ];
-    }
-
-    public function modifyTca(array &$tca, string $tableName)
-    {
-        parent::modifyTca($tca, $tableName);
-
-        if (!isset($tca['ctrl']['label'])) {
-            $tca['ctrl']['label'] = $this->getName();
-        }
-
-        if (!isset($tca['ctrl']['searchFields']) || strlen($tca['ctrl']['searchFields']) === 0) {
-            $tca['ctrl']['searchFields'] = $this->getName();
-        } else {
-            $tca['ctrl']['searchFields'] .= ', ' . $this->getName();
-        }
     }
 
     public function getDbFieldDefinition(): string
