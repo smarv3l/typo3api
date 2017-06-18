@@ -28,6 +28,9 @@ class InputField extends TcaField
             'required' => false,
             'trim' => true,
             'eval' => null,
+            'useAsLabel' => true,
+            'searchField' => true,
+
             'dbType' => function (Options $options) {
                 $maxLength = $options['maxLength'];
                 $default = addslashes($options['defaultValue']);
@@ -45,7 +48,10 @@ class InputField extends TcaField
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
         $resolver->setAllowedTypes('eval', ['string', 'null']);
+        $resolver->setAllowedTypes('useAsLabel', 'bool');
+        $resolver->setAllowedTypes('searchField', 'bool');
         $resolver->setNormalizer('maxLength', function (Options $options, $maxLength) {
+
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
                 throw new InvalidOptionsException($msg);
@@ -64,20 +70,24 @@ class InputField extends TcaField
     {
         parent::modifyCtrl($ctrl, $tableName);
 
-        if (!isset($ctrl['label'])) {
-            $ctrl['label'] = $this->getName();
-        } else {
-            if (!isset($ctrl['label_alt'])) {
-                $ctrl['label_alt'] = $this->getName();
+        if ($this->getOption('useAsLabel')) {
+            if (!isset($ctrl['label'])) {
+                $ctrl['label'] = $this->getName();
             } else {
-                $ctrl['label_alt'] .= ', ' . $this->getName();
+                if (!isset($ctrl['label_alt'])) {
+                    $ctrl['label_alt'] = $this->getName();
+                } else {
+                    $ctrl['label_alt'] .= ', ' . $this->getName();
+                }
             }
         }
 
-        if (!isset($ctrl['searchFields'])) {
-            $ctrl['searchFields'] = $this->getName();
-        } else {
-            $ctrl['searchFields'] .= ', ' . $this->getName();
+        if ($this->getOption('searchField')) {
+            if (!isset($ctrl['searchFields'])) {
+                $ctrl['searchFields'] = $this->getName();
+            } else {
+                $ctrl['searchFields'] .= ', ' . $this->getName();
+            }
         }
     }
 
