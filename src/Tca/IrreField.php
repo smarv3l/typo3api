@@ -21,8 +21,10 @@ class IrreField extends TcaField
         $resolver->setRequired('foreignTable');
         $resolver->setDefaults([
             'foreignField' => 'parent_uid',
-            'collapseAll' => true,
             'maxItems' => 100, // at some point, inline record editing doesn't make sense anymore
+            'collapseAll' => function (Options $options) {
+                return $options['maxItems'] > 5;
+            },
 
             'dbType' => function (Options $options) {
                 $maxItems = $options['maxItems'];
