@@ -37,7 +37,7 @@ class Double2Field extends TcaField
                 $high = intval($options['max']);
 
                 $default = number_format($options['defaultValue'], 2, '.', '');
-                $decimals = 2; // hardcoded because of validation
+                $decimals = 2; // hardcoded because typo3 only offers double2 validation
                 $digits = max(array_map('strlen', [abs($low), abs($high)])) + $decimals;
 
                 if ($options['min'] < 0) {
