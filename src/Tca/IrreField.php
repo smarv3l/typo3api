@@ -23,6 +23,7 @@ class IrreField extends TcaField
             'foreignField' => 'parent_uid',
             'collapseAll' => true,
             'maxItems' => 100, // at some point, inline record editing doesn't make sense anymore
+
             'dbType' => function (Options $options) {
                 $maxItems = $options['maxItems'];
 
@@ -61,7 +62,10 @@ class IrreField extends TcaField
             'foreign_field' => $this->getOption('foreignField'),
             'foreign_sortby' => $sortby,
             'maxitems' => $this->getOption('maxItems'),
-            'behaviour' => ['enableCascadingDelete' => TRUE],
+            'behaviour' => [
+                'enableCascadingDelete' => TRUE,
+                'localizeChildrenAtParentLocalization' => $canLocalize
+            ],
             'appearance' => [
                 'collapseAll' => $this->getOption('collapseAll') ? 1 : 0,
                 'useSortable' => $sortby === 'sorting',
