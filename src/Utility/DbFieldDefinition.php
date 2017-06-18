@@ -27,7 +27,7 @@ class DbFieldDefinition
             }
 
             if ($high <= 65535) {
-                return "SMALLINT(5) UNSIGNED DEFAULT '$default' NOT NULL'";
+                return "SMALLINT(5) UNSIGNED DEFAULT '$default' NOT NULL";
             }
 
             if ($high <= 16777215) {
@@ -44,7 +44,7 @@ class DbFieldDefinition
             }
 
             if ($low >= -32768 && $high <= 32767) {
-                return "SMALLINT(6) DEFAULT '$default' NOT NULL'";
+                return "SMALLINT(6) DEFAULT '$default' NOT NULL";
             }
 
             if ($low >= -8388608 && $high <= 8388607) {
