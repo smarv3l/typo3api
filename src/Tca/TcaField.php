@@ -9,6 +9,7 @@
 namespace Typo3Api\Tca;
 
 
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class TcaField implements TcaConfiguration
@@ -40,7 +41,10 @@ abstract class TcaField implements TcaConfiguration
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'label' => $this->name,
+            'label' => function (Options $options) {
+                $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $this->getName());
+                return ucfirst(trim(strtolower($splitName)));
+            },
             'exclude' => true,
             'dbType' => "VARCHAR(255) DEFAULT '' NOT NULL",
             'localize' => true,
