@@ -66,6 +66,8 @@ abstract class TcaField implements TcaConfiguration
             'exclude' => false,
             'localize' => true,
             'displayCond' => null,
+            'useAsLabel' => false,
+            'searchField' => false,
         ]);
 
         $resolver->setAllowedTypes('name', 'string');
@@ -74,6 +76,8 @@ abstract class TcaField implements TcaConfiguration
         $resolver->setAllowedTypes('dbType', 'string');
         $resolver->setAllowedTypes('localize', 'bool');
         $resolver->setAllowedTypes('displayCond', ['string', 'null']);
+        $resolver->setAllowedTypes('useAsLabel', 'bool');
+        $resolver->setAllowedTypes('searchField', 'bool');
     }
 
     public function getOptions()
@@ -88,6 +92,25 @@ abstract class TcaField implements TcaConfiguration
 
     public function modifyCtrl(array &$ctrl, string $tableName)
     {
+        if ($this->getOption('useAsLabel')) {
+            if (!isset($ctrl['label'])) {
+                $ctrl['label'] = $this->getOption('name');
+            } else {
+                if (!isset($ctrl['label_alt'])) {
+                    $ctrl['label_alt'] = $this->getOption('name');
+                } else {
+                    $ctrl['label_alt'] .= ', ' . $this->getOption('name');
+                }
+            }
+        }
+
+        if ($this->getOption('searchField')) {
+            if (!isset($ctrl['searchFields'])) {
+                $ctrl['searchFields'] = $this->getOption('name');
+            } else {
+                $ctrl['searchFields'] .= ', ' . $this->getOption('name');
+            }
+        }
     }
 
     public function getColumns(string $tableName): array

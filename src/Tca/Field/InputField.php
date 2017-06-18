@@ -32,8 +32,6 @@ class InputField extends TcaField
             'required' => false,
             'trim' => true,
             'eval' => null,
-            'useAsLabel' => true,
-            'searchField' => true,
 
             'dbType' => function (Options $options) {
                 $maxLength = $options['maxLength'];
@@ -48,6 +46,10 @@ class InputField extends TcaField
             'exclude' => function (Options $options) {
                 return $options['required'] === false;
             },
+            'useAsLabel' => function (Options $options) {
+                return $options['required'] === true;
+            },
+            'searchField' => true,
         ]);
 
         $resolver->setAllowedTypes('maxLength', 'int');
@@ -56,8 +58,6 @@ class InputField extends TcaField
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
         $resolver->setAllowedTypes('eval', ['string', 'null']);
-        $resolver->setAllowedTypes('useAsLabel', 'bool');
-        $resolver->setAllowedTypes('searchField', 'bool');
         $resolver->setNormalizer('maxLength', function (Options $options, $maxLength) {
 
             if ($maxLength < 1) {
@@ -73,31 +73,6 @@ class InputField extends TcaField
 
             return $maxLength;
         });
-    }
-
-    public function modifyCtrl(array &$ctrl, string $tableName)
-    {
-        parent::modifyCtrl($ctrl, $tableName);
-
-        if ($this->getOption('useAsLabel')) {
-            if (!isset($ctrl['label'])) {
-                $ctrl['label'] = $this->getOption('name');
-            } else {
-                if (!isset($ctrl['label_alt'])) {
-                    $ctrl['label_alt'] = $this->getOption('name');
-                } else {
-                    $ctrl['label_alt'] .= ', ' . $this->getOption('name');
-                }
-            }
-        }
-
-        if ($this->getOption('searchField')) {
-            if (!isset($ctrl['searchFields'])) {
-                $ctrl['searchFields'] = $this->getOption('name');
-            } else {
-                $ctrl['searchFields'] .= ', ' . $this->getOption('name');
-            }
-        }
     }
 
     public function getFieldTcaConfig(string $tableName)
