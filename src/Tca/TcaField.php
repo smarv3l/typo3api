@@ -41,8 +41,13 @@ abstract class TcaField implements TcaConfiguration
     {
         $resolver->setDefaults([
             'label' => $this->name,
-            'exclude' => false
+            'exclude' => true,
+            'dbType' => "VARCHAR(255) DEFAULT '' NOT NULL"
         ]);
+
+        $resolver->setAllowedTypes('label', 'string');
+        $resolver->setAllowedTypes('exclude', 'bool');
+        $resolver->setAllowedTypes('dbType', 'string');
     }
 
     public function getOptions()
@@ -78,10 +83,8 @@ abstract class TcaField implements TcaConfiguration
     public function getDbTableDefinitions(string $tableName): array
     {
         $name = addslashes($this->getName());
-        return [$tableName => ["`$name` " . $this->getDbFieldDefinition()]];
+        return [$tableName => ["`$name` " . $this->getOption('dbType')]];
     }
-
-    abstract public function getDbFieldDefinition(): string;
 
     public function getShowItemString(string $tableName): string
     {

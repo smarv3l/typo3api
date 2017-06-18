@@ -9,6 +9,7 @@
 namespace Typo3Api\Tca;
 
 
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IrreField extends TcaField
@@ -20,9 +21,26 @@ class IrreField extends TcaField
         $resolver->setRequired('foreignTable');
         $resolver->setDefaults([
             'foreignField' => 'parent_uid',
+            'collapseAll' => true,
             'maxItems' => 100, // at some point, inline record editing doesn't make sense anymore
-            'collapseAll' => true
+            'dbType' => function (Options $options) {
+                $maxItems = $options['maxItems'];
+
+                if ($maxItems < 1 << 8) {
+                    return "TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL";
+                }
+
+                if ($maxItems < 1 << 16) {
+                    return "SMALLINT(5) UNSIGNED DEFAULT '0' NOT NULL";
+                }
+
+                return "INT(10) UNSIGNED DEFAULT '0' NOT NULL";
+            },
         ]);
+
+        $resolver->setAllowedTypes('foreignTable', 'string');
+        $resolver->setAllowedTypes('foreignField', 'string');
+        $resolver->setAllowedTypes('maxItems', 'int');
     }
 
     public function getFieldTcaConfig(string $tableName)
@@ -61,21 +79,6 @@ class IrreField extends TcaField
                 ],
             ],
         ];
-    }
-
-    public function getDbFieldDefinition(): string
-    {
-        $maxItems = $this->getOption('maxItems');
-
-        if ($maxItems < 1 << 8) {
-            return "TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL";
-        }
-
-        if ($maxItems < 1 << 16) {
-            return "SMALLINT(5) UNSIGNED DEFAULT '0' NOT NULL";
-        }
-
-        return "INT(10) UNSIGNED DEFAULT '0' NOT NULL";
     }
 
     public function getDbTableDefinitions(string $tableName): array

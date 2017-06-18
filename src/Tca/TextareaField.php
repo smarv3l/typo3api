@@ -19,19 +19,45 @@ class TextareaField extends TcaField
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'maxLength' => 900,
+            'maxLength' => 500,
             'cols' => 30,
             'rows' => function (Options $options) {
-                $calculatedSpace = floor($options['maxLength'] / $options['cols']);
-                return min($calculatedSpace, 5);
+                $realCols = $options['cols'] * 2; // cols doesn't cut it exactly so adjust a bit.
+                $calculatedSpace = floor($options['maxLength'] / $realCols);
+                return min((int)$calculatedSpace, 10);
             },
-            'defaultValue' => '',
             'required' => false,
             'trim' => true,
             'eval' => null,
+            'dbType' => function (Options $options) {
+                $maxLength = $options['maxLength'];
+                if ($maxLength < 1 << 10) {
+                    // text types don't have a default value and therefor default to null
+                    // because of this, i make the varchar version also default to null for consistent behavior
+                    return "VARCHAR($maxLength) DEFAULT NULL";
+                }
+
+                if ($maxLength < 1 << 16) {
+                    return "TEXT DEFAULT NULL";
+                }
+
+                return "MEDIUMTEXT DEFAULT NULL";
+            },
+            // overwrite default exclude default depending on required option
+            'exclude' => function (Options $options) {
+                return $options['required'] === false;
+            },
         ]);
 
+        $resolver->setAllowedTypes('maxLength', 'int');
+        $resolver->setAllowedTypes('cols', 'int');
+        $resolver->setAllowedTypes('rows', 'int');
+        $resolver->setAllowedTypes('required', 'bool');
+        $resolver->setAllowedTypes('trim', 'bool');
+        $resolver->setAllowedTypes('eval', ['string', 'null']);
+
         $resolver->setNormalizer('maxLength', function (Options $options, $maxLength) {
+
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
                 throw new InvalidOptionsException($msg);
@@ -40,15 +66,11 @@ class TextareaField extends TcaField
             if ($maxLength >= 1 << 24) {
                 $msg = "The max size of an input field must not be higher than 2^24-1.";
                 $msg .= " More characters can't reliably be handled.";
+                $msg .= " However, even 2^24-1 chars might fail to localize so use something sensibel.";
                 throw new InvalidOptionsException($msg);
             }
 
             return $maxLength;
-        });
-
-        // overwrite default exclude default depending on required option
-        $resolver->setDefault('exclude', function (Options $options) {
-            return $options['required'] == false;
         });
     }
 
@@ -58,26 +80,11 @@ class TextareaField extends TcaField
             'type' => 'text',
             'max' => $this->getOption('maxLength'),
             'rows' => $this->getOption('rows'),
-            'default' => $this->getOption('defaultValue'),
-            'eval' => implode(',', array_filter('is_string', [
+            'eval' => implode(',', array_filter([
                 $this->getOption('trim') ? 'trim' : null,
                 $this->getOption('required') ? 'required' : null,
                 $this->getOption('eval')
             ])),
         ];
-    }
-
-    public function getDbFieldDefinition(): string
-    {
-        $maxLength = $this->getOption('maxLength');
-        if ($maxLength < 1 << 8) {
-            return "VARCHAR($maxLength) DEFAULT '' NOT NULL";
-        }
-
-        if ($maxLength < 1 << 16) {
-            return "TEXT";
-        }
-
-        return "MEDIUMTEXT";
     }
 }

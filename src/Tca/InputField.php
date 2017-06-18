@@ -28,26 +28,35 @@ class InputField extends TcaField
             'required' => false,
             'trim' => true,
             'eval' => null,
+            'dbType' => function (Options $options) {
+                $maxLength = $options['maxLength'];
+                $default = addslashes($options['defaultValue']);
+                return "VARCHAR($maxLength) DEFAULT '$default' NOT NULL";
+            },
+            // overwrite default exclude default depending on required option
+            'exclude' => function (Options $options) {
+                return $options['required'] === false;
+            },
         ]);
 
+        $resolver->setAllowedTypes('maxLength', 'int');
+        $resolver->setAllowedTypes('visibleSize', 'int');
+        $resolver->setAllowedTypes('defaultValue', 'string');
+        $resolver->setAllowedTypes('required', 'bool');
+        $resolver->setAllowedTypes('trim', 'bool');
+        $resolver->setAllowedTypes('eval', ['string', 'null']);
         $resolver->setNormalizer('maxLength', function (Options $options, $maxLength) {
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
                 throw new InvalidOptionsException($msg);
             }
 
-            if ($maxLength >= 1 << 24) {
-                $msg = "The max size of an input field must not be higher than 2^24-1.";
-                $msg -= " More characters can't reliably be handled.";
+            if ($maxLength > 1024) {
+                $msg = "The max size of an input field must not be higher than 1024.";
                 throw new InvalidOptionsException($msg);
             }
 
             return $maxLength;
-        });
-
-        // overwrite default exclude default depending on required option
-        $resolver->setDefault('exclude', function (Options $options) {
-            return $options['required'] == false;
         });
     }
 
@@ -85,26 +94,5 @@ class InputField extends TcaField
                 $this->getOption('eval')
             ])),
         ];
-    }
-
-    public function getDbFieldDefinition(): string
-    {
-        $maxChars = $this->getOption('maxLength');
-
-        if ($maxChars < 1 << 8) {
-            $default = addslashes($this->getOption('defaultValue'));
-            return "VARCHAR($maxChars) DEFAULT '$default' NOT NULL";
-        }
-
-        if ($maxChars < 1 << 16) {
-            return "TEXT";
-        }
-
-        if ($maxChars < 1 << 24) {
-            return "MEDIUMTEXT";
-        }
-
-        // i ignore longtext as texts these long will create multiple problems
-        throw new \RuntimeException("Max size error ~ should have been caught by setMaxChars");
     }
 }
