@@ -29,6 +29,9 @@ class ImageField extends TcaField
             'dbType' => function (Options $options) {
                 return DbFieldDefinition::getIntForNumberRange(0, $options['maxItems']);
             },
+            'exclude' => function (Options $options) {
+                return $options['minItems'] <= 0;
+            },
         ]);
     }
 

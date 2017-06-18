@@ -32,24 +32,19 @@ class SelectField extends TcaField
                 });
                 return $values;
             },
-            'required' => true,
 
-            // overwrite default exclude default
-            // if there is a value which is empty, then default to exclude
+            'required' => true,
             'exclude' => function (Options $options) {
-                foreach ($options['values'] as $value) {
-                    if ($value === '') {
-                        return true;
-                    }
-                }
-                return false;
+                return $options['required'] === false;
             },
+
             'dbType' => function (Options $options) {
                 $possibleValues = $options['values'];
                 $defaultValue = addslashes(reset($possibleValues));
                 $maxLength = max(array_map('strlen', $possibleValues));
                 return "VARCHAR($maxLength) DEFAULT '$defaultValue' NOT NULL";
             },
+
             // it doesn't make sense to localize selects most of the time
             'localize' => false
         ]);

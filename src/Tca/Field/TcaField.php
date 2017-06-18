@@ -49,7 +49,7 @@ abstract class TcaField implements TcaConfiguration
                 $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $this->getName());
                 return ucfirst(trim(strtolower($splitName)));
             },
-            'exclude' => true,
+            'exclude' => false,
             'localize' => true,
             'displayCond' => null,
         ]);
@@ -79,8 +79,8 @@ abstract class TcaField implements TcaConfiguration
     {
         return [
             $this->getName() => [
-                'label' => $this->options['label'],
-                'exclude' => $this->options['exclude'],
+                'label' => $this->getOption('label'),
+                'exclude' => $this->getOption('exclude'),
                 'config' => $this->getFieldTcaConfig($tableName),
                 'l10n_mode' => $this->getOption('localize') ? '' : 'exclude',
                 'l10n_display' => $this->getOption('localize') ? '' : 'defaultAsReadonly',
