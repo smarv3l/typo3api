@@ -35,6 +35,10 @@ class InputField extends TcaField
                 $maxLength = $options['maxLength'];
                 $default = addslashes($options['defaultValue']);
                 return "VARCHAR($maxLength) DEFAULT '$default' NOT NULL";
+                // using anything but varchar here would make searchFields slow
+                // because it doesn't make sense to have a very large input field anyway
+                // i opt to prevent large input fields and by default add everything to searchFields
+                // also, i can easily use the default option here which is nice.
             },
             // overwrite default exclude default depending on required option
             'exclude' => function (Options $options) {
