@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: marco
  * Date: 18.06.17
- * Time: 13:41
+ * Time: 17:20
  */
 
 namespace Typo3Api\Tca\Field;
@@ -11,22 +11,21 @@ namespace Typo3Api\Tca\Field;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Typo3Api\Utility\DbFieldDefinition;
 
-class IntField extends TcaField
+class Double2Field extends TcaField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'min' => 0,
-            'max' => 10000,
+            'min' => 0.0,
+            'max' => 99.0,
             'visibleSize' => function (Options $options) {
                 return (int)(max(array_map('strlen', [$options['min'], $options['max']])) / 2);
             },
             'defaultValue' => function (Options $options) {
-                if ($options['min'] <= 0 && $options['max'] >= 0) {
-                    return 0;
+                if ($options['min'] <= 0.0 && $options['max'] >= 0.0) {
+                    return 0.0;
                 }
 
                 return $options['min'];
@@ -34,23 +33,31 @@ class IntField extends TcaField
             'required' => false, // TODO required is kind of useless on an int
 
             'dbType' => function (Options $options) {
-                $low = $options['min'];
-                $high = $options['max'];
-                $default = $options['defaultValue'];
-                return DbFieldDefinition::getIntForNumberRange($low, $high, $default);
+                $low = intval($options['min']);
+                $high = intval($options['max']);
+
+                $default = number_format($options['defaultValue'], 2, '.', '');
+                $decimals = 2; // hardcoded because of validation
+                $digits = max(array_map('strlen', [abs($low), abs($high)])) + $decimals;
+
+                if ($options['min'] < 0) {
+                    return "DECIMAL($digits, $decimals) UNSIGNED DEFAULT '$default' NOT NULL";
+                } else {
+                    return "DECIMAL($digits, $decimals) DEFAULT '$default' NOT NULL";
+                }
             },
             // overwrite default exclude default depending on required option
             'exclude' => function (Options $options) {
                 return $options['required'] === false;
             },
-            // an int field is most of the time not required to be localized
+            // a double field is most of the time not required to be localized
             'localize' => false,
         ]);
 
-        $resolver->setAllowedTypes('min', 'int');
-        $resolver->setAllowedTypes('max', 'int');
+        $resolver->setAllowedTypes('min', ['int', 'double']);
+        $resolver->setAllowedTypes('max', ['int', 'double']);
         $resolver->setAllowedTypes('visibleSize', 'int');
-        $resolver->setAllowedTypes('defaultValue', 'int');
+        $resolver->setAllowedTypes('defaultValue', ['int', 'double']);
         $resolver->setAllowedTypes('required', 'bool');
     }
 
@@ -64,7 +71,7 @@ class IntField extends TcaField
                 'lower' => $this->getOption('min'),
                 'upper' => $this->getOption('max')
             ],
-            'eval' => 'trim,int' . ($this->getOption('required') ? ',required' : '')
+            'eval' => 'trim,double2' . ($this->getOption('required') ? ',required' : '')
         ];
     }
 }
