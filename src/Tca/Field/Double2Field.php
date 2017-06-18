@@ -21,7 +21,8 @@ class Double2Field extends TcaField
             'min' => 0.0,
             'max' => 99.0,
             'visibleSize' => function (Options $options) {
-                return (int)(max(array_map('strlen', [$options['min'], $options['max']])) / 2);
+                $preDecimalSize = max(strlen((int)$options['min']), strlen((int)$options['max']));
+                return (int)(($preDecimalSize + 2) / 2);
             },
             'defaultValue' => function (Options $options) {
                 if ($options['min'] <= 0.0 && $options['max'] >= 0.0) {
@@ -38,7 +39,7 @@ class Double2Field extends TcaField
 
                 $default = number_format($options['defaultValue'], 2, '.', '');
                 $decimals = 2; // hardcoded because typo3 only offers double2 validation
-                $digits = max(array_map('strlen', [abs($low), abs($high)])) + $decimals;
+                $digits = max(strlen(abs($low)), strlen(abs($high))) + $decimals;
 
                 if ($options['min'] < 0) {
                     return "NUMERIC($digits, $decimals) UNSIGNED DEFAULT '$default' NOT NULL";

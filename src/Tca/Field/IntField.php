@@ -22,7 +22,7 @@ class IntField extends TcaField
             'min' => 0,
             'max' => 10000,
             'visibleSize' => function (Options $options) {
-                return (int)(max(array_map('strlen', [$options['min'], $options['max']])) / 2);
+                return (int)(max(strlen($options['min']), strlen($options['max'])) / 2);
             },
             'defaultValue' => function (Options $options) {
                 if ($options['min'] <= 0 && $options['max'] >= 0) {
