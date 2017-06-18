@@ -11,6 +11,7 @@ namespace Typo3Api\Tca;
 
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class IrreField extends TcaField
 {
@@ -21,6 +22,11 @@ class IrreField extends TcaField
         $resolver->setRequired('foreignTable');
         $resolver->setDefaults([
             'foreignField' => 'parent_uid',
+            // if foreignTakeover is true, the other table is exclusive for this relation (recommended)
+            // this means hideTable will be set to true, and some other behaviors will change
+            // however: you can still use the foreign table for other relations
+            'foreignTakeover' => true,
+            'minItems' => 0,
             'maxItems' => 100, // at some point, inline record editing doesn't make sense anymore
             'collapseAll' => function (Options $options) {
                 return $options['maxItems'] > 5;
@@ -49,6 +55,7 @@ class IrreField extends TcaField
 
         $resolver->setAllowedTypes('foreignTable', 'string');
         $resolver->setAllowedTypes('foreignField', 'string');
+        $resolver->setAllowedTypes('minItems', 'int');
         $resolver->setAllowedTypes('maxItems', 'int');
     }
 
@@ -60,31 +67,51 @@ class IrreField extends TcaField
         }
 
         $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];
-        $sortby = $foreignTableDefinition['ctrl']['sortby'];
-        $canLocalize = (bool)$foreignTableDefinition['ctrl']['languageField'];
-        $canHide = (bool)$foreignTableDefinition['columns']['hidden'];
+        $sortby = @$foreignTableDefinition['ctrl']['sortby'] ?: @$foreignTableDefinition['ctrl']['_sortby'];
+        $canBeSorted = (bool)$sortby;
+        $canLocalize = (bool)@$foreignTableDefinition['ctrl']['languageField'];
+        $canHide = (bool)@$foreignTableDefinition['columns']['hidden'];
+
+        // this is the takeover part... it will modify globals which isn't so nice
+        // TODO create a better spot do modify globals.. this doesn't fit here
+        if ($this->getOption('foreignTakeover')) {
+            // the doc states that sortby should be disabled if the table is exclusive for this relation
+            // https://docs.typo3.org/typo3cms/TCAReference/8-dev/ColumnsConfig/Type/Inline.html#foreign-sortby
+            if ($sortby) {
+                $GLOBALS['TCA'][$foreignTable]['ctrl']['sortby'] = null;
+                $GLOBALS['TCA'][$foreignTable]['ctrl']['sortby_'] = $sortby;
+            }
+
+            // ensure only this relation sees the other table
+            $GLOBALS['TCA'][$foreignTable]['ctrl']['hideTable'] = true;
+
+            // since this table can't normally be created anymore, remove creation restrictions
+            ExtensionManagementUtility::allowTableOnStandardPages($foreignTable);
+        }
 
         return [
             'type' => 'inline',
             'foreign_table' => $this->getOption('foreignTable'),
             'foreign_field' => $this->getOption('foreignField'),
             'foreign_sortby' => $sortby,
+            'minitems' => $this->getOption('minItems'),
             'maxitems' => $this->getOption('maxItems'),
             'behaviour' => [
-                'enableCascadingDelete' => TRUE,
+                'enableCascadingDelete' => $this->getOption('foreignTakeover'),
                 'localizeChildrenAtParentLocalization' => $canLocalize
             ],
             'appearance' => [
                 'collapseAll' => $this->getOption('collapseAll') ? 1 : 0,
-                'useSortable' => $sortby === 'sorting',
-                'showSynchronizationLink' => $canLocalize,
+                'useSortable' => $canBeSorted,
                 'showPossibleLocalizationRecords' => $canLocalize,
+                'showRemovedLocalizationRecords' => $canLocalize,
                 'showAllLocalizationLink' => $canLocalize,
+                'showSynchronizationLink' => $canLocalize, // potentially dangerous...
                 'enabledControls' => [
                     'info' => TRUE,
                     'new' => TRUE,
-                    'dragdrop' => $sortby === 'sorting',
-                    'sort' => $sortby === 'sorting',
+                    'dragdrop' => $canBeSorted,
+                    'sort' => $canBeSorted,
                     'hide' => $canHide,
                     'delete' => TRUE,
                     'localize' => $canLocalize,
