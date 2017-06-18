@@ -20,9 +20,13 @@ class InputField extends TcaField
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'maxLength' => 255,
+            // normally devs put 255 as the default size for inputs because it's the common "best size" for varchar
+            // however, in my experience, nobody expects an input to be filled with so much text
+            // also: the limit of 255 feels random for a normal human
+            // that's why i use 100 as a default
+            'maxLength' => 100,
             'visibleSize' => function (Options $options) {
-                return min(30, $options['maxLength']);
+                return min(30, (int) ($options['maxLength'] / 2));
             },
             'defaultValue' => '',
             'required' => false,
