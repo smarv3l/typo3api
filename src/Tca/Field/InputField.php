@@ -67,6 +67,7 @@ class InputField extends TcaField
 
             if ($maxLength > 1024) {
                 $msg = "The max size of an input field must not be higher than 1024.";
+                $msg .= " Use a textarea instead.";
                 throw new InvalidOptionsException($msg);
             }
 
