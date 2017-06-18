@@ -16,37 +16,51 @@ use Typo3Api\Tca\TcaConfiguration;
 abstract class TcaField implements TcaConfiguration
 {
     /**
-     * @var string
-     */
-    private $name;
-
-    /**
      * @var array
      */
     private $options;
+
+    /**
+     * A cache for option resolvers to speed up duplicate usage.
+     * @var array
+     */
+    private static $optionResolvers = [];
 
     /**
      * CommonField constructor.
      * @param string $name
      * @param array $options
      */
-    public function __construct(string $name, array $options = [])
+    public final function __construct(string $name, array $options = [])
     {
-        $this->name = $name;
+        // nicer creation syntax when passing name as a direct parameter instead of expecting an option
+        $options['name'] = $name;
+
+        $optionResolver = $this->getOptionResolver();
+        $this->options = $optionResolver->resolve($options);
+    }
+
+    private function getOptionResolver()
+    {
+        if (isset(self::$optionResolvers[get_class($this)])) {
+            return self::$optionResolvers[get_class($this)];
+        }
 
         $optionResolver = new OptionsResolver();
         $this->configureOptions($optionResolver);
-        $this->options = $optionResolver->resolve($options);
+        self::$optionResolvers[get_class($this)] = $optionResolver;
+        return $optionResolver;
     }
 
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
+            'name',
             'dbType'
         ]);
         $resolver->setDefaults([
             'label' => function (Options $options) {
-                $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $this->getName());
+                $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $options['name']);
                 return ucfirst(trim(strtolower($splitName)));
             },
             'exclude' => false,
@@ -54,6 +68,7 @@ abstract class TcaField implements TcaConfiguration
             'displayCond' => null,
         ]);
 
+        $resolver->setAllowedTypes('name', 'string');
         $resolver->setAllowedTypes('label', 'string');
         $resolver->setAllowedTypes('exclude', 'bool');
         $resolver->setAllowedTypes('dbType', 'string');
@@ -78,7 +93,7 @@ abstract class TcaField implements TcaConfiguration
     public function getColumns(string $tableName): array
     {
         return [
-            $this->getName() => [
+            $this->getOption('name') => [
                 'label' => $this->getOption('label'),
                 'exclude' => $this->getOption('exclude'),
                 'config' => $this->getFieldTcaConfig($tableName),
@@ -98,7 +113,7 @@ abstract class TcaField implements TcaConfiguration
 
     public function getDbTableDefinitions(string $tableName): array
     {
-        $name = addslashes($this->getName());
+        $name = addslashes($this->getOption('name'));
         return [
             $tableName => [
                 "`$name` " . $this->getOption('dbType')
@@ -108,14 +123,6 @@ abstract class TcaField implements TcaConfiguration
 
     public function getShowItemString(string $tableName): string
     {
-        return $this->getName();
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
+        return $this->getOption('name');
     }
 }

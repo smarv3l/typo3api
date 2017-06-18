@@ -38,7 +38,7 @@ class ImageField extends TcaField
     public function getFieldTcaConfig(string $tableName)
     {
         $config = $GLOBALS['TCA']['tt_content']['columns']['image']['config'];
-        $config['foreign_match_fields']['fieldname'] = $this->getName();
+        $config['foreign_match_fields']['fieldname'] = $this->getOption('name');
         return $config;
     }
 }

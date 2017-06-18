@@ -81,21 +81,21 @@ class InputField extends TcaField
 
         if ($this->getOption('useAsLabel')) {
             if (!isset($ctrl['label'])) {
-                $ctrl['label'] = $this->getName();
+                $ctrl['label'] = $this->getOption('name');
             } else {
                 if (!isset($ctrl['label_alt'])) {
-                    $ctrl['label_alt'] = $this->getName();
+                    $ctrl['label_alt'] = $this->getOption('name');
                 } else {
-                    $ctrl['label_alt'] .= ', ' . $this->getName();
+                    $ctrl['label_alt'] .= ', ' . $this->getOption('name');
                 }
             }
         }
 
         if ($this->getOption('searchField')) {
             if (!isset($ctrl['searchFields'])) {
-                $ctrl['searchFields'] = $this->getName();
+                $ctrl['searchFields'] = $this->getOption('name');
             } else {
-                $ctrl['searchFields'] .= ', ' . $this->getName();
+                $ctrl['searchFields'] .= ', ' . $this->getOption('name');
             }
         }
     }

@@ -42,7 +42,7 @@ class FileField extends TcaField
     public function getFieldTcaConfig(string $tableName)
     {
         return ExtensionManagementUtility::getFileFieldTCAConfig(
-            $this->getName(),
+            $this->getOption('name'),
             [
                 'minitems' => $this->getOption('minItems'),
                 'maxitems' => $this->getOption('maxItems'),
