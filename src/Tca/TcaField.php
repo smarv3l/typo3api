@@ -42,12 +42,16 @@ abstract class TcaField implements TcaConfiguration
         $resolver->setDefaults([
             'label' => $this->name,
             'exclude' => true,
-            'dbType' => "VARCHAR(255) DEFAULT '' NOT NULL"
+            'dbType' => "VARCHAR(255) DEFAULT '' NOT NULL",
+            'localize' => true,
+            'displayCond' => '',
         ]);
 
         $resolver->setAllowedTypes('label', 'string');
         $resolver->setAllowedTypes('exclude', 'bool');
         $resolver->setAllowedTypes('dbType', 'string');
+        $resolver->setAllowedTypes('localize', 'bool');
+        $resolver->setAllowedTypes('displayCond', 'string');
     }
 
     public function getOptions()
@@ -66,11 +70,15 @@ abstract class TcaField implements TcaConfiguration
 
     public function getColumns(string $tableName): array
     {
-        return [$this->getName() => [
-            'label' => $this->options['label'],
-            'exclude' => $this->options['exclude'],
-            'config' => $this->getFieldTcaConfig($tableName)
-        ]];
+        return [
+            $this->getName() => [
+                'label' => $this->options['label'],
+                'exclude' => $this->options['exclude'],
+                'config' => $this->getFieldTcaConfig($tableName),
+                'l10n_mode' => $this->getOption('localize') ? '' : 'exclude',
+                'displayCond' => $this->getOption('displayCond'),
+            ]
+        ];
     }
 
     public function getPalettes(string $tableName): array
@@ -83,7 +91,11 @@ abstract class TcaField implements TcaConfiguration
     public function getDbTableDefinitions(string $tableName): array
     {
         $name = addslashes($this->getName());
-        return [$tableName => ["`$name` " . $this->getOption('dbType')]];
+        return [
+            $tableName => [
+                "`$name` " . $this->getOption('dbType')
+            ]
+        ];
     }
 
     public function getShowItemString(string $tableName): string
