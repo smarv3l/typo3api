@@ -41,13 +41,15 @@ abstract class TcaField implements TcaConfiguration
 
     protected function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setRequired([
+            'dbType'
+        ]);
         $resolver->setDefaults([
             'label' => function (Options $options) {
                 $splitName = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $this->getName());
                 return ucfirst(trim(strtolower($splitName)));
             },
             'exclude' => true,
-            'dbType' => "VARCHAR(255) DEFAULT '' NOT NULL",
             'localize' => true,
             'displayCond' => null,
         ]);
