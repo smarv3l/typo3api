@@ -80,7 +80,7 @@ class SqlSchemaHook
             array_unshift($definitions, "uid int(11) NOT NULL auto_increment");
             array_push($definitions, "PRIMARY KEY (uid)");
 
-            $sqlStrings[] = "CREATE TABLE `$tableName` (" . implode(",\n", $definitions) . ");";
+            $sqlStrings[] = "CREATE TABLE `$tableName` (\n" . implode(",\n", $definitions) . "\n);";
         }
 
         return [$sqlStrings];
