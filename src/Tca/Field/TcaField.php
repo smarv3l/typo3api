@@ -68,6 +68,7 @@ abstract class TcaField implements TcaConfiguration
             'displayCond' => null,
             'useAsLabel' => false,
             'searchField' => false,
+            'useForRecordType' => false,
         ]);
 
         $resolver->setAllowedTypes('name', 'string');
@@ -107,9 +108,20 @@ abstract class TcaField implements TcaConfiguration
         if ($this->getOption('searchField')) {
             if (!isset($ctrl['searchFields'])) {
                 $ctrl['searchFields'] = $this->getOption('name');
-            } else {
+            } else if (strpos($ctrl['searchFields'], $this->getOption('name')) === false) {
                 $ctrl['searchFields'] .= ', ' . $this->getOption('name');
             }
+        }
+
+        if ($this->getOption('useForRecordType')) {
+            if (isset($ctrl['type'])) {
+                $msg = "Only one field can specify the record type for table $tableName.";
+                $msg .= " Tried using field " . $this->getOption('name') . " as type field.";
+                $msg .= " Field " . $ctrl['type'] . " is already defined as type field.";
+                throw new \RuntimeException($msg);
+            }
+
+            $ctrl['type'] = $this->getOption('name');
         }
     }
 
