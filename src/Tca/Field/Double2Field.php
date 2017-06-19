@@ -42,9 +42,9 @@ class Double2Field extends TcaField
                 $digits = max(strlen(abs($low)), strlen(abs($high))) + $decimals;
 
                 if ($options['min'] < 0) {
-                    return "NUMERIC($digits, $decimals) UNSIGNED DEFAULT '$default' NOT NULL";
-                } else {
                     return "NUMERIC($digits, $decimals) DEFAULT '$default' NOT NULL";
+                } else {
+                    return "NUMERIC($digits, $decimals) UNSIGNED DEFAULT '$default' NOT NULL";
                 }
             },
             // overwrite default exclude default depending on required option
