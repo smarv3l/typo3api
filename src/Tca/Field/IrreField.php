@@ -108,6 +108,19 @@ class IrreField extends TcaField
         ];
     }
 
+    public function getColumns(string $tableName): array
+    {
+        $columns = parent::getColumns($tableName);
+
+        if ($this->getOption('localize') === false) {
+            // remove the l10n display options
+            // inline field cant be displayed as readonly
+            unset($columns[$this->getOption('name')]['l10n_display']);
+        }
+
+        return $columns;
+    }
+
     public function getDbTableDefinitions(string $tableName): array
     {
         $tableDefinitions = parent::getDbTableDefinitions($tableName);
