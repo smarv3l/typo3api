@@ -46,9 +46,7 @@ class InputField extends TcaField
             'exclude' => function (Options $options) {
                 return $options['required'] === false;
             },
-            'useAsLabel' => function (Options $options) {
-                return $options['required'] === true;
-            },
+            'useAsLabel' => true,
             'searchField' => true,
         ]);
 
