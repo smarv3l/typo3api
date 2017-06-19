@@ -27,24 +27,24 @@ class IrreField extends TcaField
             // this means hideTable will be set to true, and some other behaviors will change
             // however: you can still use the foreign table for other relations
             'foreignTakeover' => true,
-            'minItems' => 0,
-            'maxItems' => 100, // at some point, inline record editing doesn't make sense anymore
+            'minitems' => 0,
+            'maxitems' => 100, // at some point, inline record editing doesn't make sense anymore
             'collapseAll' => function (Options $options) {
-                return $options['maxItems'] > 5;
+                return $options['maxitems'] > 5;
             },
 
             'dbType' => function (Options $options) {
-                return DbFieldDefinition::getIntForNumberRange(0, $options['maxItems']);
+                return DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']);
             },
             'exclude' => function (Options $options) {
-                return $options['minItems'] <= 0;
+                return $options['minitems'] <= 0;
             },
         ]);
 
         $resolver->setAllowedTypes('foreignTable', 'string');
         $resolver->setAllowedTypes('foreignField', 'string');
-        $resolver->setAllowedTypes('minItems', 'int');
-        $resolver->setAllowedTypes('maxItems', 'int');
+        $resolver->setAllowedTypes('minitems', 'int');
+        $resolver->setAllowedTypes('maxitems', 'int');
     }
 
     public function getFieldTcaConfig(string $tableName)
@@ -82,8 +82,8 @@ class IrreField extends TcaField
             'foreign_table' => $this->getOption('foreignTable'),
             'foreign_field' => $this->getOption('foreignField'),
             'foreign_sortby' => $sortby,
-            'minitems' => $this->getOption('minItems'),
-            'maxitems' => $this->getOption('maxItems'),
+            'minitems' => $this->getOption('minitems'),
+            'maxitems' => $this->getOption('maxitems'),
             'behaviour' => [
                 'enableCascadingDelete' => $this->getOption('foreignTakeover'),
                 'localizeChildrenAtParentLocalization' => $canLocalize

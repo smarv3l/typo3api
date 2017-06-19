@@ -24,9 +24,9 @@ class InputField extends TcaField
             // however, in my experience, nobody expects an input to be filled with so much text
             // also: the limit of 255 feels random for a normal human
             // that's why i use 100 as a default
-            'maxLength' => 100,
+            'max' => 100,
             'visibleSize' => function (Options $options) {
-                return min(30, (int) ($options['maxLength'] / 2));
+                return min(30, (int) ($options['max'] / 2));
             },
             'defaultValue' => '',
             'required' => false,
@@ -34,7 +34,7 @@ class InputField extends TcaField
             'eval' => null,
 
             'dbType' => function (Options $options) {
-                $maxLength = $options['maxLength'];
+                $maxLength = $options['max'];
                 $default = addslashes($options['defaultValue']);
                 return "VARCHAR($maxLength) DEFAULT '$default' NOT NULL";
                 // using anything but varchar here would make searchFields slow
@@ -50,13 +50,13 @@ class InputField extends TcaField
             'searchField' => true,
         ]);
 
-        $resolver->setAllowedTypes('maxLength', 'int');
+        $resolver->setAllowedTypes('max', 'int');
         $resolver->setAllowedTypes('visibleSize', 'int');
         $resolver->setAllowedTypes('defaultValue', 'string');
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
         $resolver->setAllowedTypes('eval', ['string', 'null']);
-        $resolver->setNormalizer('maxLength', function (Options $options, $maxLength) {
+        $resolver->setNormalizer('max', function (Options $options, $maxLength) {
 
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
@@ -78,7 +78,7 @@ class InputField extends TcaField
         return [
             'type' => 'input',
             'size' => $this->getOption('visibleSize'),
-            'max' => $this->getOption('maxLength'),
+            'max' => $this->getOption('max'),
             'default' => $this->getOption('defaultValue'),
             'eval' => implode(',', array_filter([
                 $this->getOption('trim') ? 'trim' : null,
