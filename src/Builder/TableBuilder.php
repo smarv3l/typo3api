@@ -17,7 +17,7 @@ class TableBuilder
     /**
      * @var string
      */
-    private $name;
+    private $tableName;
 
     /**
      * TableBuilder constructor.
@@ -25,7 +25,7 @@ class TableBuilder
      */
     public function __construct(string $name)
     {
-        $this->name = $name;
+        $this->tableName = $name;
         $this->configureTableIfNotPresent();
         SqlSchemaHook::attach();
     }
@@ -50,9 +50,9 @@ class TableBuilder
     /**
      * @return string
      */
-    public function getName(): string
+    public function getTableName(): string
     {
-        return $this->name;
+        return $this->tableName;
     }
 
     /**
@@ -61,7 +61,7 @@ class TableBuilder
      */
     public function configure(TcaConfiguration $configuration)
     {
-        $tableName = $this->getName();
+        $tableName = $this->getTableName();
 
         $configuration->modifyCtrl($GLOBALS['TCA'][$tableName]['ctrl'], $tableName);
 
@@ -91,16 +91,16 @@ class TableBuilder
 
     public function getTitle(): string
     {
-        if (!is_string($GLOBALS['TCA'][$this->getName()]['ctrl']['title'])) {
+        if (!is_string($GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'])) {
             return '';
         }
 
-        return $GLOBALS['TCA'][$this->getName()]['ctrl']['title'];
+        return $GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'];
     }
 
     public function setTitle(string $title)
     {
-        $GLOBALS['TCA'][$this->getName()]['ctrl']['title'] = $title;
+        $GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'] = $title;
     }
 
     /**
@@ -108,14 +108,14 @@ class TableBuilder
      */
     protected function configureTableIfNotPresent(): bool
     {
-        if (isset($GLOBALS['TCA'][$this->getName()])) {
+        if (isset($GLOBALS['TCA'][$this->getTableName()])) {
             return false;
         }
 
-        $GLOBALS['TCA'][$this->getName()] = [
+        $GLOBALS['TCA'][$this->getTableName()] = [
             'ctrl' => [
                 'dividers2tabs' => true,
-                'title' => $this->getName(),
+                'title' => $this->getTableName(),
             ],
             'interface' => [
                 'showRecordFieldList' => ''
