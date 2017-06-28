@@ -23,10 +23,10 @@ class InputField extends TcaField
             // normally devs put 255 as the default size for inputs because it's the common "best size" for varchar
             // however, in my experience, nobody expects an input to be filled with so much text
             // also: the limit of 255 feels random for a normal human
-            // that's why i use 100 as a default
-            'max' => 100,
+            // that's why i use 50 as a default
+            'max' => 50,
             'size' => function (Options $options) {
-                return min(30, (int) ($options['max'] / 2));
+                return (int)($options['max'] / 2);
             },
             'default' => '',
             'required' => false,
