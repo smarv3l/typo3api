@@ -30,6 +30,10 @@ class ImageField extends FileField
         // copy the column overrides from the image type in tt_content
         // i don't want to copy paste all that definition stuff
         $config['overrideChildTca']['types'] = $GLOBALS['TCA']['tt_content']['columns']['image']['config']['overrideChildTca']['types'];
+        $config['appearance'] = array_merge(
+            $GLOBALS['TCA']['tt_content']['columns']['image']['config']['appearance'],
+            $config['appearance']
+        );
 
         return $config;
     }
