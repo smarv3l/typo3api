@@ -12,6 +12,7 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use Typo3Api\Builder\TableBuilder;
 use Typo3Api\Utility\DbFieldDefinition;
 
 class IrreField extends TcaField
@@ -25,7 +26,7 @@ class IrreField extends TcaField
             'foreignField' => 'parent_uid',
             // if foreignTakeover is true, the other table is exclusive for this relation (recommended)
             // this means hideTable will be set to true, and some other behaviors will change
-            // however: you can still use the foreign table for other relations
+            // however: you can still use the foreign table for other inline relations
             'foreignTakeover' => true,
             'minitems' => 0,
             'maxitems' => 100, // at some point, inline record editing doesn't make sense anymore
@@ -41,10 +42,18 @@ class IrreField extends TcaField
             },
         ]);
 
-        $resolver->setAllowedTypes('foreignTable', 'string');
+        $resolver->setAllowedTypes('foreignTable', ['string', TableBuilder::class]);
         $resolver->setAllowedTypes('foreignField', 'string');
         $resolver->setAllowedTypes('minitems', 'int');
         $resolver->setAllowedTypes('maxitems', 'int');
+
+        $resolver->setNormalizer('foreignTable', function (Options $options, $foreignTable) {
+            if ($foreignTable instanceof TableBuilder) {
+                return $foreignTable->getTableName();
+            }
+
+            return $foreignTable;
+        });
     }
 
     public function getFieldTcaConfig(string $tableName)
