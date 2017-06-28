@@ -56,7 +56,7 @@ class FileField extends TcaField
                 throw new InvalidOptionsException("maxitems must not be smaller than minitems");
             }
 
-            return $minitems;
+            return $maxitems;
         });
     }
 
