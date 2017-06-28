@@ -20,11 +20,11 @@ class Double2Field extends TcaField
         $resolver->setDefaults([
             'min' => 0.0,
             'max' => 99.0,
-            'visibleSize' => function (Options $options) {
+            'size' => function (Options $options) {
                 $preDecimalSize = max(strlen((int)$options['min']), strlen((int)$options['max']));
                 return (int)(($preDecimalSize + 2) / 2);
             },
-            'defaultValue' => function (Options $options) {
+            'default' => function (Options $options) {
                 if ($options['min'] <= 0.0 && $options['max'] >= 0.0) {
                     return 0.0;
                 }
@@ -37,7 +37,7 @@ class Double2Field extends TcaField
                 $low = intval($options['min']);
                 $high = intval($options['max']);
 
-                $default = number_format($options['defaultValue'], 2, '.', '');
+                $default = number_format($options['default'], 2, '.', '');
                 $decimals = 2; // hardcoded because typo3 only offers double2 validation
                 $digits = max(strlen(abs($low)), strlen(abs($high))) + $decimals;
 
@@ -57,8 +57,8 @@ class Double2Field extends TcaField
 
         $resolver->setAllowedTypes('min', ['int', 'double']);
         $resolver->setAllowedTypes('max', ['int', 'double']);
-        $resolver->setAllowedTypes('visibleSize', 'int');
-        $resolver->setAllowedTypes('defaultValue', ['int', 'double']);
+        $resolver->setAllowedTypes('size', 'int');
+        $resolver->setAllowedTypes('default', ['int', 'double']);
         $resolver->setAllowedTypes('required', 'bool');
     }
 
@@ -66,8 +66,8 @@ class Double2Field extends TcaField
     {
         return [
             'type' => 'input',
-            'size' => $this->getOption('visibleSize'),
-            'default' => $this->getOption('defaultValue'),
+            'size' => $this->getOption('size'),
+            'default' => $this->getOption('default'),
             'range' => [
                 'lower' => $this->getOption('min'),
                 'upper' => $this->getOption('max')

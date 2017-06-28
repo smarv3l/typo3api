@@ -9,6 +9,7 @@
 namespace Typo3Api\Tca\Field;
 
 
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -23,20 +24,40 @@ class FileField extends TcaField
         $resolver->setDefaults([
             'allowedFileExtensions' => '',
             'disallowedFileExtensions' => '', // only makes sense if allowedFileExtensions is empty
-            'minItems' => 0,
-            'maxItems' => 100,
+            'minitems' => 0,
+            'maxitems' => 100,
             'allowHide' => function (Options $options) {
-                // if you define minItems, you'd expect there to be at least one item.
+                // if you define minitems, you'd expect there to be at least one item.
                 // however: hiding elements will prevent this so i just decided to disable hiding by default then.
-                return $options['minItems'] === 0;
+                return $options['minitems'] === 0;
             },
             'dbType' => function (Options $options) {
-                return DbFieldDefinition::getIntForNumberRange(0, $options['maxItems']);
+                return DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']);
             },
             'exclude' => function (Options $options) {
-                return $options['minItems'] <= 0;
+                return $options['minitems'] === 0;
             },
         ]);
+
+        $resolver->setAllowedTypes('minitems', 'int');
+        $resolver->setAllowedTypes('maxitems', 'int');
+        $resolver->setAllowedTypes('allowHide', 'bool');
+
+        $resolver->setNormalizer('minitems', function (Options $options, $minitems) {
+            if ($minitems < 0) {
+                throw new InvalidOptionsException("minitems must not be smaller than 0");
+            }
+
+            return $minitems;
+        });
+
+        $resolver->setNormalizer('maxitems', function (Options $options, $maxitems) {
+            if ($maxitems < $options['minitems']) {
+                throw new InvalidOptionsException("maxitems must not be smaller than minitems");
+            }
+
+            return $minitems;
+        });
     }
 
     public function getFieldTcaConfig(string $tableName)
@@ -44,8 +65,8 @@ class FileField extends TcaField
         return ExtensionManagementUtility::getFileFieldTCAConfig(
             $this->getOption('name'),
             [
-                'minitems' => $this->getOption('minItems'),
-                'maxitems' => $this->getOption('maxItems'),
+                'minitems' => $this->getOption('minitems'),
+                'maxitems' => $this->getOption('maxitems'),
                 'appearance' => [
                     'enabledControls' => [
                         'hide' => $this->getOption('allowHide')

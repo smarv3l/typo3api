@@ -21,22 +21,22 @@ class IntField extends TcaField
         $resolver->setDefaults([
             'min' => 0,
             'max' => 10000,
-            'visibleSize' => function (Options $options) {
+            'size' => function (Options $options) {
                 return (int)(max(strlen($options['min']), strlen($options['max'])) / 2);
             },
-            'defaultValue' => function (Options $options) {
+            'default' => function (Options $options) {
                 if ($options['min'] <= 0 && $options['max'] >= 0) {
                     return 0;
                 }
 
                 return $options['min'];
             },
-            'required' => false, // TODO required is kind of useless on an int
+            'required' => false, // TODO required is kind of useless on an int since the backend doesn't allow en empty value
 
             'dbType' => function (Options $options) {
                 $low = $options['min'];
                 $high = $options['max'];
-                $default = $options['defaultValue'];
+                $default = $options['default'];
                 return DbFieldDefinition::getIntForNumberRange($low, $high, $default);
             },
             // overwrite default exclude default depending on required option
@@ -49,8 +49,8 @@ class IntField extends TcaField
 
         $resolver->setAllowedTypes('min', 'int');
         $resolver->setAllowedTypes('max', 'int');
-        $resolver->setAllowedTypes('visibleSize', 'int');
-        $resolver->setAllowedTypes('defaultValue', 'int');
+        $resolver->setAllowedTypes('size', 'int');
+        $resolver->setAllowedTypes('default', 'int');
         $resolver->setAllowedTypes('required', 'bool');
     }
 
@@ -58,8 +58,8 @@ class IntField extends TcaField
     {
         return [
             'type' => 'input',
-            'size' => $this->getOption('visibleSize'),
-            'default' => $this->getOption('defaultValue'),
+            'size' => $this->getOption('size'),
+            'default' => $this->getOption('default'),
             'range' => [
                 'lower' => $this->getOption('min'),
                 'upper' => $this->getOption('max')

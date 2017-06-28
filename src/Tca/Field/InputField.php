@@ -25,17 +25,17 @@ class InputField extends TcaField
             // also: the limit of 255 feels random for a normal human
             // that's why i use 100 as a default
             'max' => 100,
-            'visibleSize' => function (Options $options) {
+            'size' => function (Options $options) {
                 return min(30, (int) ($options['max'] / 2));
             },
-            'defaultValue' => '',
+            'default' => '',
             'required' => false,
             'trim' => true,
             'eval' => null,
 
             'dbType' => function (Options $options) {
                 $maxLength = $options['max'];
-                $default = addslashes($options['defaultValue']);
+                $default = addslashes($options['default']);
                 return "VARCHAR($maxLength) DEFAULT '$default' NOT NULL";
                 // using anything but varchar here would make searchFields slow
                 // because it doesn't make sense to have a very large input field anyway
@@ -51,8 +51,8 @@ class InputField extends TcaField
         ]);
 
         $resolver->setAllowedTypes('max', 'int');
-        $resolver->setAllowedTypes('visibleSize', 'int');
-        $resolver->setAllowedTypes('defaultValue', 'string');
+        $resolver->setAllowedTypes('size', 'int');
+        $resolver->setAllowedTypes('default', 'string');
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
         $resolver->setAllowedTypes('eval', ['string', 'null']);
@@ -77,9 +77,9 @@ class InputField extends TcaField
     {
         return [
             'type' => 'input',
-            'size' => $this->getOption('visibleSize'),
+            'size' => $this->getOption('size'),
             'max' => $this->getOption('max'),
-            'default' => $this->getOption('defaultValue'),
+            'default' => $this->getOption('default'),
             'eval' => implode(',', array_filter([
                 $this->getOption('trim') ? 'trim' : null,
                 $this->getOption('required') ? 'required' : null,
