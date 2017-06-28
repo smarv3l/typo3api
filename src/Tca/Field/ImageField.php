@@ -13,54 +13,24 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Typo3Api\Utility\DbFieldDefinition;
 
-class ImageField extends TcaField
+class ImageField extends FileField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'minitems' => 0,
-            'maxitems' => 100,
-            'allowHide' => function (Options $options) {
-                // if you define minitems, you'd expect there to be at least one item.
-                // however: hiding elements will prevent this so i just decided to disable hiding by default then.
-                return $options['minitems'] === 0;
-            },
-            'dbType' => function (Options $options) {
-                return DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']);
-            },
-            'exclude' => function (Options $options) {
-                return $options['minitems'] === 0;
-            },
+            'allowedFileExtensions' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
         ]);
-        
-        $resolver->setAllowedTypes('minitems', 'int');
-        $resolver->setAllowedTypes('maxitems', 'int');
-        $resolver->setAllowedTypes('allowHide', 'bool');
-
-        $resolver->setNormalizer('minitems', function (Options $options, $minitems) {
-            if ($minitems < 0) {
-                throw new InvalidOptionsException("minitems must not be smaller than 0");
-            }
-
-            return $minitems;
-        });
-
-        $resolver->setNormalizer('maxitems', function (Options $options, $maxitems) {
-            if ($maxitems < $options['minitems']) {
-                throw new InvalidOptionsException("maxitems must not be smaller than minitems");
-            }
-
-            return $minitems;
-        });
     }
 
     public function getFieldTcaConfig(string $tableName)
     {
-        $config = $GLOBALS['TCA']['tt_content']['columns']['image']['config'];
-        $config['foreign_match_fields']['fieldname'] = $this->getOption('name');
-        $config['minitems'] = $this->getOption('minitems');
-        $config['maxitems'] = $this->getOption('maxitems');
+        $config = parent::getFieldTcaConfig($tableName);
+
+        // copy the column overrides from the image type in tt_content
+        // i don't want to copy paste all that definition stuff
+        $config['overrideChildTca']['types'] = $GLOBALS['TCA']['tt_content']['columns']['image']['config']['overrideChildTca']['types'];
+
         return $config;
     }
 }
