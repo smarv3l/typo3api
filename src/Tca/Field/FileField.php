@@ -26,6 +26,7 @@ class FileField extends TcaField
             'disallowedFileExtensions' => '', // only makes sense if allowedFileExtensions is empty
             'minitems' => 0,
             'maxitems' => 100,
+            'collapseAll' => true,
             'allowHide' => function (Options $options) {
                 // if you define minitems, you'd expect there to be at least one item.
                 // however: hiding elements will prevent this so i just decided to disable hiding by default then.
@@ -68,6 +69,7 @@ class FileField extends TcaField
                 'minitems' => $this->getOption('minitems'),
                 'maxitems' => $this->getOption('maxitems'),
                 'appearance' => [
+                    'collapseAll' => $this->getOption('collapseAll'),
                     'enabledControls' => [
                         'hide' => $this->getOption('allowHide')
                     ]
