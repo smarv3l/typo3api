@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * This is basically an input field with useful defaults for storing phone numbers.
  * I've seen phone numbers entered in an unusable way a lot so I created this definition.
+ * This still doesn't validate invalid or missing country prefixes.
  * For output I reccommend giggsey/libphonenumber-for-php for formatting.
  */
 class PhoneField extends InputField
