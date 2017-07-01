@@ -70,7 +70,7 @@ class IrreField extends TcaField
         $canHide = (bool)@$foreignTableDefinition['columns']['hidden'];
 
         // this is the takeover part... it will modify globals which isn't so nice
-        // TODO create a better spot do modify globals.. this doesn't fit here
+        // TODO create a better spot to modify globals.. this doesn't fit here
         if ($this->getOption('foreignTakeover')) {
             // the doc states that sortby should be disabled if the table is exclusive for this relation
             // https://docs.typo3.org/typo3cms/TCAReference/8-dev/ColumnsConfig/Type/Inline.html#foreign-sortby
@@ -138,7 +138,8 @@ class IrreField extends TcaField
         // TODO somewhere it should be checked if this field is already defined
         $foreignField = addslashes($this->getOption('foreignField'));
         $tableDefinitions[$this->getOption('foreignTable')] = [
-            "`$foreignField` INT(11) DEFAULT '0' NOT NULL"
+            "`$foreignField` INT(11) DEFAULT '0' NOT NULL",
+            "KEY `$foreignField`(`$foreignField`)"
         ];
 
         return $tableDefinitions;
