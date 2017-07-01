@@ -35,6 +35,7 @@ class InputField extends TcaField
             'is_in' => null,
             'case' => 'any',
             'nospace' => false,
+            'unique' => false,
 
             'dbType' => function (Options $options) {
                 $maxLength = $options['max'];
@@ -44,6 +45,9 @@ class InputField extends TcaField
                 // because it doesn't make sense to have a very large input field anyway
                 // i opt to prevent large input fields and by default add everything to searchFields
                 // also, i can easily use the default option here which is nice.
+            },
+            'index' => function (Options $options) {
+                return $options['unique'];
             },
             'useAsLabel' => true,
             'searchField' => true,
@@ -58,6 +62,7 @@ class InputField extends TcaField
         $resolver->setAllowedTypes('is_in', ['null', 'string']);
         $resolver->setAllowedValues('case', ['lower', 'upper', 'any']);
         $resolver->setAllowedTypes('nospace', 'bool');
+        $resolver->setAllowedTypes('unique', 'bool');
 
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
 
@@ -117,6 +122,13 @@ class InputField extends TcaField
 
         if ($this->getOption('nospace')) {
             $evals[] = 'nospace';
+        }
+
+        if ($this->getOption('unique')) {
+            // i decided against the "real" unique and prefere to always use uniqueInPid
+            // it's like a name in a filesystem, you expect it to be unique in a folder
+            // there is no "real" unique in typo3 anyways because of deleted and versioning
+            $evals[] = 'uniqueInPid';
         }
 
         return $evals;
