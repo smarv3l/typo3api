@@ -18,6 +18,7 @@ class EmailField extends InputField
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'max' => 100,
+            'size' => 40, // https://stackoverflow.com/a/1297352/1973256
             'localize' => false
         ]);
     }
