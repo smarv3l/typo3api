@@ -45,10 +45,6 @@ class InputField extends TcaField
                 // i opt to prevent large input fields and by default add everything to searchFields
                 // also, i can easily use the default option here which is nice.
             },
-            // overwrite default exclude default depending on required option
-            'exclude' => function (Options $options) {
-                return $options['required'] === false;
-            },
             'useAsLabel' => true,
             'searchField' => true,
         ]);

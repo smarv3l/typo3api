@@ -47,10 +47,6 @@ class Double2Field extends TcaField
                     return "NUMERIC($digits, $decimals) UNSIGNED DEFAULT '$default' NOT NULL";
                 }
             },
-            // overwrite default exclude default depending on required option
-            'exclude' => function (Options $options) {
-                return $options['required'] === false;
-            },
             // a double field is most of the time not required to be localized
             'localize' => false,
         ]);

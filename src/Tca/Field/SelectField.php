@@ -34,9 +34,6 @@ class SelectField extends TcaField
             },
 
             'required' => true,
-            'exclude' => function (Options $options) {
-                return $options['required'] === false;
-            },
 
             'dbType' => function (Options $options) {
                 $possibleValues = $options['values'];

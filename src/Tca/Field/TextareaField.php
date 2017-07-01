@@ -49,10 +49,6 @@ class TextareaField extends TcaField
 
                 return "MEDIUMTEXT DEFAULT NULL";
             },
-            // overwrite default exclude default depending on required option
-            'exclude' => function (Options $options) {
-                return $options['required'] === false;
-            },
         ]);
 
         $resolver->setAllowedTypes('max', 'int');

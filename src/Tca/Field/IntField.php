@@ -39,10 +39,6 @@ class IntField extends TcaField
                 $default = $options['default'];
                 return DbFieldDefinition::getIntForNumberRange($low, $high, $default);
             },
-            // overwrite default exclude default depending on required option
-            'exclude' => function (Options $options) {
-                return $options['required'] === false;
-            },
             // an int field is most of the time not required to be localized
             'localize' => false,
         ]);

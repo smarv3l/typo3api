@@ -37,9 +37,6 @@ class IrreField extends TcaField
             'dbType' => function (Options $options) {
                 return DbFieldDefinition::getIntForNumberRange(0, $options['maxitems']);
             },
-            'exclude' => function (Options $options) {
-                return $options['minitems'] <= 0;
-            },
         ]);
 
         $resolver->setAllowedTypes('foreignTable', ['string', TableBuilder::class]);
