@@ -26,7 +26,7 @@ class InputField extends TcaField
             // that's why i use 50 as a default
             'max' => 50,
             'size' => function (Options $options) {
-                return (int)($options['max'] / 2);
+                return $options['max'];
             },
             'default' => '',
             'required' => false,
@@ -85,7 +85,7 @@ class InputField extends TcaField
     {
         return [
             'type' => 'input',
-            'size' => $this->getOption('size'),
+            'size' => (int)($this->getOption('size') / 2), // adjust the size to fit the character count better
             'max' => $this->getOption('max'),
             'default' => $this->getOption('default'),
             'is_in' => $this->getOption('is_in'),
