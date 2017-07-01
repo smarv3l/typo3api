@@ -28,7 +28,6 @@ class TextareaField extends TcaField
             },
             'required' => false,
             'trim' => true,
-            'eval' => null,
             'dbType' => function (Options $options) {
                 $maxLength = $options['max'];
                 if ($maxLength < 1 << 10) {
@@ -56,7 +55,6 @@ class TextareaField extends TcaField
         $resolver->setAllowedTypes('rows', 'int');
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
-        $resolver->setAllowedTypes('eval', ['string', 'null']);
 
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
 
@@ -85,7 +83,6 @@ class TextareaField extends TcaField
             'eval' => implode(',', array_filter([
                 $this->getOption('trim') ? 'trim' : null,
                 $this->getOption('required') ? 'required' : null,
-                $this->getOption('eval'),
                 // i'd love to define null here, but this will render a checkbox which i don't want
             ])),
         ];
