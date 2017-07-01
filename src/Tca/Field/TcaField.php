@@ -69,6 +69,7 @@ abstract class TcaField implements TcaConfiguration
             'useAsLabel' => false,
             'searchField' => false,
             'useForRecordType' => false,
+            'index' => false,
         ]);
 
         $resolver->setAllowedTypes('name', 'string');
@@ -79,6 +80,8 @@ abstract class TcaField implements TcaConfiguration
         $resolver->setAllowedTypes('displayCond', ['string', 'null']);
         $resolver->setAllowedTypes('useAsLabel', 'bool');
         $resolver->setAllowedTypes('searchField', 'bool');
+        $resolver->setAllowedTypes('useForRecordType', 'bool');
+        $resolver->setAllowedTypes('index', 'bool');
     }
 
     public function getOptions()
@@ -149,11 +152,14 @@ abstract class TcaField implements TcaConfiguration
     public function getDbTableDefinitions(string $tableName): array
     {
         $name = addslashes($this->getOption('name'));
-        return [
-            $tableName => [
-                "`$name` " . $this->getOption('dbType')
-            ]
-        ];
+        $definition = [$tableName => ["`$name` " . $this->getOption('dbType')]];
+
+        if ($this->getOption('index')) {
+            // TODO I'd really like multi field indexes that are somehow namable
+            $definition[$tableName][] = "INDEX `$name`(`$name`)";
+        }
+
+        return $definition;
     }
 
     public function getShowItemString(string $tableName): string
