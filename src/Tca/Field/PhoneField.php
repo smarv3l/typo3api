@@ -13,8 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * This is basically an input field with useful defaults for storing phone numbers.
- * I've seen phone numbers entered in the owrst way possible way to often.
- * This prefix forces the user to store it correctly.
+ * I've seen phone numbers entered in an unusable way a lot so I created this definition.
  * For output I reccommend giggsey/libphonenumber-for-php for formatting.
  */
 class PhoneField extends InputField
