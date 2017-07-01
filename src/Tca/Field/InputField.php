@@ -31,7 +31,10 @@ class InputField extends TcaField
             'default' => '',
             'required' => false,
             'trim' => true,
-            'eval' => null,
+            'charset' => null,
+            'is_in' => null,
+            'case' => 'any',
+            'nospace' => false,
 
             'dbType' => function (Options $options) {
                 $maxLength = $options['max'];
@@ -55,7 +58,11 @@ class InputField extends TcaField
         $resolver->setAllowedTypes('default', 'string');
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
-        $resolver->setAllowedTypes('eval', ['string', 'null']);
+        $resolver->setAllowedValues('charset', [null, 'alpha', 'alphanum', 'alphanum_x']);
+        $resolver->setAllowedTypes('is_in', ['null', 'string']);
+        $resolver->setAllowedValues('case', ['lower', 'upper', 'any']);
+        $resolver->setAllowedTypes('nospace', 'bool');
+
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
 
             if ($maxLength < 1) {
@@ -80,11 +87,42 @@ class InputField extends TcaField
             'size' => $this->getOption('size'),
             'max' => $this->getOption('max'),
             'default' => $this->getOption('default'),
-            'eval' => implode(',', array_filter([
-                $this->getOption('trim') ? 'trim' : null,
-                $this->getOption('required') ? 'required' : null,
-                $this->getOption('eval')
-            ])),
+            'is_in' => $this->getOption('is_in'),
+            'eval' => implode(',', $this->getEvals()),
         ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getEvals()
+    {
+        $evals = [];
+
+        if ($this->getOption('trim')) {
+            $evals[] = 'trim';
+        }
+
+        if ($this->getOption('required')) {
+            $evals[] = 'required';
+        }
+
+        if ($this->getOption('charset')) {
+            $evals[] = $this->getOption('charset');
+        }
+
+        if ($this->getOption('is_in')) {
+            $evals[] = 'is_in';
+        }
+
+        if ($this->getOption('case') !== 'any') {
+            $evals[] = $this->getOption('case');
+        }
+
+        if ($this->getOption('nospace')) {
+            $evals[] = 'nospace';
+        }
+
+        return $evals;
     }
 }
