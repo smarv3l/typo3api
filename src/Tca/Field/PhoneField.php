@@ -26,6 +26,7 @@ class PhoneField extends InputField
             'max' => 31, // https://stackoverflow.com/a/4729239/1973256
             'is_in' => '+1234567890',
             'nospace' => true,
+            'localize' => false,
         ]);
     }
 }
