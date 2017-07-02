@@ -189,9 +189,16 @@ class TableBuilder
      */
     protected function addPalettes(array &$tca, TcaConfiguration $configuration)
     {
-        foreach ($configuration->getPalettes($this->getTableName()) as $paletteName => $paletteDefinition) {
-            // FIXME i assume the palette hasn't changed
+        $tableName = $this->getTableName();
+        $palettes = $configuration->getPalettes($tableName);
+        foreach ($palettes as $paletteName => $paletteDefinition) {
             if (isset($tca['palettes'][$paletteName])) {
+                if ($paletteDefinition !== $tca['palettes'][$paletteName]) {
+                    $msg = "The palette $paletteName is already defined in $tableName but isn't compatible.";
+                    $msg .= " If you can rename the palette than that would be an easy fix for the problem.";
+                    throw new \RuntimeException($msg);
+                }
+
                 continue;
             }
 
