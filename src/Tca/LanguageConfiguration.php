@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class LanguageConfiguration implements TcaConfiguration
+class LanguageConfiguration implements TcaConfiguration, DefaultTab
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {
@@ -25,18 +25,39 @@ class LanguageConfiguration implements TcaConfiguration
             'sys_language_uid' => $GLOBALS['TCA']['tt_content']['columns']['sys_language_uid'],
             'l10n_source' => $GLOBALS['TCA']['tt_content']['columns']['l10n_source'],
             'l18n_diffsource' => $GLOBALS['TCA']['tt_content']['columns']['l18n_diffsource'],
-            'l18n_parent' => $GLOBALS['TCA']['tt_content']['columns']['l18n_parent'],
+            'l18n_parent' => [
+                'exclude' => true,
+                'displayCond' => 'FIELD:sys_language_uid:>:0',
+                'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+                'config' => [
+                    'type' => 'select',
+                    'renderType' => 'selectSingle',
+                    'items' => [
+                        ['', 0]
+                    ],
+                    'foreign_table' => $tableName,
+                    'foreign_table_where' => "AND $tableName.pid=###CURRENT_PID### AND $tableName.sys_language_uid IN (-1,0)",
+                    'default' => 0
+                ]
+            ],
         ];
     }
 
     public function getPalettes(string $tableName): array
     {
-        return [];
+        return [
+            'language' => [
+                'showitem' => implode(', ', [
+                    'sys_language_uid;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:sys_language_uid_formlabel',
+                    'l18n_parent'
+                ])
+            ]
+        ];
     }
 
     public function getShowItemString(string $tableName): string
     {
-        return "sys_language_uid;;;;1-1-1, l18n_parent, l18n_diffsource";
+        return "--palette--;;language";
     }
 
     public function getDbTableDefinitions(string $tableName): array
@@ -50,4 +71,10 @@ class LanguageConfiguration implements TcaConfiguration
             ]
         ];
     }
+
+    public function getDefaultTab(): string
+    {
+        return 'LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language';
+    }
+
 }
