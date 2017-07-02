@@ -80,6 +80,6 @@ class EnableFieldConfiguration implements TcaConfiguration, DefaultTab
 
     public function getDefaultTab(): string
     {
-        return 'access';
+        return 'LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access';
     }
 }
