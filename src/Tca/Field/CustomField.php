@@ -17,6 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
  *     'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
+ *     'localize' => false,
  *     'config' => [
  *         'type' => 'input',
  *         'renderType' => 'colorpicker',
