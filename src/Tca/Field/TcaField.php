@@ -9,6 +9,7 @@
 namespace Typo3Api\Tca\Field;
 
 
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Typo3Api\Tca\TcaConfiguration;
@@ -82,6 +83,16 @@ abstract class TcaField implements TcaConfiguration
         $resolver->setAllowedTypes('searchField', 'bool');
         $resolver->setAllowedTypes('useForRecordType', 'bool');
         $resolver->setAllowedTypes('index', 'bool');
+
+        $resolver->setNormalizer('name', function (Options $options, $name) {
+            if (strtolower($name) !== $name) {
+                $msg = "All field names must be in underscored lower case.";
+                $msg .= " The field name '$name' does not fit that requirement.";
+                throw new InvalidOptionsException($msg);
+            }
+
+            return $name;
+        });
     }
 
     public function getOptions()
