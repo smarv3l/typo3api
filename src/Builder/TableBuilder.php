@@ -9,6 +9,7 @@
 namespace Typo3Api\Builder;
 
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Typo3Api\Hook\SqlSchemaHook;
 use Typo3Api\Tca\DefaultTab;
 use Typo3Api\Tca\TcaConfiguration;
@@ -24,6 +25,15 @@ class TableBuilder
      * @var string
      */
     private $typeName;
+
+    /**
+     * This is a list of default tabs.
+     * Default tabs are passed by the DefaultTab Interface.
+     * They are forced to be always at the end.
+     *
+     * @var array
+     */
+    private $defaultTabs = [];
 
     /**
      * TableBuilder constructor.
@@ -55,6 +65,22 @@ class TableBuilder
     }
 
     /**
+     * @param TcaConfiguration $configuration
+     * @return $this
+     */
+    public function configure(TcaConfiguration $configuration)
+    {
+        if ($configuration instanceof DefaultTab) {
+            $tabName = $configuration->getDefaultTab();
+            $this->defaultTabs[] = $tabName;
+            return $this->configureInTab($tabName, $configuration);
+        } else {
+            $tabName = 'LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general';
+            return $this->configureInTab($tabName, $configuration);
+        }
+    }
+
+    /**
      * @param string $tab
      * @param TcaConfiguration $configuration
      * @return $this
@@ -64,69 +90,30 @@ class TableBuilder
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
         $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
-
-        if (!isset($tca['types'][$this->getTypeName()])) {
-            $tca['types'][$this->getTypeName()] = [];
-        }
-        $typeDefinition =& $tca['types'][$this->getTypeName()];
-
-        $showItemString = $configuration->getShowItemString($this->getTableName());
-        if ($showItemString !== '') {
-            $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/';
-            $replace = '\0,' . $showItemString;
-            $typeDefinition['showitem'] = preg_replace($search, $replace, $typeDefinition['showitem'], 1, $matches);
-            if ($matches === 0) {
-                $typeDefinition['showitem'] .= ', --div--; ' . $tab . ', ' . $showItemString;
-            }
-        }
-
-        foreach ($configuration->getPalettes($this->getTableName()) as $paletteName => $paletteDefinition) {
-            // FIXME i assume the palette hasn't changed
-            if (isset($tca['palettes'][$paletteName])) {
-                continue;
-            }
-
-            $tca['palettes'][$paletteName] = $paletteDefinition;
-        }
-
-        $columns = $configuration->getColumns($this->getTableName());
-        $existingColumns = $tca['columns'];
-        $missingColumns = array_diff(array_keys($columns), array_keys($existingColumns));
-
-        if (count($missingColumns) === count($columns)) {
-            foreach ($columns as $columnName => $columnDefinition) {
-                $tca['columns'][$columnName] = $columnDefinition;
-            }
-
-            SqlSchemaHook::addTableConfiguration($this->getTableName(), $configuration);
-        } else if (count($missingColumns) > 0) {
-            throw new \RuntimeException("Partial configuration of a child type is not implemented right now");
-        } else {
-            // all columns are already defined so...
-            // TODO detect which overwrites are nessesary... maybe making overwrites optional somehow
-        }
+        $this->addShowItemToTab($tca, $configuration, $tab);
+        $this->addPalettes($tca, $configuration);
+        $this->addColumns($tca, $configuration);
 
         return $this;
     }
 
-    /**
-     * @param TcaConfiguration $configuration
-     * @return $this
-     */
-    public function configure(TcaConfiguration $configuration)
+    public function configureAtPosition($position, TcaConfiguration $configuration)
     {
-        if ($configuration instanceof DefaultTab) {
-            return $this->configureInTab($configuration->getDefaultTab(), $configuration);
-        } else {
-            return $this->configureInTab('general', $configuration);
-        }
+        $tca =& $GLOBALS['TCA'][$this->getTableName()];
+
+        $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
+        $this->addShowItemAtPositon($tca, $configuration, $position);
+        $this->addPalettes($tca, $configuration);
+        $this->addColumns($tca, $configuration);
+
+        return $this;
     }
 
     /**
      * @param string $type
      * @return $this
      */
-    public function inheritConfigurationFrom(string $type)
+    public function inheritConfigurationFromType(string $type)
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
@@ -194,5 +181,111 @@ class TableBuilder
         ];
 
         return true;
+    }
+
+    /**
+     * @param array $tca
+     * @param TcaConfiguration $configuration
+     */
+    protected function addPalettes(array &$tca, TcaConfiguration $configuration)
+    {
+        foreach ($configuration->getPalettes($this->getTableName()) as $paletteName => $paletteDefinition) {
+            // FIXME i assume the palette hasn't changed
+            if (isset($tca['palettes'][$paletteName])) {
+                continue;
+            }
+
+            $tca['palettes'][$paletteName] = $paletteDefinition;
+        }
+    }
+
+    /**
+     * @param array $tca
+     * @param TcaConfiguration $configuration
+     */
+    protected function addColumns(array &$tca, TcaConfiguration $configuration)
+    {
+        $columns = $configuration->getColumns($this->getTableName());
+        $existingColumns = $tca['columns'];
+        $missingColumns = array_diff(array_keys($columns), array_keys($existingColumns));
+
+        if (count($missingColumns) === count($columns)) {
+            foreach ($columns as $columnName => $columnDefinition) {
+                $tca['columns'][$columnName] = $columnDefinition;
+            }
+
+            SqlSchemaHook::addTableConfiguration($this->getTableName(), $configuration);
+        } else if (count($missingColumns) > 0) {
+            throw new \RuntimeException("Partial configuration of a child type is not implemented right now");
+        } else {
+            // all columns are already defined so...
+            // TODO detect which overwrites are nessesary... maybe making overwrites optional somehow
+        }
+    }
+
+    /**
+     * @param array $tca
+     * @param TcaConfiguration $configuration
+     * @param string $tab
+     */
+    protected function addShowItemToTab(array &$tca, TcaConfiguration $configuration, string $tab)
+    {
+        if (!isset($tca['types'][$this->getTypeName()])) {
+            $tca['types'][$this->getTypeName()] = [];
+        }
+        $type =& $tca['types'][$this->getTypeName()];
+
+        $showItemString = $configuration->getShowItemString($this->getTableName());
+        if ($showItemString === '') {
+            return;
+        }
+
+        // search the correct tab and add the content into it
+        $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/';
+        $type['showitem'] = preg_replace($search, '\0,' . $showItemString, $type['showitem'], 1, $matches);
+        if ($matches > 0) {
+            return;
+        }
+
+        // so the tab did not exist yet...
+
+        $newTab = '--div--; ' . $tab . ', ' . $showItemString;
+
+        // put the new tab right before the first "default tab"
+        if (count($this->defaultTabs) > 0 && !in_array($tab, $this->defaultTabs)) {
+            $search = '/--div--\s*;\s*' . preg_quote(reset($this->defaultTabs), '/') . '.*?(?=,\s?--div--|$)/';
+            $type['showitem'] = preg_replace($search, $newTab . ', \0', $type['showitem'], 1, $matches);
+            if ($matches > 0) {
+                return;
+            }
+        }
+
+        // just put the new tab at the end
+        $type['showitem'] .= ', ' . $newTab;
+    }
+
+    /**
+     * @param array $tca
+     * @param TcaConfiguration $configuration
+     * @param string $position
+     */
+    protected function addShowItemAtPositon(array &$tca, TcaConfiguration $configuration, string $position)
+    {
+        if (!isset($tca['types'][$this->getTypeName()])) {
+            $tca['types'][$this->getTypeName()] = [];
+        }
+        $type =& $tca['types'][$this->getTypeName()];
+
+        $showItemString = $configuration->getShowItemString($this->getTableName());
+        if ($showItemString === '') {
+            return;
+        }
+
+        ExtensionManagementUtility::addToAllTCAtypes(
+            $this->getTableName(),
+            $showItemString,
+            $this->getTypeName(),
+            $position
+        );
     }
 }
