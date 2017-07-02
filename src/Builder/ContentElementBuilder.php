@@ -9,6 +9,7 @@
 namespace Typo3Api\Builder;
 
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Typo3Api\Tca\CustomConfiguration;
 use Typo3Api\Tca\ShowitemConfiguration;
 use Typo3Api\Tca\TcaConfiguration;
@@ -20,13 +21,47 @@ class ContentElementBuilder implements TcaBuilderInterface
      */
     private $tableBuilder;
 
-    public function __construct(string $cType)
+    /**
+     * @var string
+     */
+    private $section;
+
+    /**
+     * @param string $cType
+     * @param string $section
+     * @return ContentElementBuilder
+     */
+    public static function create(string $extKey, string $cType, string $section = 'common'): ContentElementBuilder
+    {
+        return new static($extKey, $cType, $section);
+    }
+
+    public function __construct(string $extKey, string $cType, string $section = 'common')
     {
         $this->tableBuilder = new TableBuilder('tt_content', $cType);
+        $this->section = $section;
+
+        $icon = 'content-text';
+        $humanName = ucfirst(trim(strtolower(preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $cType))));
 
         // add new type to select choices
-        $newSelectItem = [$cType, $cType, 'i/tt_content_image.gif'];
+        // TODO allow to define a position in dropdown
+        // TODO allow to define an icon
+        $newSelectItem = [$humanName, $cType, $icon];
         $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = $newSelectItem;
+
+        // add new type to newContentElement wizard
+        ExtensionManagementUtility::addPageTSConfig("
+            mod.wizards.newContentElement.wizardItems.$this->section.elements.$cType {
+                iconIdentifier = $icon
+                title = $humanName
+                description = $extKey : $cType
+                tt_content_defValues {
+                    CType = $cType
+                }
+            }
+            mod.wizards.newContentElement.wizardItems.$this->section.show := addToList($cType)
+        ");
 
         // add basic tt_content configuration
         $this->configureInTab(
@@ -77,13 +112,67 @@ class ContentElementBuilder implements TcaBuilderInterface
     }
 
     /**
-     * @param string $cType
-     * @return ContentElementBuilder
+     * @param string $title
+     * @return $this
      */
-    public static function create(string $cType): ContentElementBuilder
+    public function setTitle(string $title)
     {
-        return new static($cType);
+        if (strpos($title, "\n") !== false) {
+            throw new \RuntimeException("A content element title must not contain newlines, got '$title'.");
+        }
+
+        $cType = $this->tableBuilder->getTypeName();
+
+        foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as &$item) {
+            if ($item[1] === $cType) {
+                $item[0] = $title;
+                break;
+            }
+        }
+
+        ExtensionManagementUtility::addPageTSConfig("
+            mod.wizards.newContentElement.wizardItems.$this->section.elements.$cType.title = $title
+        ");
+
+        return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        $cType = $this->tableBuilder->getTypeName();
+
+        foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as &$item) {
+            if ($item[1] === $cType) {
+                return $item[0];
+            }
+        }
+
+        throw new \RuntimeException("Title of content element $cType was not found.");
+    }
+
+    /**
+     * @param string $description
+     * @return $this
+     */
+    public function setDescription(string $description)
+    {
+        if (strpos($title, "\n") !== false) {
+            throw new \RuntimeException("A content element description must not contain newlines, got '$description'.");
+        }
+
+        $cType = $this->tableBuilder->getTypeName();
+
+        ExtensionManagementUtility::addPageTSConfig("
+            mod.wizards.newContentElement.wizardItems.$this->section.elements.$cType.description = $description
+        ");
+
+        return $this;
+    }
+
+    // i don't know any way to implement getDescription
 
     /**
      * @param TcaConfiguration $configuration
