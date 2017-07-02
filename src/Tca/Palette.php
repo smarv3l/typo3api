@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class PaletteConfiguration implements TcaConfiguration
+class Palette implements TcaConfiguration
 {
     /**
      * @var string
