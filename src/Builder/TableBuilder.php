@@ -71,10 +71,13 @@ class TableBuilder
         $typeDefinition =& $tca['types'][$this->getTypeName()];
 
         $showItemString = $configuration->getShowItemString($this->getTableName());
-        if (isset($typeDefinition['showitem'])) {
-            $typeDefinition['showitem'] .= ', ' . $showItemString;
-        } else {
-            $typeDefinition['showitem'] = $showItemString;
+        if ($showItemString !== '') {
+            $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/';
+            $replace = '\0,' . $showItemString;
+            $typeDefinition['showitem'] = preg_replace($search, $replace, $typeDefinition['showitem'], 1, $matches);
+            if ($matches === 0) {
+                $typeDefinition['showitem'] .= ', --div--; ' . $tab . ', ' . $showItemString;
+            }
         }
 
         foreach ($configuration->getPalettes($this->getTableName()) as $paletteName => $paletteDefinition) {
