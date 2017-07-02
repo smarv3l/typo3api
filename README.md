@@ -32,6 +32,16 @@
         new \Typo3Api\Tca\Linebreak(),
         new \Typo3Api\Tca\Field\PhoneField('phone'),
     ]))
+    ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
+        'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
+        'localize' => false,
+        'config' => [
+            'type' => 'input',
+            'renderType' => 'colorpicker',
+            'size' => 7,
+            'default' => '#000000'
+        ]
+    ]))
     ->configure(new \Typo3Api\Tca\Field\TextareaField('notice'))
     ->configure(new \Typo3Api\Tca\Field\ImageField('image'))
     ->configure(new \Typo3Api\Tca\Field\IrreField('addresses', [
