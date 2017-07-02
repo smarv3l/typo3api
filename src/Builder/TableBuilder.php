@@ -130,6 +130,33 @@ class TableBuilder
     }
 
     /**
+     * @param string $tab
+     * @param string $otherTab
+     * @return $this
+     */
+    public function addOrMoveTabInFrontOfTab(string $tab, string $otherTab)
+    {
+        $type =& $GLOBALS['TCA'][$this->getTableName()]['types'][$this->getTypeName()];
+
+        $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/';
+        $match = preg_match($search, $type['showitem'], $results);
+        $newTab = $match ? $results[0] : '--div--; ' . $tab;
+
+        if ($match) {
+            $type['showitem'] = preg_replace($search, '', $type['showitem'], 1);
+        }
+
+        // search the other tab and add the new one in front of it
+        $search = '/--div--\s*;\s*' . preg_quote($otherTab, '/') . '.*?(?=,\s?--div--|$)/';
+        $type['showitem'] = preg_replace($search, $newTab . ', \0', $type['showitem'], 1, $matches);
+        if ($matches === 0) {
+            throw new \RuntimeException("The tab '$otherTab' seems to not exist.");
+        }
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getTableName(): string
