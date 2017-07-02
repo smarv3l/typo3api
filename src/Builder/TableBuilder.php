@@ -2,14 +2,15 @@
 /**
  * Created by PhpStorm.
  * User: marco
- * Date: 10.06.17
- * Time: 19:51
+ * Date: 18.06.17
+ * Time: 20:13
  */
 
 namespace Typo3Api\Builder;
 
 
 use Typo3Api\Hook\SqlSchemaHook;
+use Typo3Api\Tca\DefaultTab;
 use Typo3Api\Tca\TcaConfiguration;
 
 class TableBuilder
@@ -20,31 +21,122 @@ class TableBuilder
     private $tableName;
 
     /**
-     * TableBuilder constructor.
-     * @param string $name
+     * @var string
      */
-    public function __construct(string $name)
+    private $typeName;
+
+    /**
+     * TableBuilder constructor.
+     * @param string $tableName
+     * @param string $typeName
+     * @internal param string $name
+     */
+    public function __construct(string $tableName, string $typeName)
     {
-        $this->tableName = $name;
-        $this->configureTableIfNotPresent();
+        $this->tableName = $tableName;
+        $this->typeName = $typeName;
         SqlSchemaHook::attach();
+        $this->configureTableIfNotPresent();
     }
 
     public static function create(string $extkey, string $name)
     {
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $tableBuilder = new static($extPrefix . $name);
-        $tableBuilder->setTitle(ucwords(str_replace('_', ' ', $name)));
+        $tableBuilder = new static($extPrefix . $name, '1');
+        $tableBuilder->setTitle(ucfirst(str_replace('_', ' ', $name)));
         return $tableBuilder;
     }
 
-    public static function createForModel(string $extkey, string $name)
+    public static function createForType(string $extkey, string $name, string $typeName)
     {
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $modelName = 'domain_model_' . str_replace('_', '', $name);
-        $tableBuilder = new static($extPrefix . $modelName);
-        $tableBuilder->setTitle(ucwords(str_replace('_', ' ', $name)));
+        $tableBuilder = new static($extPrefix . $name, $typeName);
         return $tableBuilder;
+    }
+
+    /**
+     * @param string $tab
+     * @param TcaConfiguration $configuration
+     * @return $this
+     */
+    public function configureInTab(string $tab, TcaConfiguration $configuration)
+    {
+        $tca =& $GLOBALS['TCA'][$this->getTableName()];
+
+        $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
+
+        if (!isset($tca['types'][$this->getTypeName()])) {
+            $tca['types'][$this->getTypeName()] = [];
+        }
+        $typeDefinition =& $tca['types'][$this->getTypeName()];
+
+        $showItemString = $configuration->getShowItemString($this->getTableName());
+        if (isset($typeDefinition['showitem'])) {
+            $typeDefinition['showitem'] .= ', ' . $showItemString;
+        } else {
+            $typeDefinition['showitem'] = $showItemString;
+        }
+
+        foreach ($configuration->getPalettes($this->getTableName()) as $paletteName => $paletteDefinition) {
+            // FIXME i assume the palette hasn't changed
+            if (isset($tca['palettes'][$paletteName])) {
+                continue;
+            }
+
+            $tca['palettes'][$paletteName] = $paletteDefinition;
+        }
+
+        $columns = $configuration->getColumns($this->getTableName());
+        $existingColumns = $tca['columns'];
+        $missingColumns = array_diff(array_keys($columns), array_keys($existingColumns));
+
+        if (count($missingColumns) === count($columns)) {
+            foreach ($columns as $columnName => $columnDefinition) {
+                $tca['columns'][$columnName] = $columnDefinition;
+            }
+
+            SqlSchemaHook::addTableConfiguration($this->getTableName(), $configuration);
+        } else if (count($missingColumns) > 0) {
+            throw new \RuntimeException("Partial configuration of a child type is not implemented right now");
+        } else {
+            // all columns are already defined so...
+            // TODO detect which overwrites are nessesary... maybe making overwrites optional somehow
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param TcaConfiguration $configuration
+     * @return $this
+     */
+    public function configure(TcaConfiguration $configuration)
+    {
+        if ($configuration instanceof DefaultTab) {
+            return $this->configureInTab($configuration->getDefaultTab(), $configuration);
+        } else {
+            return $this->configureInTab('general', $configuration);
+        }
+    }
+
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function inheritConfigurationFrom(string $type)
+    {
+        $tca =& $GLOBALS['TCA'][$this->getTableName()];
+
+        if (!isset($tca['types'][$type])) {
+            $msg = "The Type $type isn't defined so it can't be inherited from it.";
+            $msg .= " Possible types are: " . implode(', ', array_keys($tca['types']));
+            throw new \RuntimeException($msg);
+        }
+
+        // TODO maybe not overwrite existing configuration?
+        $tca['types'][$this->getTypeName()] = $tca['types'][$type];
+
+        return $this;
     }
 
     /**
@@ -56,37 +148,11 @@ class TableBuilder
     }
 
     /**
-     * @param TcaConfiguration $configuration
-     * @return $this
+     * @return string
      */
-    public function configure(TcaConfiguration $configuration)
+    public function getTypeName(): string
     {
-        $tableName = $this->getTableName();
-
-        $configuration->modifyCtrl($GLOBALS['TCA'][$tableName]['ctrl'], $tableName);
-
-        $columns = $configuration->getColumns($tableName);
-        foreach ($columns as $key => $value) {
-            $GLOBALS['TCA'][$tableName]['columns'][$key] = $value;
-        }
-
-        $palettes = $configuration->getPalettes($tableName);
-        foreach ($palettes as $key => $palette) {
-            $GLOBALS['TCA'][$tableName]['palettes'][$key] = $palette;
-        }
-
-        $showItemString = $configuration->getShowItemString($tableName);
-        if (strlen($showItemString) > 0) {
-            if (!isset($GLOBALS['TCA'][$tableName]['types']['1']['showitem'])) {
-                $GLOBALS['TCA'][$tableName]['types']['1']['showitem'] = $showItemString;
-            } else {
-                $GLOBALS['TCA'][$tableName]['types']['1']['showitem'] .= ', ' . $showItemString;
-            }
-        }
-
-        SqlSchemaHook::addTableConfiguration($tableName, $configuration);
-
-        return $this;
+        return $this->typeName;
     }
 
     public function getTitle(): string
@@ -115,10 +181,9 @@ class TableBuilder
         $GLOBALS['TCA'][$this->getTableName()] = [
             'ctrl' => [
                 'dividers2tabs' => true,
-                'title' => $this->getTableName(),
             ],
             'interface' => [
-                'showRecordFieldList' => ''
+                'showRecordFieldList' => '',
             ],
             'columns' => [],
             'types' => [],
