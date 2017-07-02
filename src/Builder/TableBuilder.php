@@ -14,7 +14,7 @@ use Typo3Api\Hook\SqlSchemaHook;
 use Typo3Api\Tca\DefaultTab;
 use Typo3Api\Tca\TcaConfiguration;
 
-class TableBuilder
+class TableBuilder implements TcaBuilderInterface
 {
     /**
      * @var string
@@ -49,7 +49,12 @@ class TableBuilder
         $this->configureTableIfNotPresent();
     }
 
-    public static function create(string $extkey, string $name)
+    /**
+     * @param string $extkey
+     * @param string $name
+     * @return TableBuilder
+     */
+    public static function create(string $extkey, string $name): TableBuilder
     {
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
         $tableBuilder = new static($extPrefix . $name, '1');
@@ -57,7 +62,13 @@ class TableBuilder
         return $tableBuilder;
     }
 
-    public static function createForType(string $extkey, string $name, string $typeName)
+    /**
+     * @param string $extkey
+     * @param string $name
+     * @param string $typeName
+     * @return TableBuilder
+     */
+    public static function createForType(string $extkey, string $name, string $typeName): TableBuilder
     {
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
         $tableBuilder = new static($extPrefix . $name, $typeName);
@@ -68,7 +79,7 @@ class TableBuilder
      * @param TcaConfiguration $configuration
      * @return $this
      */
-    public function configure(TcaConfiguration $configuration)
+    public function configure(TcaConfiguration $configuration): TcaBuilderInterface
     {
         if ($configuration instanceof DefaultTab) {
             $tabName = $configuration->getDefaultTab();
@@ -85,7 +96,7 @@ class TableBuilder
      * @param TcaConfiguration $configuration
      * @return $this
      */
-    public function configureInTab(string $tab, TcaConfiguration $configuration)
+    public function configureInTab(string $tab, TcaConfiguration $configuration): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
@@ -97,7 +108,12 @@ class TableBuilder
         return $this;
     }
 
-    public function configureAtPosition($position, TcaConfiguration $configuration)
+    /**
+     * @param string $position
+     * @param TcaConfiguration $configuration
+     * @return $this
+     */
+    public function configureAtPosition(string $position, TcaConfiguration $configuration): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
@@ -113,7 +129,7 @@ class TableBuilder
      * @param string $type
      * @return $this
      */
-    public function inheritConfigurationFromType(string $type)
+    public function inheritConfigurationFromType(string $type): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
@@ -134,7 +150,7 @@ class TableBuilder
      * @param string $otherTab
      * @return $this
      */
-    public function addOrMoveTabInFrontOfTab(string $tab, string $otherTab)
+    public function addOrMoveTabInFrontOfTab(string $tab, string $otherTab): TcaBuilderInterface
     {
         $type =& $GLOBALS['TCA'][$this->getTableName()]['types'][$this->getTypeName()];
 
