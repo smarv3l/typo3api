@@ -9,8 +9,10 @@
 namespace Typo3Api\Tca\Field;
 
 
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Typo3Api\Builder\TableBuilder;
 
 class SelectRelationField extends TcaField
 {
@@ -30,21 +32,54 @@ class SelectRelationField extends TcaField
             'localize' => false,
         ]);
 
+        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilder::class]);
+        $resolver->setAllowedTypes('foreign_table_where', 'string');
+        $resolver->setAllowedTypes('items', 'array');
+
+        $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
+            if ($foreignTable instanceof TableBuilder) {
+                return $foreignTable->getTableName();
+            }
+
+            return $foreignTable;
+        });
+
         $resolver->setNormalizer('foreign_table_where', function (Options $options, string $where) {
+            $foreignTable = $GLOBALS['TCA'][$options['foreign_table']];
 
             // append sys_language_uid if available
-            $foreignTable = $GLOBALS['TCA'][$options['foreign_table']];
             if (isset($foreignTable['ctrl']['languageField'])) {
                 $languageField = $options['foreign_table'] . '.' . $foreignTable['ctrl']['languageField'];
-                $where = preg_replace('/ ORDER BY|$/i', " AND $languageField IN (0, -1)\0", $where);
+                $where = preg_replace('/(\s*)(ORDER BY|$)/i', "\\1AND $languageField IN (0, -1) \\2", $where, 1);
+            }
+
+            // append sorting if available
+            if (isset($foreignTable['ctrl']['sortby'])) {
+                $sortByField = $options['foreign_table'] . '.' . $foreignTable['ctrl']['sortby'];
+                $where = preg_replace_callback('/(\s*)(?:ORDER BY(.*)|$)/i', function ($match) use ($sortByField) {
+                    if ($match[2]) {
+                        return $match[1] . 'ORDER BY' . $match[2] . ', ' . $sortByField;
+                    }
+
+                    return $match[1] . 'ORDER BY ' . $sortByField;
+                }, $where, 1);
             }
 
             return $where;
         });
 
         $resolver->setNormalizer('items', function (Options $options, array $items) {
-            if ($options['required'] === false) {
+            // ensure at least one value, or an empty value if not required
+            if (empty($items) || $options['required'] === false) {
                 array_unshift($items, ['', '0']);
+            }
+
+            foreach ($items as $item) {
+                $value = $item[1];
+                if (!preg_match('/^\d+$/', $value)) {
+                    $msg = "SelectRelationField options may only be numeric, got '$value'.";
+                    throw new InvalidOptionsException($msg);
+                }
             }
 
             return $items;
