@@ -21,9 +21,9 @@ class IrreField extends TcaField
     {
         parent::configureOptions($resolver);
 
-        $resolver->setRequired('foreignTable');
+        $resolver->setRequired('foreign_table');
         $resolver->setDefaults([
-            'foreignField' => 'parent_uid',
+            'foreign_field' => 'parent_uid',
             // if foreignTakeover is true, the other table is exclusive for this relation (recommended)
             // this means hideTable will be set to true, and some other behaviors will change
             // however: you can still use the foreign table for other inline relations
@@ -39,12 +39,12 @@ class IrreField extends TcaField
             },
         ]);
 
-        $resolver->setAllowedTypes('foreignTable', ['string', TableBuilder::class]);
-        $resolver->setAllowedTypes('foreignField', 'string');
+        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilder::class]);
+        $resolver->setAllowedTypes('foreign_field', 'string');
         $resolver->setAllowedTypes('minitems', 'int');
         $resolver->setAllowedTypes('maxitems', 'int');
 
-        $resolver->setNormalizer('foreignTable', function (Options $options, $foreignTable) {
+        $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
             if ($foreignTable instanceof TableBuilder) {
                 return $foreignTable->getTableName();
             }
@@ -55,7 +55,7 @@ class IrreField extends TcaField
 
     public function getFieldTcaConfig(string $tableName)
     {
-        $foreignTable = $this->getOption('foreignTable');
+        $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
             throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tableName");
         }
@@ -85,8 +85,8 @@ class IrreField extends TcaField
 
         return [
             'type' => 'inline',
-            'foreign_table' => $this->getOption('foreignTable'),
-            'foreign_field' => $this->getOption('foreignField'),
+            'foreign_table' => $this->getOption('foreign_table'),
+            'foreign_field' => $this->getOption('foreign_field'),
             'foreign_sortby' => $sortby,
             'minitems' => $this->getOption('minitems'),
             'maxitems' => $this->getOption('maxitems'),
@@ -133,8 +133,8 @@ class IrreField extends TcaField
 
         // define the field on the other side
         // TODO somewhere it should be checked if this field is already defined
-        $foreignField = addslashes($this->getOption('foreignField'));
-        $tableDefinitions[$this->getOption('foreignTable')] = [
+        $foreignField = addslashes($this->getOption('foreign_field'));
+        $tableDefinitions[$this->getOption('foreign_table')] = [
             "`$foreignField` INT(11) DEFAULT '0' NOT NULL",
             "KEY `$foreignField`(`$foreignField`)"
         ];
