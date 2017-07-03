@@ -52,7 +52,7 @@ class SelectField extends TcaField
         $resolver->setNormalizer('items', function (Options $options, $items) {
             // ensure at least one value, or an empty value if not required
             if (empty($items) || $options['required'] === false) {
-                array_unshift($items, [['', '']]);
+                array_unshift($items, ['', '']);
             }
 
             return $items;
