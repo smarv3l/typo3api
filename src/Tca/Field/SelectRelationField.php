@@ -66,6 +66,7 @@ class SelectRelationField extends TcaField
                 }, $where, 1);
             }
 
+            // append default_sortby if available
             if (isset($foreignTable['ctrl']['default_sortby'])) {
                 $sortByDefinitions = GeneralUtility::trimExplode(',', $foreignTable['ctrl']['default_sortby']);
                 foreach ($sortByDefinitions as &$sortByDefinition) {
@@ -81,8 +82,6 @@ class SelectRelationField extends TcaField
                     return $match[1] . 'ORDER BY ' . $sortByStr;
                 }, $where, 1);
             }
-
-            // TODO there is also a default_sortby which should be looked for
 
             return $where;
         });
