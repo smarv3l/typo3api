@@ -12,6 +12,7 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Typo3Api\Builder\TableBuilder;
 
 class SelectRelationField extends TcaField
@@ -25,7 +26,7 @@ class SelectRelationField extends TcaField
         ]);
 
         $resolver->setDefaults([
-            'foreign_table_where' => '', // todo default to sorting ~ maybe even normalize
+            'foreign_table_where' => '',
             'required' => false,
             'items' => [],
             'dbType' => "INT(11) DEFAULT '0' NOT NULL",
@@ -56,7 +57,7 @@ class SelectRelationField extends TcaField
             // append sorting if available
             if (isset($foreignTable['ctrl']['sortby'])) {
                 $sortByField = $options['foreign_table'] . '.' . $foreignTable['ctrl']['sortby'];
-                $where = preg_replace_callback('/(\s*)(?:ORDER BY(.*)|$)/i', function ($match) use ($sortByField) {
+                $where = preg_replace_callback('/(\s*)(?:ORDER BY(.*))?$/i', function ($match) use ($sortByField) {
                     if ($match[2]) {
                         return $match[1] . 'ORDER BY' . $match[2] . ', ' . $sortByField;
                     }
@@ -64,6 +65,24 @@ class SelectRelationField extends TcaField
                     return $match[1] . 'ORDER BY ' . $sortByField;
                 }, $where, 1);
             }
+
+            if (isset($foreignTable['ctrl']['default_sortby'])) {
+                $sortByDefinitions = GeneralUtility::trimExplode(',', $foreignTable['ctrl']['default_sortby']);
+                foreach ($sortByDefinitions as &$sortByDefinition) {
+                    $sortByDefinition = $options['foreign_table'] . '.' . $sortByDefinition;
+                }
+
+                $sortByStr = implode(', ', $sortByDefinitions);
+                $where = preg_replace_callback('/(\s*)(?:ORDER BY(.*))?$/i', function ($match) use ($sortByStr) {
+                    if ($match[2]) {
+                        return $match[1] . 'ORDER BY' . $match[2] . ', ' . $sortByStr;
+                    }
+
+                    return $match[1] . 'ORDER BY ' . $sortByStr;
+                }, $where, 1);
+            }
+
+            // TODO there is also a default_sortby which should be looked for
 
             return $where;
         });
