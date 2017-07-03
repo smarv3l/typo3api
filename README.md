@@ -6,6 +6,16 @@
     ->configure(new \Typo3Api\Tca\LanguageConfiguration())
     ->configure(new \Typo3Api\Tca\EnableFieldConfiguration())
     ->configure(new \Typo3Api\Tca\SortingConfiguration())
+    ->configure(new \Typo3Api\Tca\CustomConfiguration([
+        'ctrl' => [
+            'label_userFunc' => function (&$parameters) {
+                $name = $parameters['row']['last_name'];
+                $name .= ', ' . $parameters['row']['first_name'];
+                $name .= ' (' . $parameters['row']['email'] . ')';
+                $parameters['title'] = $name;
+            }
+        ]
+    ]))
     ->configure(new \Typo3Api\Tca\Field\SelectField('type', [
         'useForRecordType' => true,
         'items' => [
@@ -22,15 +32,8 @@
             ]
         ]),
         new \Typo3Api\Tca\Linebreak(),
-        new \Typo3Api\Tca\Field\InputField('first_name'),
-        new \Typo3Api\Tca\Field\InputField('last_name'),
-    ]))
-    ->configure(new \Typo3Api\Tca\Palette('contact', [
-        new \Typo3Api\Tca\Field\EmailField('email', ['unique' => true]),
-        new \Typo3Api\Tca\Linebreak(),
-        new \Typo3Api\Tca\Field\LinkField('website'),
-        new \Typo3Api\Tca\Linebreak(),
-        new \Typo3Api\Tca\Field\PhoneField('phone'),
+        new \Typo3Api\Tca\Field\InputField('first_name', ['localize' => false]),
+        new \Typo3Api\Tca\Field\InputField('last_name', ['localize' => false]),
     ]))
     ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
         'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
@@ -43,9 +46,17 @@
         ]
     ]))
     ->configure(new \Typo3Api\Tca\Field\TextareaField('notice'))
-    ->configure(new \Typo3Api\Tca\Field\ImageField('image'))
-    ->configure(new \Typo3Api\Tca\Field\IrreField('addresses', [
-        'foreignTable' => \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'address')
+    ->configureInTab('Media', new \Typo3Api\Tca\Field\ImageField('image'))
+    ->configureInTab('Media', new \Typo3Api\Tca\Field\MediaField('media'))
+    ->configureInTab('Contact', new \Typo3Api\Tca\Field\EmailField('email', ['unique' => true]))
+    ->configureInTab('Contact', new \Typo3Api\Tca\Field\LinkField('website'))
+    ->configureInTab('Contact', new \Typo3Api\Tca\Palette('phone', [
+        new \Typo3Api\Tca\Field\PhoneField('work'),
+        new \Typo3Api\Tca\Field\PhoneField('home'),
+        new \Typo3Api\Tca\Field\PhoneField('mobile'),
+    ]))
+    ->configureInTab('Address', new \Typo3Api\Tca\Field\IrreField('addresses', [
+        'foreign_table' => \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'address')
             ->configure(new \Typo3Api\Tca\MetaFieldsConfiguration())
             ->configure(new \Typo3Api\Tca\SortingConfiguration())
             ->configure(new \Typo3Api\Tca\Field\InputField('city'))
@@ -55,11 +66,23 @@
             ]))
             ->configure(new \Typo3Api\Tca\Field\InputField('country'))
     ]))
-    ->configure(new \Typo3Api\Tca\Field\MediaField('media'))
 ;
 
 \Typo3Api\Builder\TableBuilder::createForType($_EXTKEY, 'person', '2')
     ->inheritConfigurationFromType('1')
-    ->configureAtPosition('after:type', new \Typo3Api\Tca\Field\InputField('position'))
+    ->addOrMoveTabInFrontOfTab('Job', 'Media')
+    ->configureInTab('Job', new \Typo3Api\Tca\Field\InputField('position'))
+    ->configureInTab('Job', new \Typo3Api\Tca\Field\Double2Field('salary', ['max' => 100000]))
+;
+
+\Typo3Api\Builder\ContentElementBuilder::create($_EXTKEY, 'vcard')
+    ->setTitle("VCard")
+    ->setDescription("Shows a Persons vcard ~ define a person in a storage folder")
+    // options will be ignored if the column already exists
+    // this is a limitation i want to remove in the future
+    ->configure(new \Typo3Api\Tca\Field\InputField('header'))
+    ->configure(new \Typo3Api\Tca\Field\SelectRelationField('person', [
+        'foreign_table' => 'tx_hntemplates_person'
+    ]))
 ;
 ```
