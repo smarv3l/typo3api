@@ -10,7 +10,8 @@
     "require": {
         "php": "^7.0",
         "typo3/cms": "^8.6",
-        "symfony/options-resolver": "^3.3"
+        "symfony/options-resolver": "^3.3",
+        "symfony/polyfill-mbstring": "^1.2"
     },
     "autoload": {
         "psr-4": {
