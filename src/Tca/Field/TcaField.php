@@ -34,11 +34,17 @@ abstract class TcaField implements TcaConfiguration
      */
     public final function __construct(string $name, array $options = [])
     {
-        // nicer creation syntax when passing name as a direct parameter instead of expecting an option
+        // Nicer creation syntax when passing name as a direct parameter instead of expecting an option.
+        // However: the name must be an option so that it is available during option resolving.
         $options['name'] = $name;
 
-        $optionResolver = $this->getOptionResolver();
-        $this->options = $optionResolver->resolve($options);
+        try {
+            $optionResolver = $this->getOptionResolver();
+            $this->options = $optionResolver->resolve($options);
+        } catch (InvalidOptionsException $e) {
+            $msg = "Error while resolving options for the field '$name': " . $e->getMessage();
+            throw new InvalidOptionsException($msg, 0, $e);
+        }
     }
 
     private function getOptionResolver()
@@ -107,49 +113,59 @@ abstract class TcaField implements TcaConfiguration
 
     public function modifyCtrl(array &$ctrl, string $tableName)
     {
+        $fieldName = $this->getOption('name');
+
         if ($this->getOption('useAsLabel')) {
             if (!isset($ctrl['label'])) {
-                $ctrl['label'] = $this->getOption('name');
+                $ctrl['label'] = $fieldName;
             } else {
                 if (!isset($ctrl['label_alt'])) {
-                    $ctrl['label_alt'] = $this->getOption('name');
-                } else {
-                    $ctrl['label_alt'] .= ', ' . $this->getOption('name');
+                    $ctrl['label_alt'] = $fieldName;
+                } else if (strpos($ctrl['label_alt'], $fieldName) === false) {
+                    $ctrl['label_alt'] .= ', ' . $fieldName;
                 }
             }
         }
 
         if ($this->getOption('searchField')) {
             if (!isset($ctrl['searchFields'])) {
-                $ctrl['searchFields'] = $this->getOption('name');
-            } else if (strpos($ctrl['searchFields'], $this->getOption('name')) === false) {
-                $ctrl['searchFields'] .= ', ' . $this->getOption('name');
+                $ctrl['searchFields'] = $fieldName;
+            } else if (strpos($ctrl['searchFields'], $fieldName) === false) {
+                $ctrl['searchFields'] .= ', ' . $fieldName;
             }
         }
 
         if ($this->getOption('useForRecordType')) {
             if (isset($ctrl['type'])) {
                 $msg = "Only one field can specify the record type for table $tableName.";
-                $msg .= " Tried using field " . $this->getOption('name') . " as type field.";
+                $msg .= " Tried using field " . $fieldName . " as type field.";
                 $msg .= " Field " . $ctrl['type'] . " is already defined as type field.";
                 throw new \RuntimeException($msg);
             }
 
-            $ctrl['type'] = $this->getOption('name');
+            $ctrl['type'] = $fieldName;
         }
     }
 
     public function getColumns(string $tableName): array
     {
+        $column = [
+            'label' => $this->getOption('label'),
+            'exclude' => $this->getOption('exclude'),
+            'config' => $this->getFieldTcaConfig($tableName),
+        ];
+
+        if ($this->getOption('localize')) {
+            $column['l10n_mode'] = 'exclude';
+            $column['l10n_display'] = 'defaultAsReadonly';
+        }
+
+        if ($this->getOption('displayCond') !== null) {
+            $column['displayCond'] = $this->getOption('displayCond');
+        }
+
         return [
-            $this->getOption('name') => [
-                'label' => $this->getOption('label'),
-                'exclude' => $this->getOption('exclude'),
-                'config' => $this->getFieldTcaConfig($tableName),
-                'l10n_mode' => $this->getOption('localize') ? '' : 'exclude',
-                'l10n_display' => $this->getOption('localize') ? '' : 'defaultAsReadonly',
-                'displayCond' => $this->getOption('displayCond'),
-            ]
+            $this->getOption('name') => $column
         ];
     }
 

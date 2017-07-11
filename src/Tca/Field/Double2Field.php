@@ -19,10 +19,10 @@ class Double2Field extends TcaField
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'min' => 0.0,
-            'max' => 99.0,
+            'max' => 1000000.0, // default up to a million
             'size' => function (Options $options) {
                 $preDecimalSize = max(strlen((int)$options['min']), strlen((int)$options['max']));
-                return (int)(($preDecimalSize + 2) / 2);
+                return $preDecimalSize + 3; // point + 2 digits after the point
             },
             'default' => function (Options $options) {
                 if ($options['min'] <= 0.0 && $options['max'] >= 0.0) {
@@ -34,14 +34,11 @@ class Double2Field extends TcaField
             'required' => false, // TODO required is kind of useless on an int
 
             'dbType' => function (Options $options) {
-                $low = intval($options['min']);
-                $high = intval($options['max']);
-
-                $default = number_format($options['default'], 2, '.', '');
                 $decimals = 2; // hardcoded because typo3 only offers double2 validation
-                $digits = max(strlen(abs($low)), strlen(abs($high))) + $decimals;
+                $default = number_format($options['default'], $decimals, '.', '');
+                $digits = max(strlen(abs((int)$options['min'])), strlen(abs((int)$options['max']))) + $decimals;
 
-                if ($options['min'] < 0) {
+                if ($options['min'] < 0.0) {
                     return "NUMERIC($digits, $decimals) DEFAULT '$default' NOT NULL";
                 } else {
                     return "NUMERIC($digits, $decimals) UNSIGNED DEFAULT '$default' NOT NULL";
@@ -62,7 +59,7 @@ class Double2Field extends TcaField
     {
         return [
             'type' => 'input',
-            'size' => $this->getOption('size'),
+            'size' => (int)($this->getOption('size') / 2), // adjust the size to fit the character count better
             'default' => $this->getOption('default'),
             'range' => [
                 'lower' => $this->getOption('min'),

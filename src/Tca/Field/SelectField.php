@@ -38,8 +38,8 @@ class SelectField extends TcaField
             'dbType' => function (Options $options) {
                 $possibleValues = $options['values'];
                 $defaultValue = addslashes(reset($possibleValues));
-                $maxLength = max(array_map('strlen', $possibleValues));
-                return "VARCHAR($maxLength) DEFAULT '$defaultValue' NOT NULL";
+                $maxChars = max(array_map('mb_strlen', $possibleValues));
+                return "VARCHAR($maxChars) DEFAULT '$defaultValue' NOT NULL";
             },
 
             // it doesn't make sense to localize selects most of the time
@@ -59,12 +59,20 @@ class SelectField extends TcaField
         });
 
         $resolver->setNormalizer('values', function (Options $options, $values) {
-            $maxLength = max(array_map('strlen', $values));
-            if ($maxLength > 255) {
-                throw new InvalidOptionsException("The value in an select shouldn't be longer than 255 bytes.");
-            }
-
             foreach ($values as $value) {
+                
+                // Why 191 characters?
+                // Because mysql indexes can only store 767 bytes and I want to enforce a usefull limit.
+                // https://mathiasbynens.be/notes/mysql-utf8mb4#column-index-length
+                // Why are you reading this anyways? Did you really try to select a value that has more than 30 chars?
+                if (mb_strlen($value) > 191) {
+                    $msg = "The value in an select shouldn't be longer than 191 characters.";
+                    $msg .= " The longtest value has $maxChars characters.";
+                    throw new InvalidOptionsException($msg);
+                }
+                
+                // the documentation says these chars are invalid
+                // https://docs.typo3.org/typo3cms/TCAReference/ColumnsConfig/Type/Select.html#items
                 if (preg_match('/[|,;]/', $value)) {
                     throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
                 }

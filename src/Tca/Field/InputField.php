@@ -38,12 +38,19 @@ class InputField extends TcaField
             'unique' => false,
 
             'dbType' => function (Options $options) {
-                $maxLength = $options['max'];
+                $maxCharacters = $options['max'];
+                if ($maxCharacters > 1024) {
+                    $msg = "The max size of an input field should not exeed 1024 characters.";
+                    $msg .= " Use a textarea for saving that many characters.";
+                    $msg .= " If you must use an input field for some reason:";
+                    $msg .= " define the dbType option with a fitting db type option like TEXT.";
+                    throw new InvalidOptionsException($msg);
+                }
+
                 $default = addslashes($options['default']);
-                return "VARCHAR($maxLength) DEFAULT '$default' NOT NULL";
-                // using anything but varchar here would make searchFields slow
-                // because it doesn't make sense to have a very large input field anyway
-                // i opt to prevent large input fields and by default add everything to searchFields
+                return "VARCHAR($maxCharacters) DEFAULT '$default' NOT NULL";
+                // using anything but varchar here would make searchFields slow.
+                // I opted to prevent large input fields and by default add everything to searchFields
                 // also, i can easily use the default option here which is nice.
             },
             'index' => function (Options $options) {
@@ -65,15 +72,8 @@ class InputField extends TcaField
         $resolver->setAllowedTypes('unique', 'bool');
 
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
-
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";
-                throw new InvalidOptionsException($msg);
-            }
-
-            if ($maxLength > 1024) {
-                $msg = "The max size of an input field must not be higher than 1024.";
-                $msg .= " Use a textarea instead.";
                 throw new InvalidOptionsException($msg);
             }
 

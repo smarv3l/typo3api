@@ -20,9 +20,9 @@ class IntField extends TcaField
         parent::configureOptions($resolver);
         $resolver->setDefaults([
             'min' => 0,
-            'max' => 10000,
+            'max' => 1000000, // default up to a million
             'size' => function (Options $options) {
-                return (int)(max(strlen($options['min']), strlen($options['max'])) / 2);
+                return max(strlen($options['min']), strlen($options['max']));
             },
             'default' => function (Options $options) {
                 if ($options['min'] <= 0 && $options['max'] >= 0) {
@@ -54,7 +54,7 @@ class IntField extends TcaField
     {
         return [
             'type' => 'input',
-            'size' => $this->getOption('size'),
+            'size' => (int)($this->getOption('size') / 2), // adjust the size to fit the character count better
             'default' => $this->getOption('default'),
             'range' => [
                 'lower' => $this->getOption('min'),
