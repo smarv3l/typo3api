@@ -74,11 +74,17 @@ class SqlSchemaHook
         }
 
         foreach ($map as $tableName => $definitions) {
-            // pid is required by tca configuration
-            array_unshift($definitions, "pid INT(11) NOT NULL DEFAULT '0'");
-
-            array_unshift($definitions, "uid int(11) NOT NULL auto_increment");
-            array_push($definitions, "PRIMARY KEY (uid)");
+            // uid and pid are always required
+            $definitions = array_merge(
+                [
+                    "uid int(11) NOT NULL auto_increment",
+                    "pid INT(11) NOT NULL DEFAULT '0'",
+                ],
+                $definitions,
+                [
+                    "PRIMARY KEY (uid)",
+                ]
+            );
 
             $sqlStrings[] = "CREATE TABLE `$tableName` (\n" . implode(",\n", $definitions) . "\n);";
         }
