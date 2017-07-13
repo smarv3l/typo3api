@@ -24,7 +24,7 @@ class SelectField extends TcaField
 
         $resolver->setDefaults([
             // values is just a list of possible values
-            // you probably don't need to define it
+            // you can use it instead of items if you don't want/need to define labels for your options
             'values' => function (Options $options) {
                 $values = array_column($options['items'], 1);
                 $values = array_filter($values, function ($value) {
@@ -32,17 +32,38 @@ class SelectField extends TcaField
                 });
                 return $values;
             },
+            // items is the normal typo3 compatible item list
+            // if not defined, it will be generated from the value list
+            'items' => function (Options $options) {
+                return array_map(function ($value) {
+                    $label = preg_replace(['/([A-Z])/', '/[_\s]+/'], ['_$1', ' '], $value);
+                    $label = ucfirst(trim(strtolower($label)));
+                    return [$label, $value];
+                }, $options['values']);
+            },
 
             'required' => true,
 
             'dbType' => function (Options $options) {
                 $possibleValues = $options['values'];
                 $defaultValue = addslashes(reset($possibleValues));
+
                 $maxChars = max(array_map('mb_strlen', $possibleValues));
+                if ($maxChars > 191) {
+                    // Why 191 characters?
+                    // Because mysql indexes can only store 767 bytes and I want to enforce a usefull limit.
+                    // https://mathiasbynens.be/notes/mysql-utf8mb4#column-index-length
+                    // Why are you reading this anyways? Did you really try to select a value that has more than 30 chars?
+                    $msg = "The value in an select shouldn't be longer than 191 characters.";
+                    $msg .= " The longest value has $maxChars characters.";
+                    $msg .= " If you absolutely need to save longer values, define the dbType manually.";
+                    throw new InvalidOptionsException($msg);
+                }
+
                 return "VARCHAR($maxChars) DEFAULT '$defaultValue' NOT NULL";
             },
 
-            // it doesn't make sense to localize selects most of the time
+            // it doesn't make sense to localize selects (most of the time)
             'localize' => false
         ]);
 
@@ -60,17 +81,7 @@ class SelectField extends TcaField
 
         $resolver->setNormalizer('values', function (Options $options, $values) {
             foreach ($values as $value) {
-                
-                // Why 191 characters?
-                // Because mysql indexes can only store 767 bytes and I want to enforce a usefull limit.
-                // https://mathiasbynens.be/notes/mysql-utf8mb4#column-index-length
-                // Why are you reading this anyways? Did you really try to select a value that has more than 30 chars?
-                if (mb_strlen($value) > 191) {
-                    $msg = "The value in an select shouldn't be longer than 191 characters.";
-                    $msg .= " The longtest value has $maxChars characters.";
-                    throw new InvalidOptionsException($msg);
-                }
-                
+
                 // the documentation says these chars are invalid
                 // https://docs.typo3.org/typo3cms/TCAReference/ColumnsConfig/Type/Select.html#items
                 if (preg_match('/[|,;]/', $value)) {
