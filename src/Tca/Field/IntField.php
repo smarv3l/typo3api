@@ -25,11 +25,8 @@ class IntField extends TcaField
                 return max(strlen($options['min']), strlen($options['max']));
             },
             'default' => function (Options $options) {
-                if ($options['min'] <= 0 && $options['max'] >= 0) {
-                    return 0;
-                }
-
-                return $options['min'];
+                // try to get default as close to 0 as possible
+                return max($options['min'], min($options['max'], 0));
             },
             'required' => false, // TODO required is kind of useless on an int since the backend doesn't allow en empty value
 

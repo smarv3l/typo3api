@@ -25,11 +25,8 @@ class Double2Field extends TcaField
                 return $preDecimalSize + 3; // point + 2 digits after the point
             },
             'default' => function (Options $options) {
-                if ($options['min'] <= 0.0 && $options['max'] >= 0.0) {
-                    return 0.0;
-                }
-
-                return $options['min'];
+                // try to get default as close to 0 as possible
+                return max($options['min'], min($options['max'], 0.0));
             },
             'required' => false, // TODO required is kind of useless on an int
 
