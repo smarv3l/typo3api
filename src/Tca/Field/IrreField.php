@@ -9,6 +9,7 @@
 namespace Typo3Api\Tca\Field;
 
 
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -50,6 +51,25 @@ class IrreField extends TcaField
             }
 
             return $foreignTable;
+        });
+
+        $resolver->setNormalizer('minitems', function (Options $options, $minItems) {
+            if ($minItems < 0) {
+                throw new InvalidOptionsException("Minitems can't be smaller than 0, got $minItems.");
+            }
+
+            if (
+                $minItems > 0
+                && isset($GLOBALS['TCA'][$options['foreign_table']]['ctrl']['enablecolumns'])
+                && !empty($GLOBALS['TCA'][$options['foreign_table']]['ctrl']['enablecolumns'])
+            ) {
+                $msg = "minitems can't be used if the foreign_table has enablecolumns. This is to prevent unexpected behavior.";
+                $msg .= " Someone could create a relation and disable the related record (eg. by setting endtime).";
+                $msg .= " Typo3 can't catch that so it is better to just not use minitems in combination with enablecolumns.";
+                throw new InvalidOptionsException($msg);
+            }
+
+            return $minItems;
         });
     }
 
