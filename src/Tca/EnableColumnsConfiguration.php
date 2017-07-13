@@ -9,11 +9,11 @@
 namespace Typo3Api\Tca;
 
 
-class EnableFieldConfiguration implements TcaConfiguration, DefaultTab
+class EnableColumnsConfiguration implements TcaConfiguration, DefaultTab
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {
-        $ctrl['deleted'] = 'deleted';
+        $ctrl['deleted'] = 'deleted'; // TODO deleted should always be used, even if enable columns aren't
         if (!isset($ctrl['enablecolumns'])) {
             $ctrl['enablecolumns'] = [];
         }

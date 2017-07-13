@@ -4,7 +4,7 @@
 \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'person')
     ->configure(new \Typo3Api\Tca\MetaFieldsConfiguration())
     ->configure(new \Typo3Api\Tca\LanguageConfiguration())
-    ->configure(new \Typo3Api\Tca\EnableFieldConfiguration())
+    ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
     ->configure(new \Typo3Api\Tca\SortingConfiguration())
     ->configure(new \Typo3Api\Tca\CustomConfiguration([
         'ctrl' => [
