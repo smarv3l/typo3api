@@ -125,7 +125,7 @@ class InputField extends TcaField
         }
 
         if ($this->getOption('unique')) {
-            // i decided against the "real" unique and prefere to always use uniqueInPid
+            // i decided against the "real" unique and prefer to always use uniqueInPid
             // it's like a name in a filesystem, you expect it to be unique in a folder
             // there is no "real" unique in typo3 anyways because of deleted and versioning
             $evals[] = 'uniqueInPid';
