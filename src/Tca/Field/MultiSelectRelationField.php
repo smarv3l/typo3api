@@ -31,6 +31,7 @@ class MultiSelectRelationField extends TcaField
             'items' => [], // TODO test this
             'minitems' => 0,
             'maxitems' => 100,
+            'size' => 7,
 
             'dbType' => "INT(11) DEFAULT '0' NOT NULL",
             'localize' => false,
@@ -81,10 +82,9 @@ class MultiSelectRelationField extends TcaField
             'foreign_table_where' => $this->getOption('foreign_table_where'),
             'MM' => $this->getMnTableName($tableName),
             'items' => $this->getOption('items'),
-            'size' => 10,
+            'size' => $this->getOption('size'),
             'minitems' => $this->getOption('minitems'),
             'maxitems' => $this->getOption('maxitems'),
-            'autoSizeMax' => 5
         ];
     }
 
