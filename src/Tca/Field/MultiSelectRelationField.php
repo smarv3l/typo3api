@@ -32,6 +32,7 @@ class MultiSelectRelationField extends TcaField
             'minitems' => 0,
             'maxitems' => 100,
             'size' => 7,
+            'enableSearch' => true,
 
             'dbType' => "INT(11) DEFAULT '0' NOT NULL",
             'localize' => false,
@@ -85,7 +86,21 @@ class MultiSelectRelationField extends TcaField
             'size' => $this->getOption('size'),
             'minitems' => $this->getOption('minitems'),
             'maxitems' => $this->getOption('maxitems'),
+            'enableMultiSelectFilterTextfield' => $this->getOption('enableSearch'),
         ];
+    }
+
+    public function getColumns(string $tableName): array
+    {
+        $columns = parent::getColumns($tableName);
+
+        if ($this->getOption('localize') === false) {
+            // remove the l10n display options
+            // selectMultipleSideBySide cant be displayed as readonly
+            unset($columns[$this->getOption('name')]['l10n_display']);
+        }
+
+        return $columns;
     }
 
     public function getDbTableDefinitions(string $tableName): array
