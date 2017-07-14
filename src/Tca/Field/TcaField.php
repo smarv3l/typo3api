@@ -91,9 +91,24 @@ abstract class TcaField implements TcaConfiguration
         $resolver->setAllowedTypes('index', 'bool');
 
         $resolver->setNormalizer('name', function (Options $options, $name) {
+
+            if (strlen($name) > 64) {
+                $msg = "The field name should be at most 64 characters long. (and even that... are you insane?)";
+                throw new InvalidOptionsException($msg);
+            }
+
+            if (strlen($name) <= 0) {
+                $msg = "The field name must not be empty";
+                throw new InvalidOptionsException($msg);
+            }
+
             if (strtolower($name) !== $name) {
-                $msg = "All field names must be in underscored lower case.";
-                $msg .= " The field name '$name' does not fit that requirement.";
+                $msg = "The field name must be lower case.";
+                throw new InvalidOptionsException($msg);
+            }
+
+            if (!preg_match('#^\w*$#', $name)) {
+                $msg = "The field name should only contain word characters to avoid potential problems.";
                 throw new InvalidOptionsException($msg);
             }
 
