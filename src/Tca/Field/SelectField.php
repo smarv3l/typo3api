@@ -67,8 +67,9 @@ class SelectField extends TcaField
             'localize' => false
         ]);
 
-        $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('values', 'array');
+        $resolver->setAllowedTypes('items', 'array');
+        $resolver->setAllowedTypes('required', 'bool');
 
         $resolver->setNormalizer('items', function (Options $options, $items) {
             // ensure at least one value, or an empty value if not required
