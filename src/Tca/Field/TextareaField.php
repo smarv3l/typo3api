@@ -44,7 +44,7 @@ class TextareaField extends TcaField
 
                 // the mysql text field can save up to 65535 bytes (not characters)
                 // 1 character can have up to 4 bytes since I want to support utf8mb4
-                // however... tpyo3 doesn't support utf8mb4 yet: https://forge.typo3.org/issues/80398
+                // however... typo3 doesn't support utf8mb4 yet: https://forge.typo3.org/issues/80398
                 // but it's nice to be prepared
                 $maxBytes = $maxChars * 4;
 
@@ -59,7 +59,7 @@ class TextareaField extends TcaField
                 $msg = "Tried to store a text field with up to $maxBytes bytes ($maxChars characters).";
                 $msg .= " This can't be stored in a MEDIUMTEXT and LONGTEXT might get to big for a php process.";
                 $msg .= " Even if you increase the memory limit, the translation system of typo3 uses MEDIUMTEXT too.";
-                $msg .= " Try to use a sensable character limit or store your data in a file if possible.";
+                $msg .= " Try to use a sensible character limit or store your data in a file if possible.";
                 throw new InvalidOptionsException($msg);
             },
         ]);
