@@ -9,6 +9,8 @@
 namespace Typo3Api\Utility;
 
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * This utility is used by relational field configurations.
  */
