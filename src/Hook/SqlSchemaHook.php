@@ -74,18 +74,6 @@ class SqlSchemaHook
         }
 
         foreach ($map as $tableName => $definitions) {
-            // uid and pid are always required
-            $definitions = array_merge(
-                [
-                    "uid int(11) NOT NULL auto_increment",
-                    "pid INT(11) NOT NULL DEFAULT '0'",
-                ],
-                $definitions,
-                [
-                    "PRIMARY KEY (uid)",
-                ]
-            );
-
             $sqlStrings[] = "CREATE TABLE `$tableName` (\n" . implode(",\n", $definitions) . "\n);";
         }
 

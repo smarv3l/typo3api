@@ -2,17 +2,24 @@
 /**
  * Created by PhpStorm.
  * User: marco
- * Date: 18.06.17
- * Time: 10:38
+ * Date: 14.07.17
+ * Time: 09:09
  */
 
 namespace Typo3Api\Tca;
 
 
-class MetaFieldsConfiguration implements TcaConfiguration
+/**
+ * You probably don't need this.
+ *
+ * This is a basic configuration for fields every table should have.
+ * Because of this, it is added to every newly created table automatically.
+ */
+class BaseConfiguration implements TcaConfiguration
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {
+        $ctrl['deleted'] = 'deleted';
         $ctrl['tstamp'] = 'tstamp';
         $ctrl['crdate'] = 'crdate';
         $ctrl['cruser_id'] = 'cruser_id';
@@ -37,6 +44,12 @@ class MetaFieldsConfiguration implements TcaConfiguration
     public function getDbTableDefinitions(string $tableName): array
     {
         return [$tableName => [
+            "uid int(11) NOT NULL auto_increment",
+            "PRIMARY KEY (uid)",
+            "pid INT(11) NOT NULL DEFAULT '0'",
+            "INDEX pid (pid)", // i'm not sure if every table should have an index on pid
+
+            "deleted TINYINT(1) DEFAULT '0' NOT NULL",
             "tstamp INT(11) DEFAULT '0' NOT NULL",
             "crdate INT(11) DEFAULT '0' NOT NULL",
             "cruser_id INT(11) DEFAULT '0' NOT NULL",

@@ -11,6 +11,7 @@ namespace Typo3Api\Builder;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Typo3Api\Hook\SqlSchemaHook;
+use Typo3Api\Tca\BaseConfiguration;
 use Typo3Api\Tca\DefaultTab;
 use Typo3Api\Tca\TcaConfiguration;
 
@@ -222,6 +223,9 @@ class TableBuilder implements TcaBuilderInterface
             'types' => [],
             'palettes' => [],
         ];
+
+        // add the basic fields every table should have
+        $this->configure(new BaseConfiguration());
 
         return true;
     }

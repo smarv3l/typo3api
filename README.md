@@ -2,7 +2,6 @@
 
 ```PHP
 \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'person')
-    ->configure(new \Typo3Api\Tca\MetaFieldsConfiguration())
     ->configure(new \Typo3Api\Tca\LanguageConfiguration())
     ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
     ->configure(new \Typo3Api\Tca\SortingConfiguration())
@@ -57,7 +56,6 @@
     ]))
     ->configureInTab('Address', new \Typo3Api\Tca\Field\IrreField('addresses', [
         'foreign_table' => \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'address')
-            ->configure(new \Typo3Api\Tca\MetaFieldsConfiguration())
             ->configure(new \Typo3Api\Tca\SortingConfiguration())
             ->configure(new \Typo3Api\Tca\Field\InputField('city'))
             ->configure(new \Typo3Api\Tca\Palette('full_street', [
