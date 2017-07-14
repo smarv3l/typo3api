@@ -37,9 +37,28 @@ class FileField extends TcaField
             },
         ]);
 
+        $resolver->setAllowedTypes('allowedFileExtensions', ['string', 'array']);
+        $resolver->setAllowedTypes('disallowedFileExtensions', ['string', 'array']);
+
         $resolver->setAllowedTypes('minitems', 'int');
         $resolver->setAllowedTypes('maxitems', 'int');
         $resolver->setAllowedTypes('allowHide', 'bool');
+
+        $resolver->setNormalizer('allowedFileExtensions', function (Options $options, $allowedFileExtensions) {
+            if (is_array($allowedFileExtensions)) {
+                $allowedFileExtensions = implode(',', array_filter($allowedFileExtensions, 'strlen'));
+            }
+
+            return $allowedFileExtensions;
+        });
+
+        $resolver->setNormalizer('disallowedFileExtensions', function (Options $options, $disallowedFileExtensions) {
+            if (is_array($disallowedFileExtensions)) {
+                $disallowedFileExtensions = implode(',', array_filter($disallowedFileExtensions, 'strlen'));
+            }
+
+            return $disallowedFileExtensions;
+        });
 
         $resolver->setNormalizer('minitems', function (Options $options, $minitems) {
             if ($minitems < 0) {

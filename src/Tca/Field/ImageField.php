@@ -9,17 +9,30 @@
 namespace Typo3Api\Tca\Field;
 
 
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Typo3Api\Utility\DbFieldDefinition;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ImageField extends FileField
 {
+    /**
+     * I only want to allow sane formats which can be tested and are somewhat reasonable and stable
+     *
+     * svg support in typo3 is basically none existent ~ you should do intense testing if you want svg's
+     * ai support is also broken ~ entirely
+     * pcx and tga are too obscure so i dropped them
+     * pdf is like pandora's box ... with memory leaks, timeouts etc.
+     * bmp files tend to be huge ~ you shouldn't accept those
+     */
+    const BLACKLISTED_FORMATS = ['svg', 'ai', 'pcx', 'tga', 'pdf', 'bmp'];
+
     protected function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
-            'allowedFileExtensions' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext']
+            'allowedFileExtensions' => array_diff(
+                GeneralUtility::trimExplode(',', strtolower($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])),
+                ImageField::BLACKLISTED_FORMATS
+            ),
         ]);
     }
 
