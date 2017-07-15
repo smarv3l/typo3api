@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-interface TcaConfiguration
+interface TcaConfigurationInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName);
 

@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class EnableColumnsConfiguration implements TcaConfiguration, DefaultTab
+class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {

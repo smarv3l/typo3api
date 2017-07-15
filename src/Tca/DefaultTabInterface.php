@@ -9,10 +9,10 @@
 namespace Typo3Api\Tca;
 
 
-interface DefaultTab extends TcaConfiguration
+interface DefaultTabInterface extends TcaConfigurationInterface
 {
     /**
-     * There are instances where fields should be seperated from the main fields.
+     * There are instances where fields should be separated from the main fields.
      *
      * @return string
      */

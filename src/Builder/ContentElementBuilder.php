@@ -10,9 +10,8 @@ namespace Typo3Api\Builder;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Typo3Api\Tca\CustomConfiguration;
 use Typo3Api\Tca\ShowitemConfiguration;
-use Typo3Api\Tca\TcaConfiguration;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
 class ContentElementBuilder implements TcaBuilderInterface
 {
@@ -159,7 +158,7 @@ class ContentElementBuilder implements TcaBuilderInterface
      */
     public function setDescription(string $description)
     {
-        if (strpos($title, "\n") !== false) {
+        if (strpos($description, "\n") !== false) {
             throw new \RuntimeException("A content element description must not contain newlines, got '$description'.");
         }
 
@@ -175,10 +174,10 @@ class ContentElementBuilder implements TcaBuilderInterface
     // i don't know any way to implement getDescription
 
     /**
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configure(TcaConfiguration $configuration): TcaBuilderInterface
+    public function configure(TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $this->tableBuilder->configure($configuration);
         return $this;
@@ -186,10 +185,10 @@ class ContentElementBuilder implements TcaBuilderInterface
 
     /**
      * @param string $tab
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configureInTab(string $tab, TcaConfiguration $configuration): TcaBuilderInterface
+    public function configureInTab(string $tab, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $this->tableBuilder->configureInTab($tab, $configuration);
         return $this;
@@ -197,10 +196,10 @@ class ContentElementBuilder implements TcaBuilderInterface
 
     /**
      * @param string $position
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configureAtPosition(string $position, TcaConfiguration $configuration): TcaBuilderInterface
+    public function configureAtPosition(string $position, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $this->tableBuilder->configureAtPosition($position, $configuration);
         return $this;
@@ -223,7 +222,7 @@ class ContentElementBuilder implements TcaBuilderInterface
      */
     public function addOrMoveTabInFrontOfTab(string $tab, string $otherTab): TcaBuilderInterface
     {
-        $this->tableBuilder->inheritConfigurationFromType($type);
+        $this->tableBuilder->addOrMoveTabInFrontOfTab($tab, $otherTab);
         return $this;
     }
 }

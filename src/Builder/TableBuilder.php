@@ -12,8 +12,8 @@ namespace Typo3Api\Builder;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Typo3Api\Hook\SqlSchemaHook;
 use Typo3Api\Tca\BaseConfiguration;
-use Typo3Api\Tca\DefaultTab;
-use Typo3Api\Tca\TcaConfiguration;
+use Typo3Api\Tca\DefaultTabInterface;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
 class TableBuilder implements TcaBuilderInterface
 {
@@ -29,7 +29,7 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * This is a list of default tabs.
-     * Default tabs are passed by the DefaultTab Interface.
+     * Default tabs are passed by the DefaultTabInterface Interface.
      * They are forced to be always at the end.
      *
      * @var array
@@ -77,12 +77,12 @@ class TableBuilder implements TcaBuilderInterface
     }
 
     /**
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configure(TcaConfiguration $configuration): TcaBuilderInterface
+    public function configure(TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
-        if ($configuration instanceof DefaultTab) {
+        if ($configuration instanceof DefaultTabInterface) {
             $tabName = $configuration->getDefaultTab();
             $this->defaultTabs[] = $tabName;
             return $this->configureInTab($tabName, $configuration);
@@ -94,10 +94,10 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param string $tab
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configureInTab(string $tab, TcaConfiguration $configuration): TcaBuilderInterface
+    public function configureInTab(string $tab, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
@@ -111,15 +111,15 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param string $position
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configureAtPosition(string $position, TcaConfiguration $configuration): TcaBuilderInterface
+    public function configureAtPosition(string $position, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
         $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
-        $this->addShowItemAtPositon($tca, $configuration, $position);
+        $this->addShowItemAtPosition($tca, $configuration, $position);
         $this->addPalettes($tca, $configuration);
         $this->addColumns($tca, $configuration);
 
@@ -232,9 +232,9 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param array $tca
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      */
-    protected function addPalettes(array &$tca, TcaConfiguration $configuration)
+    protected function addPalettes(array &$tca, TcaConfigurationInterface $configuration)
     {
         $tableName = $this->getTableName();
         $palettes = $configuration->getPalettes($tableName);
@@ -255,9 +255,9 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param array $tca
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      */
-    protected function addColumns(array &$tca, TcaConfiguration $configuration)
+    protected function addColumns(array &$tca, TcaConfigurationInterface $configuration)
     {
         $columns = $configuration->getColumns($this->getTableName());
         $existingColumns = $tca['columns'];
@@ -281,10 +281,10 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param array $tca
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @param string $tab
      */
-    protected function addShowItemToTab(array &$tca, TcaConfiguration $configuration, string $tab)
+    protected function addShowItemToTab(array &$tca, TcaConfigurationInterface $configuration, string $tab)
     {
         if (!isset($tca['types'][$this->getTypeName()])) {
             $tca['types'][$this->getTypeName()] = [];
@@ -322,16 +322,11 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param array $tca
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @param string $position
      */
-    protected function addShowItemAtPositon(array &$tca, TcaConfiguration $configuration, string $position)
+    protected function addShowItemAtPosition(array &$tca, TcaConfigurationInterface $configuration, string $position)
     {
-        if (!isset($tca['types'][$this->getTypeName()])) {
-            $tca['types'][$this->getTypeName()] = [];
-        }
-        $type =& $tca['types'][$this->getTypeName()];
-
         $showItemString = $configuration->getShowItemString($this->getTableName());
         if ($showItemString === '') {
             return;

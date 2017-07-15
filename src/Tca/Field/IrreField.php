@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Typo3Api\Builder\TableBuilder;
 use Typo3Api\Utility\DbFieldDefinition;
 
-class IrreField extends TcaField
+class IrreField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -45,6 +45,7 @@ class IrreField extends TcaField
         $resolver->setAllowedTypes('minitems', 'int');
         $resolver->setAllowedTypes('maxitems', 'int');
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
             if ($foreignTable instanceof TableBuilder) {
                 return $foreignTable->getTableName();

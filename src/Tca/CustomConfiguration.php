@@ -12,7 +12,7 @@ namespace Typo3Api\Tca;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CustomConfiguration implements TcaConfiguration
+class CustomConfiguration implements TcaConfigurationInterface
 {
     /**
      * @var array
@@ -37,6 +37,7 @@ class CustomConfiguration implements TcaConfiguration
         $resolver->setAllowedTypes('showitem', ['array', 'string']);
         $resolver->setAllowedTypes('dbTableDefinition', 'array');
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('showitem', function (Options $options, $showitem) {
             if (is_array($showitem)) {
                 $showitem = implode(', ', array_filter($showitem));

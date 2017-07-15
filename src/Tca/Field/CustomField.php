@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *     ]
  * ]))
  */
-class CustomField extends TcaField
+class CustomField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {

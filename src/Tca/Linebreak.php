@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class Linebreak implements TcaConfiguration
+class Linebreak implements TcaConfigurationInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {

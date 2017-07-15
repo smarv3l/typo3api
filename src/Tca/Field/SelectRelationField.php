@@ -12,12 +12,11 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Typo3Api\Builder\TableBuilder;
 use Typo3Api\Utility\ForeignTableUtility;
 
 
-class SelectRelationField extends TcaField
+class SelectRelationField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -39,6 +38,7 @@ class SelectRelationField extends TcaField
         $resolver->setAllowedTypes('foreign_table_where', 'string');
         $resolver->setAllowedTypes('items', 'array');
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
             if ($foreignTable instanceof TableBuilder) {
                 return $foreignTable->getTableName();

@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class SortingConfiguration implements TcaConfiguration
+class SortingConfiguration implements TcaConfigurationInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {

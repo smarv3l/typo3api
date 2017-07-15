@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SelectField extends TcaField
+class SelectField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -80,6 +80,7 @@ class SelectField extends TcaField
             return $items;
         });
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('values', function (Options $options, $values) {
             foreach ($values as $value) {
 

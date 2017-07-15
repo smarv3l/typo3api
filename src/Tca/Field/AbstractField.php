@@ -12,9 +12,9 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Typo3Api\Tca\TcaConfiguration;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
-abstract class TcaField implements TcaConfiguration
+abstract class AbstractField implements TcaConfigurationInterface
 {
     /**
      * @var array
@@ -90,6 +90,7 @@ abstract class TcaField implements TcaConfiguration
         $resolver->setAllowedTypes('useForRecordType', 'bool');
         $resolver->setAllowedTypes('index', 'bool');
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('name', function (Options $options, $name) {
 
             if (strlen($name) > 64) {

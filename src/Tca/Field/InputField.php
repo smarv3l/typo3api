@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class InputField extends TcaField
+class InputField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -71,6 +71,7 @@ class InputField extends TcaField
         $resolver->setAllowedTypes('nospace', 'bool');
         $resolver->setAllowedTypes('unique', 'bool');
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('max', function (Options $options, $maxLength) {
             if ($maxLength < 1) {
                 $msg = "Max size of input can't be smaller than 1, got $maxLength";

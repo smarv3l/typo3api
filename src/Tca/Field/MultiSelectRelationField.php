@@ -16,7 +16,7 @@ use Typo3Api\Builder\TableBuilder;
 use Typo3Api\Utility\ForeignTableUtility;
 
 
-class MultiSelectRelationField extends TcaField
+class MultiSelectRelationField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -42,6 +42,7 @@ class MultiSelectRelationField extends TcaField
         $resolver->setAllowedTypes('foreign_table_where', 'string');
         $resolver->setAllowedTypes('items', 'array');
 
+        /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
             if ($foreignTable instanceof TableBuilder) {
                 return $foreignTable->getTableName();

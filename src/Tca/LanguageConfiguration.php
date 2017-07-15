@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class LanguageConfiguration implements TcaConfiguration, DefaultTab
+class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {

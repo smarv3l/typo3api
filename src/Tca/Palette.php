@@ -9,7 +9,7 @@
 namespace Typo3Api\Tca;
 
 
-class Palette implements TcaConfiguration
+class Palette implements TcaConfigurationInterface
 {
     /**
      * @var string
@@ -17,7 +17,7 @@ class Palette implements TcaConfiguration
     private $name;
 
     /**
-     * @var TcaConfiguration[]
+     * @var TcaConfigurationInterface[]
      */
     private $children;
 

@@ -13,7 +13,7 @@ namespace Typo3Api\Tca;
  * This simple configuration just passes though the showitem string passed during construct.
  * It can be used to easily reuse fields that have already been defined (for example while creating a new type).
  */
-class ShowitemConfiguration implements TcaConfiguration
+class ShowitemConfiguration implements TcaConfigurationInterface
 {
     /**
      * @var string

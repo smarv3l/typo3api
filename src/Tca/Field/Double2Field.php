@@ -12,7 +12,7 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Double2Field extends TcaField
+class Double2Field extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {

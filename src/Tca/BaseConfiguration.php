@@ -15,7 +15,7 @@ namespace Typo3Api\Tca;
  * This is a basic configuration for fields every table should have.
  * Because of this, it is added to every newly created table automatically.
  */
-class BaseConfiguration implements TcaConfiguration
+class BaseConfiguration implements TcaConfigurationInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {

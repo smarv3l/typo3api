@@ -12,7 +12,7 @@ namespace Typo3Api\Hook;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
-use Typo3Api\Tca\TcaConfiguration;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
 class SqlSchemaHook
 {
@@ -26,7 +26,7 @@ class SqlSchemaHook
      */
     private static $eventAttached = false;
 
-    public static function addTableConfiguration(string $tableName, TcaConfiguration $configuration)
+    public static function addTableConfiguration(string $tableName, TcaConfigurationInterface $configuration)
     {
         if (!isset(self::$tableConfigurations[$tableName])) {
             self::$tableConfigurations[$tableName] = [];
@@ -58,7 +58,7 @@ class SqlSchemaHook
         $map = [];
 
         foreach (self::$tableConfigurations as $tableName => $tableConfiguration) {
-            /** @var TcaConfiguration $configuration */
+            /** @var TcaConfigurationInterface $configuration */
             foreach ($tableConfiguration as $configuration) {
                 $tableDefinitions = $configuration->getDbTableDefinitions($tableName);
                 foreach ($tableDefinitions as $table => $fieldDefinitions) {

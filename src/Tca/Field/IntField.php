@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Typo3Api\Utility\DbFieldDefinition;
 
-class IntField extends TcaField
+class IntField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {

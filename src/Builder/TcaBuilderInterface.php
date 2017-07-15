@@ -9,29 +9,29 @@
 namespace Typo3Api\Builder;
 
 
-use Typo3Api\Tca\TcaConfiguration;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
 interface TcaBuilderInterface
 {
     /**
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configure(TcaConfiguration $configuration): TcaBuilderInterface;
+    public function configure(TcaConfigurationInterface $configuration): TcaBuilderInterface;
 
     /**
      * @param string $tab
-     * @param TcaConfiguration $configuration
+     * @param TcaConfigurationInterface $configuration
      * @return $this
      */
-    public function configureInTab(string $tab, TcaConfiguration $configuration): TcaBuilderInterface;
+    public function configureInTab(string $tab, TcaConfigurationInterface $configuration): TcaBuilderInterface;
 
     /**
      * @param string $position
-     * @param TcaConfiguration $configuration
-     * @return mixed
+     * @param TcaConfigurationInterface $configuration
+     * @return $this
      */
-    public function configureAtPosition(string $position, TcaConfiguration $configuration): TcaBuilderInterface;
+    public function configureAtPosition(string $position, TcaConfigurationInterface $configuration): TcaBuilderInterface;
 
     /**
      * @param string $type
