@@ -83,14 +83,22 @@ class InputField extends TcaField
 
     public function getFieldTcaConfig(string $tableName)
     {
-        return [
+        $config = [
             'type' => 'input',
             'size' => (int)($this->getOption('size') / 2), // adjust the size to fit the character count better
             'max' => $this->getOption('max'),
-            'default' => $this->getOption('default'),
-            'is_in' => $this->getOption('is_in'),
             'eval' => implode(',', $this->getEvals()),
         ];
+
+        if ($this->getOption('default')) {
+            $config['default'] = $this->getOption('default');
+        }
+
+        if ($this->getOption('is_in')) {
+            $config['is_in'] = $this->getOption('is_in');
+        }
+
+        return $config;
     }
 
     /**
