@@ -166,9 +166,12 @@ abstract class TcaField implements TcaConfiguration
     {
         $column = [
             'label' => $this->getOption('label'),
-            'exclude' => $this->getOption('exclude'),
             'config' => $this->getFieldTcaConfig($tableName),
         ];
+
+        if ($this->getOption('exclude')) {
+            $column['exclude'] = true;
+        }
 
         if ($this->getOption('localize') === false) {
             $column['l10n_mode'] = 'exclude';
