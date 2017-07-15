@@ -270,10 +270,12 @@ class TableBuilder implements TcaBuilderInterface
 
             SqlSchemaHook::addTableConfiguration($this->getTableName(), $configuration);
         } else if (count($missingColumns) > 0) {
-            throw new \RuntimeException("Partial configuration of a child type is not implemented right now");
+            throw new \RuntimeException("Partial configuration of a child type is not possible");
         } else {
-            // all columns are already defined so...
-            // TODO detect which overwrites are nessesary... maybe making overwrites optional somehow
+            // all columns are already defined so define overrides, just in case something changed.
+            foreach ($columns as $columnName => $columnDefinition) {
+                $tca['types'][$this->getTypeName()]['columnsOverrides'][$columnName] = $columnDefinition;
+            }
         }
     }
 
