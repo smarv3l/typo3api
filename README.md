@@ -34,6 +34,8 @@
         new \Typo3Api\Tca\Field\InputField('first_name', ['localize' => false]),
         new \Typo3Api\Tca\Field\InputField('last_name', ['localize' => false]),
     ]))
+    ->configure(new \Typo3Api\Tca\Field\Double2Field('height', ['min' => 1.0, 'max' => 3.0]))
+    ->configure(new \Typo3Api\Tca\Field\DateField('birthday'))
     ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
         'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
         'localize' => false,
@@ -55,6 +57,7 @@
         new \Typo3Api\Tca\Field\PhoneField('mobile'),
     ]))
     ->configureInTab('Address', new \Typo3Api\Tca\Field\IrreField('addresses', [
+        'localize' => false,
         'foreign_table' => \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'address')
             ->configure(new \Typo3Api\Tca\SortingConfiguration())
             ->configure(new \Typo3Api\Tca\Field\InputField('city'))
@@ -80,6 +83,17 @@
     // this is a limitation i want to remove in the future
     ->configure(new \Typo3Api\Tca\Field\InputField('header'))
     ->configure(new \Typo3Api\Tca\Field\SelectRelationField('person', [
+        'foreign_table' => 'tx_hntemplates_person',
+        'foreign_table_where' => 'ORDER BY tx_hntemplates_person.last_name'
+    ]))
+    ->configure(new \Typo3Api\Tca\Field\RteField('bodytext'))
+;
+
+\Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'company')
+    ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
+    ->configure(new \Typo3Api\Tca\LanguageConfiguration())
+    ->configure(new \Typo3Api\Tca\Field\InputField('name'))
+    ->configure(new \Typo3Api\Tca\Field\MultiSelectRelationField('employees', [
         'foreign_table' => 'tx_hntemplates_person'
     ]))
 ;
