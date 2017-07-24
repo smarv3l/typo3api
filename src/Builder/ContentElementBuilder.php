@@ -75,7 +75,6 @@ class ContentElementBuilder implements TcaBuilderInterface
         $this->configureInTab(
             'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance',
             new ShowitemConfiguration([
-                '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.frames;frames',
                 '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.appearanceLinks;appearanceLinks',
             ])
         );
