@@ -73,12 +73,6 @@ class ContentElementBuilder implements TcaBuilderInterface
         // TODO mark the following tabs as default tabs which currently isn't easily possible
 
         $this->configureInTab(
-            'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance',
-            new ShowitemConfiguration([
-                '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.appearanceLinks;appearanceLinks',
-            ])
-        );
-        $this->configureInTab(
             'LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language',
             new ShowitemConfiguration([
                 '--palette--;;language'
