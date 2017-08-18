@@ -274,6 +274,26 @@ class TableBuilder implements TcaBuilderInterface
         } else {
             // all columns are already defined so define overrides, just in case something changed.
             foreach ($columns as $columnName => $columnDefinition) {
+
+                // don't overwrite if both arrays are identical
+                $existingColumnDefinition = $tca['columns'][$columnName];
+                if ($existingColumnDefinition === $columnDefinition) {
+                    continue;
+                }
+
+                // prevent accidental type changes
+                $existingColumnType = $existingColumnDefinition['config']['type'];
+                $newColumnType = $columnDefinition['config']['type'];
+                if ($newColumnType !== $existingColumnType) {
+                    $tableName = $this->getTableName();
+                    $typeName = $this->getTypeName();
+                    $msg = "Column $columnName is already defined in table $tableName but as type $existingColumnType.";
+                    $msg .= " Tried to change the type in type $typeName with $newColumnType.";
+                    $msg .= " It is not possible to change the field type in different render types.";
+                    $msg .= " Use another field name or use another table entirely.";
+                    throw new \RuntimeException($msg);
+                }
+
                 $tca['types'][$this->getTypeName()]['columnsOverrides'][$columnName] = $columnDefinition;
             }
         }
