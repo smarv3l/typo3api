@@ -53,14 +53,30 @@ class TableBuilder implements TcaBuilderInterface
     /**
      * @param string $extkey
      * @param string $name
+     * @param string $typeName
      * @return TableBuilder
      */
-    public static function create(string $extkey, string $name): TableBuilder
+    public static function create(string $extkey, string $name, string $typeName = '1'): TableBuilder
     {
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $tableBuilder = new static($extPrefix . $name, '1');
-        $tableBuilder->setTitle(ucfirst(str_replace('_', ' ', $name)));
+        $tableBuilder = new static($extPrefix . $name, $typeName);
+
+        // define a name for the table if not already present
+        if (!$tableBuilder->getTitle()) {
+            $tableBuilder->setTitle(ucfirst(str_replace('_', ' ', $name)));
+        }
+
         return $tableBuilder;
+    }
+
+    /**
+     * @param string $name
+     * @param string $typeName
+     * @return TableBuilder
+     */
+    public static function createFullyNamed(string $name, string $typeName = '1'): TableBuilder
+    {
+        return new TableBuilder($name, $typeName);
     }
 
     /**
@@ -68,6 +84,7 @@ class TableBuilder implements TcaBuilderInterface
      * @param string $name
      * @param string $typeName
      * @return TableBuilder
+     * @deprecated use create instead
      */
     public static function createForType(string $extkey, string $name, string $typeName): TableBuilder
     {
