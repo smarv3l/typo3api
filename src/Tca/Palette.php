@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: marco
- * Date: 28.06.17
- * Time: 13:03
- */
 
 namespace Typo3Api\Tca;
 

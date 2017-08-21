@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: marco
- * Date: 18.06.17
- * Time: 13:23
- */
 
 namespace Typo3Api\Utility;
 

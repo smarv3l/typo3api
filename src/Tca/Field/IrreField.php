@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: marco
- * Date: 11.06.17
- * Time: 21:57
- */
 
 namespace Typo3Api\Tca\Field;
 
