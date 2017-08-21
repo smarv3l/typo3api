@@ -317,7 +317,7 @@ class TableBuilder implements TcaBuilderInterface
         }
 
         // search the correct tab and add the content into it
-        $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/';
+        $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*(?=,\s*--div--|$)/Us';
         $type['showitem'] = preg_replace($search, '\0,' . $showItemString, $type['showitem'], 1, $matches);
         if ($matches > 0) {
             return;
@@ -329,7 +329,7 @@ class TableBuilder implements TcaBuilderInterface
 
         // put the new tab right before the first "default tab"
         if (count($this->defaultTabs) > 0 && !in_array($tab, $this->defaultTabs)) {
-            $search = '/--div--\s*;\s*' . preg_quote(reset($this->defaultTabs), '/') . '.*?(?=,\s?--div--|$)/';
+            $search = '/--div--\s*;\s*' . preg_quote(reset($this->defaultTabs), '/') . '.*(?=,\s*--div--|$)/Us';
             $type['showitem'] = preg_replace($search, $newTab . ', \0', $type['showitem'], 1, $matches);
             if ($matches > 0) {
                 return;
