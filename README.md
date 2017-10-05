@@ -47,7 +47,11 @@
         ]
     ]))
     ->configure(new \Typo3Api\Tca\Field\TextareaField('notice'))
-    ->configureInTab('Media', new \Typo3Api\Tca\Field\ImageField('image'))
+    ->configureInTab('Media', new \Typo3Api\Tca\Field\ImageField('image', [
+        'cropVariants' => [
+            'default' => '4:3'
+        ]
+    ]))
     ->configureInTab('Media', new \Typo3Api\Tca\Field\MediaField('media'))
     ->configureInTab('Contact', new \Typo3Api\Tca\Field\EmailField('email', ['unique' => true]))
     ->configureInTab('Contact', new \Typo3Api\Tca\Field\LinkField('website'))

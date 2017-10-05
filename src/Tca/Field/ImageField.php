@@ -1,10 +1,17 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: marco
+ * Date: 18.06.17
+ * Time: 13:17
+ */
 
 namespace Typo3Api\Tca\Field;
 
 
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Typo3Api\Utility\DbFieldDefinition;
 
 class ImageField extends FileField
 {
@@ -27,7 +34,58 @@ class ImageField extends FileField
                 GeneralUtility::trimExplode(',', strtolower($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])),
                 ImageField::BLACKLISTED_FORMATS
             ),
+            'cropVariants' => null,
         ]);
+
+        $resolver->addAllowedTypes('cropVariants', ['array', 'null']);
+        $resolver->setNormalizer('cropVariants', function (Options $options, $cropVariants) {
+            if ($cropVariants === null) {
+                return null;
+            }
+
+            $parsedCropVariants = [];
+            foreach ($cropVariants as $name => $aspectRatios) {
+                if (is_string($aspectRatios)) {
+                    $aspectRatios = GeneralUtility::trimExplode(',', $aspectRatios, true);
+                }
+
+                $allowedAspectRatios = [];
+                foreach ($aspectRatios as $aspectRatio) {
+                    if ($aspectRatio === 'NaN') {
+                        $allowedAspectRatios['NaN'] = [
+                            'title' => 'LLL:EXT:lang/Resources/Private/Language/locallang_wizards.xlf:imwizard.ratio.free',
+                            'value' => 0.0
+                        ];
+                        continue;
+                    }
+
+                    $parts = GeneralUtility::trimExplode(':', $aspectRatio, true);
+                    if (count($parts) !== 2) {
+                        $msg = "Aspect ratio $aspectRatio could not be parsed. Expected something like 16:9.";
+                        throw new \RuntimeException($msg);
+                    }
+
+                    $x = floatval($parts[0]);
+                    $y = floatval($parts[1]);
+                    if ($x <= 0 || $y <= 0) {
+                        $msg = "Aspect ratio $aspectRatio did not return usable sizes, got $x and $y.";
+                        throw new \RuntimeException($msg);
+                    }
+
+                    $allowedAspectRatios[$aspectRatio] = [
+                        'title' => $aspectRatio,
+                        'value' => $x / $y
+                    ];
+                }
+
+                $parsedCropVariants[$name] = [
+                    'title' => $name,
+                    'allowedAspectRatios' => $allowedAspectRatios
+                ];
+            }
+
+            return $parsedCropVariants;
+        });
     }
 
     public function getFieldTcaConfig(string $tableName)
