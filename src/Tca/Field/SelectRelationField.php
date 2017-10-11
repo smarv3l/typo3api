@@ -47,7 +47,7 @@ class SelectRelationField extends AbstractField
 
         $resolver->setNormalizer('items', function (Options $options, array $items) {
             // ensure at least one value, or an empty value if not required
-            if (empty($items) || $options['required'] === false) {
+            if ($options['required'] === false) {
                 array_unshift($items, ['', '0']);
             }
 
