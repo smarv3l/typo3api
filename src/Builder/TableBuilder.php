@@ -172,7 +172,7 @@ class TableBuilder implements TcaBuilderInterface
     {
         $type =& $GLOBALS['TCA'][$this->getTableName()]['types'][$this->getTypeName()];
 
-        $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/';
+        $search = '/--div--\s*;\s*' . preg_quote($tab, '/') . '.*?(?=,\s?--div--|$)/Us';
         $match = preg_match($search, $type['showitem'], $results);
         $newTab = $match ? $results[0] : '--div--; ' . $tab;
 
@@ -181,7 +181,7 @@ class TableBuilder implements TcaBuilderInterface
         }
 
         // search the other tab and add the new one in front of it
-        $search = '/--div--\s*;\s*' . preg_quote($otherTab, '/') . '.*?(?=,\s?--div--|$)/';
+        $search = '/--div--\s*;\s*' . preg_quote($otherTab, '/') . '.*?(?=,\s?--div--|$)/Us';
         $type['showitem'] = preg_replace($search, $newTab . ', \0', $type['showitem'], 1, $matches);
         if ($matches === 0) {
             throw new \RuntimeException("The tab '$otherTab' seems to not exist.");
@@ -215,9 +215,10 @@ class TableBuilder implements TcaBuilderInterface
         return $GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'];
     }
 
-    public function setTitle(string $title)
+    public function setTitle(string $title): TableBuilder
     {
         $GLOBALS['TCA'][$this->getTableName()]['ctrl']['title'] = $title;
+        return $this;
     }
 
     /**
