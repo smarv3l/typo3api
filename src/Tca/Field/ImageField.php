@@ -101,7 +101,10 @@ class ImageField extends FileField
             $config['appearance']
         );
 
-        $config['overrideChildTca']['columns']['crop']['config']['cropVariants'] = $this->getOption('cropVariants');
+        $cropVariants = $this->getOption('cropVariants');
+        if ($cropVariants !== null) {
+            $config['overrideChildTca']['columns']['crop']['config']['cropVariants'] = $cropVariants;
+        }
 
         return $config;
     }
