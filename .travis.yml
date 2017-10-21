@@ -1,6 +1,11 @@
 language: php
 php:
-  - '7.0'
-  - '7.1'
-install: composer install --no-suggest --optimize-autoloader --classmap-authoritative
+  - 7.0
+  - 7.1
+  - 7.2
+  - hhvm
+install: composer install --no-suggest
 script: vendor/bin/phpunit tests
+cache:
+  directories:
+    - $HOME/.composer/cache
