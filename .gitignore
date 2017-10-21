@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+vendor
+/composer.lock
+/index.php
+/typo3
+/typo3_src

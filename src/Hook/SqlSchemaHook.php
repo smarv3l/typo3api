@@ -26,6 +26,12 @@ class SqlSchemaHook
      */
     private static $eventAttached = false;
 
+    /**
+     * Add a configuration to the hook for attaching when the schema is compared.
+     *
+     * @param string $tableName
+     * @param TcaConfigurationInterface $configuration
+     */
     public static function addTableConfiguration(string $tableName, TcaConfigurationInterface $configuration)
     {
         if (!isset(self::$tableConfigurations[$tableName])) {
@@ -35,6 +41,9 @@ class SqlSchemaHook
         self::$tableConfigurations[$tableName][] = $configuration;
     }
 
+    /**
+     * Attach to the event hook.
+     */
     public static function attach()
     {
         if (self::$eventAttached) {
@@ -53,6 +62,22 @@ class SqlSchemaHook
         self::$eventAttached = true;
     }
 
+    /**
+     * Reset all attached definitions.
+     * Mostly useful for testing.
+     */
+    public static function reset()
+    {
+        self::$eventAttached = false;
+        self::$tableConfigurations = [];
+    }
+
+    /**
+     * The actual hook method.
+     *
+     * @param array $sqlStrings
+     * @return array
+     */
     public function modifyTablesDefinitionString(array $sqlStrings)
     {
         $map = [];

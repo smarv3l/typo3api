@@ -15,6 +15,7 @@ class CustomConfiguration implements TcaConfigurationInterface
 
     public function __construct(array $options)
     {
+        // TODO cache option resolver creation
         $resolver = new OptionsResolver();
 
         $resolver->setDefaults([
