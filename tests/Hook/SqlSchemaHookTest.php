@@ -6,20 +6,12 @@ use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
+use Typo3Api\PreparationForTypo3;
 use Typo3Api\Tca\CustomConfiguration;
 
 class SqlSchemaHookTest extends TestCase
 {
-    public static function setUpBeforeClass()
-    {
-        // what? you think you can execute typo3 code with warnings enabled? are you crazy?
-        error_reporting(E_ERROR | E_WARNING | E_DEPRECATED);
-    }
-
-    public function setUp()
-    {
-        SqlSchemaHook::reset();
-    }
+    use PreparationForTypo3;
 
     public function testAttach()
     {
