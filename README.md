@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.org/Nemo64/typo3api.svg?branch=master)](https://travis-ci.org/Nemo64/typo3api)
 
 ```PHP
 \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'person')
