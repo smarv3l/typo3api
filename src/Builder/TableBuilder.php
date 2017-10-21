@@ -231,9 +231,7 @@ class TableBuilder implements TcaBuilderInterface
         }
 
         $GLOBALS['TCA'][$this->getTableName()] = [
-            'ctrl' => [
-                'dividers2tabs' => true,
-            ],
+            'ctrl' => [],
             'interface' => [
                 'showRecordFieldList' => '',
             ],
@@ -355,7 +353,11 @@ class TableBuilder implements TcaBuilderInterface
         }
 
         // just put the new tab at the end
-        $type['showitem'] .= ', ' . $newTab;
+        if (isset($type['showitem']) && !empty($type['showitem'])) {
+            $type['showitem'] .= ', ' . $newTab;
+        } else {
+            $type['showitem'] = $newTab;
+        }
     }
 
     /**
