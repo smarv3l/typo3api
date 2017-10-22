@@ -9,10 +9,18 @@ use Typo3Api\Hook\SqlSchemaHook;
 
 trait PreparationForTypo3
 {
+    private static $errorLevelBeforeClass = E_ALL;
+
     public static function setUpBeforeClass()
     {
-        // what? you think you can execute typo3 code with warnings enabled? are you crazy?
-        error_reporting(E_ERROR | E_WARNING | E_DEPRECATED);
+        self::$errorLevelBeforeClass = error_reporting();
+        error_reporting(self::$errorLevelBeforeClass & ~E_NOTICE);
+        // what? you think you can execute typo3 code with notices enabled? are you crazy?
+    }
+
+    public static function tearDownAfterClass()
+    {
+        error_reporting(self::$errorLevelBeforeClass);
     }
 
     public function setUp()
