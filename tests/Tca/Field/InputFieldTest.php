@@ -51,7 +51,7 @@ class InputFieldTest extends AbstractFieldTest
 
     /**
      * @dataProvider differentSizeProvider
-     * @param string $fieldName
+     * @param int $size
      */
     public function testDifferentSizes(int $size)
     {
