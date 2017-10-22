@@ -61,4 +61,20 @@ class InputFieldTest extends AbstractFieldTest
         $this->assertEquals($size / 2, $field->getColumns('t')[$fieldName]['config']['size']);
         $this->assertEquals("`$fieldName` VARCHAR($size) DEFAULT '' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
     }
+
+    /**
+     * @dataProvider validNameProvider
+     * @param string $fieldName
+     */
+    public function testDefault(string $fieldName)
+    {
+        $default = 'some default';
+        $field = $this->createFieldInstance($fieldName, [
+            'default' => $default
+        ], false);
+
+        $this->assertBasicCtrlChange($field);
+        $this->assertEquals($default, $field->getColumns('t')[$fieldName]['config']['default']);
+        $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '$default' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
+    }
 }
