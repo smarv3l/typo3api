@@ -6,6 +6,7 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Typo3Api\Exception\TcaFieldException;
 use Typo3Api\Tca\TcaConfigurationInterface;
 
 abstract class AbstractField implements TcaConfigurationInterface
@@ -36,8 +37,8 @@ abstract class AbstractField implements TcaConfigurationInterface
             $optionResolver = $this->getOptionResolver();
             $this->options = $optionResolver->resolve($options);
         } catch (InvalidOptionsException $e) {
-            $msg = "Error while resolving options for the field '$name': " . $e->getMessage();
-            throw new InvalidOptionsException($msg, 0, $e);
+            $this->options = ['name' => $name]; // make getName work for the exception
+            throw new TcaFieldException($this, $e->getMessage(), 1508678194, $e);
         }
     }
 
@@ -203,6 +204,11 @@ abstract class AbstractField implements TcaConfigurationInterface
     }
 
     public function getShowItemString(string $tableName): string
+    {
+        return $this->getOption('name');
+    }
+
+    public function getName(): string
     {
         return $this->getOption('name');
     }
