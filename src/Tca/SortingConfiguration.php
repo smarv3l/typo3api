@@ -12,11 +12,13 @@ class SortingConfiguration implements TcaConfigurationInterface
 
     public function getColumns(string $tableName): array
     {
-        return ['sorting' => [
-            'config' => [
-                'type' => 'passthrough'
+        return [
+            'sorting' => [
+                'config' => [
+                    'type' => 'passthrough'
+                ]
             ]
-        ]];
+        ];
     }
 
     public function getPalettes(string $tableName): array
@@ -31,6 +33,13 @@ class SortingConfiguration implements TcaConfigurationInterface
 
     public function getDbTableDefinitions(string $tableName): array
     {
-        return [$tableName => ["sorting int(11) DEFAULT '0' NOT NULL"]];
+        return [
+            $tableName => [
+                "sorting int(11) DEFAULT '0' NOT NULL",
+
+                // sorting is always local to the pid so putting that in the index might help a lot
+                "INDEX sorting (pid, sorting ASC)",
+            ]
+        ];
     }
 }
