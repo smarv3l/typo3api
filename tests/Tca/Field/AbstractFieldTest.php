@@ -33,7 +33,7 @@ class AbstractFieldTest extends TestCase
     {
         $ctrl = [];
         $field->modifyCtrl($ctrl, 'stub_table');
-        $this->assertEmpty($ctrl);
+        $this->assertEmpty($ctrl, "No modification to ctrl is done");
     }
 
     /**

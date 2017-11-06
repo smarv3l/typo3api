@@ -12,7 +12,6 @@ namespace Typo3Api\Tca\Field;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Typo3Api\Utility\DbFieldDefinition;
 
 class ImageField extends FileField
 {
@@ -31,12 +30,15 @@ class ImageField extends FileField
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
+            'useAsThumbnail' => true,
             'allowedFileExtensions' => array_diff(
                 GeneralUtility::trimExplode(',', strtolower($GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'])),
                 ImageField::BLACKLISTED_FORMATS
             ),
             'cropVariants' => null,
         ]);
+
+        $resolver->setAllowedValues('useAsThumbnail', [true, false, 'force']);
 
         $resolver->addAllowedTypes('cropVariants', ['array', 'null']);
         $resolver->setNormalizer('cropVariants', function (Options $options, $cropVariants) {
@@ -87,6 +89,18 @@ class ImageField extends FileField
 
             return $parsedCropVariants;
         });
+    }
+
+    public function modifyCtrl(array &$ctrl, string $tableName)
+    {
+        parent::modifyCtrl($ctrl, $tableName);
+
+        $thumbnailMode = $this->getOption('useAsThumbnail');
+        if ($thumbnailMode === true && !isset($ctrl['thumbnail'])) {
+            $ctrl['thumbnail'] = $this->getOption('name');
+        } elseif ($thumbnailMode === 'force') {
+            $ctrl['thumbnail'] = $this->getOption('name');
+        }
     }
 
     public function getFieldTcaConfig(string $tableName)
