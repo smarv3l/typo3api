@@ -1,10 +1,33 @@
 language: php
+
 php:
   - 7.0
   - 7.1
   - 7.2
-install: composer update
-script: vendor/bin/phpunit tests
+
+matrix:
+  include:
+    - php: 7.0
+      env: dependencies=highest
+    - php: 7.1
+      env: dependencies=highest
+    - php: 7.2
+      env: dependencies=highest
+
+    - php: 7.0
+      env: dependencies=lowest
+    - php: 7.1
+      env: dependencies=lowest
+    - php: 7.2
+      env: dependencies=lowest
+
+install:
+  - if [ "$dependencies" = "highest" ]; then composer update --prefer-lowest --no-interaction; fi
+  - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --no-interaction; fi
+
+script:
+  - vendor/bin/phpunit tests
+
 cache:
   directories:
     - $HOME/.composer/cache
