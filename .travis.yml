@@ -22,7 +22,7 @@ matrix:
       env: dependencies=lowest
 
 install:
-  - if [ "$dependencies" = "highest" ]; then composer update --prefer-lowest --no-interaction; fi
+  - if [ "$dependencies" = "highest" ]; then composer update --no-interaction; fi
   - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --no-interaction; fi
 
 script:
