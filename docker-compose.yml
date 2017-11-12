@@ -1,0 +1,37 @@
+version: "2"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - .:/var/www:cached
+      - typo3temp:/var/www/web/typo3temp
+    ports:
+      - 8080:80
+    links:
+      - db
+    environment:
+      PLATFORM: Docker
+      TYPO3_CONTEXT: Development
+  db:
+    image: mysql:5.7
+    volumes:
+      - database:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    ports:
+      - 3306:3306
+    command: mysqld --sql-mode=NO_ENGINE_SUBSTITUTION --character-set-server=utf8 --collation-server=utf8_general_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+
+volumes:
+  database:
+  typo3temp:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs

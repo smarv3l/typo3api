@@ -16,6 +16,9 @@
         "typo3/cms": {
             "cms-package-dir": "{$vendor-dir}/typo3/cms",
             "web-dir": "web"
+        },
+        "helhum/typo3-console": {
+            "install-extension-dummy": false
         }
     },
     "require": {
@@ -30,7 +33,8 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.4"
+        "phpunit/phpunit": "^6.4",
+        "helhum/typo3-console": "^4.9"
     },
     "autoload-dev": {
         "psr-4": {

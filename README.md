@@ -1,104 +1,29 @@
 [![Build Status](https://travis-ci.org/Nemo64/typo3api.svg?branch=master)](https://travis-ci.org/Nemo64/typo3api)
 
-```PHP
-\Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'person')
-    ->configure(new \Typo3Api\Tca\LanguageConfiguration())
-    ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
-    ->configure(new \Typo3Api\Tca\SortingConfiguration())
-    ->configure(new \Typo3Api\Tca\CustomConfiguration([
-        'ctrl' => [
-            'label_userFunc' => function (&$parameters) {
-                $name = $parameters['row']['last_name'];
-                $name .= ', ' . $parameters['row']['first_name'];
-                $name .= ' (' . $parameters['row']['email'] . ')';
-                $parameters['title'] = $name;
-            }
-        ]
-    ]))
-    ->configure(new \Typo3Api\Tca\Field\SelectField('type', [
-        'useForRecordType' => true,
-        'items' => [
-            ['Normal', '1'],
-            ['Employee', '2']
-        ]
-    ]))
-    ->configure(new \Typo3Api\Tca\Palette('name', [
-        new \Typo3Api\Tca\Field\SelectField('gender', [
-            'label' => 'Salutation',
-            'items' => [
-                ['Mr.', 'm'],
-                ['Ms.', 'f'],
-            ]
-        ]),
-        new \Typo3Api\Tca\Linebreak(),
-        new \Typo3Api\Tca\Field\InputField('first_name', ['localize' => false]),
-        new \Typo3Api\Tca\Field\InputField('last_name', ['localize' => false]),
-    ]))
-    ->configure(new \Typo3Api\Tca\Field\Double2Field('height', ['min' => 1.0, 'max' => 3.0]))
-    ->configure(new \Typo3Api\Tca\Field\DateField('birthday'))
-    ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
-        'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
-        'localize' => false,
-        'config' => [
-            'type' => 'input',
-            'renderType' => 'colorpicker',
-            'size' => 7,
-            'default' => '#000000'
-        ]
-    ]))
-    ->configure(new \Typo3Api\Tca\Field\TextareaField('notice'))
-    ->configureInTab('Media', new \Typo3Api\Tca\Field\ImageField('image', [
-        'cropVariants' => [
-            'default' => '4:3'
-        ]
-    ]))
-    ->configureInTab('Media', new \Typo3Api\Tca\Field\MediaField('media'))
-    ->configureInTab('Contact', new \Typo3Api\Tca\Field\EmailField('email', ['unique' => true]))
-    ->configureInTab('Contact', new \Typo3Api\Tca\Field\LinkField('website'))
-    ->configureInTab('Contact', new \Typo3Api\Tca\Palette('phone', [
-        new \Typo3Api\Tca\Field\PhoneField('work'),
-        new \Typo3Api\Tca\Field\PhoneField('home'),
-        new \Typo3Api\Tca\Field\PhoneField('mobile'),
-    ]))
-    ->configureInTab('Address', new \Typo3Api\Tca\Field\IrreField('addresses', [
-        'localize' => false,
-        'foreign_table' => \Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'address')
-            ->configure(new \Typo3Api\Tca\SortingConfiguration())
-            ->configure(new \Typo3Api\Tca\Field\InputField('city'))
-            ->configure(new \Typo3Api\Tca\Palette('full_street', [
-                new \Typo3Api\Tca\Field\InputField('street'),
-                new \Typo3Api\Tca\Field\InputField('number', ['max' => 5]),
-            ]))
-            ->configure(new \Typo3Api\Tca\Field\InputField('country'))
-    ]))
-;
+# apis for easier typo3 handling
 
-\Typo3Api\Builder\TableBuilder::createForType($_EXTKEY, 'person', '2')
-    ->inheritConfigurationFromType('1')
-    ->addOrMoveTabInFrontOfTab('Job', 'Media')
-    ->configureInTab('Job', new \Typo3Api\Tca\Field\InputField('position'))
-    ->configureInTab('Job', new \Typo3Api\Tca\Field\Double2Field('salary', ['max' => 100000]))
-;
+# testing
 
-\Typo3Api\Builder\ContentElementBuilder::create($_EXTKEY, 'vcard')
-    ->setTitle("VCard")
-    ->setDescription("Shows a Persons vcard ~ define a person in a storage folder")
-    // options will be ignored if the column already exists
-    // this is a limitation i want to remove in the future
-    ->configure(new \Typo3Api\Tca\Field\InputField('header'))
-    ->configure(new \Typo3Api\Tca\Field\SelectRelationField('person', [
-        'foreign_table' => 'tx_hntemplates_person',
-        'foreign_table_where' => 'ORDER BY tx_hntemplates_person.last_name'
-    ]))
-    ->configure(new \Typo3Api\Tca\Field\RteField('bodytext'))
-;
+Checkout this repo and install the composer dependencies using `composer update`.
+I don't ship a `composer.lock` since this library must run with the newest dependencies.
+If you don't have composer locally use `docker-compose run --rm --entrypoint=composer php update`. 
 
-\Typo3Api\Builder\TableBuilder::create($_EXTKEY, 'company')
-    ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
-    ->configure(new \Typo3Api\Tca\LanguageConfiguration())
-    ->configure(new \Typo3Api\Tca\Field\InputField('name'))
-    ->configure(new \Typo3Api\Tca\Field\MultiSelectRelationField('employees', [
-        'foreign_table' => 'tx_hntemplates_person'
-    ]))
-;
-```
+## run the unit tests
+
+There are classical unit tests included.
+
+run `docker-compose run --rm php vendor/bin/phpunit tests`
+
+## run the shipped typo3 instance
+
+Since many features can't easily be tested without a running typo3 instance.
+To test the interface use the included typo3 instance.
+
+run `docker-compose up` and then access `localhost:8080`.
+All passwords are `password` and the default user is `admin`. 
+
+### updating the shipped mysql dump
+
+If you changed something in the database which you think is important to ship for other testers:
+simply run the following command while the database is running
+`docker-compose exec db bash -c "mysqldump -uroot -ppassword database > /docker-entrypoint-initdb.d/database.sql"`
