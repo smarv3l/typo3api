@@ -29,7 +29,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Typo3Api\\": "src"
+            "Typo3Api\\": "Classes"
         }
     },
     "require-dev": {
@@ -38,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Typo3Api\\": "tests"
+            "Typo3Api\\": "Tests"
         }
     }
 }
