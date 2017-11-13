@@ -360,7 +360,7 @@ mod.wizards.newContentElement.wizardItems.$this->section.show := addToList(vcard
 
 Checkout this repo and install the composer dependencies using `composer update`.
 I don't ship a `composer.lock` since this library must run with the newest dependencies.
-If you don't have composer locally use `docker-compose run --rm --entrypoint=composer php update`. 
+If you don't have composer locally use `docker-compose run --rm php composer update`. 
 
 ## run the unit tests
 
