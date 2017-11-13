@@ -11,11 +11,6 @@ matrix:
 
     - php: 7.0
       env: dependencies=lowest
-    - php: 7.1
-      env: dependencies=lowest
-#   this test is failing because of the typo3 installer but since it isn't officially released, i don't mind
-#    - php: 7.2
-#      env: dependencies=lowest
 
 install:
   - if [ "$dependencies" = "highest" ]; then composer update --no-interaction; fi
