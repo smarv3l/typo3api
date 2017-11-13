@@ -1,5 +1,11 @@
 {
     "name" : "nemo64/typo3api",
+    "license": "MIT",
+    "type": "library",
+    "keywords": "TYPO3 api tca tsconfig ext_tables.php ext_localconf.php",
+    "support": [
+        "issues": "https://github.com/Nemo64/typo3api/issues"
+    ],
     "authors": [
         {
             "name": "Marco Pfeiffer",
