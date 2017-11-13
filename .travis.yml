@@ -22,7 +22,7 @@ install:
   - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest --no-interaction; fi
 
 script:
-  - vendor/bin/phpunit tests
+  - vendor/bin/phpunit Tests
 
 cache:
   directories:
