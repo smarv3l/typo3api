@@ -9,7 +9,8 @@ RUN echo deb http://deb.debian.org/debian stretch main >> /etc/apt/sources.list.
  && echo "Package: *" >> /etc/apt/preferences.d/stretch \
  && echo "Pin: release a=stretch" >> /etc/apt/preferences.d/stretch \
  && echo "Pin-Priority: 1" >> /etc/apt/preferences.d/stretch \
- && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y libpcre3
+ && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y libpcre3 \
+ && rm -r /var/lib/apt/lists/*
 
 # change configuration
 RUN sed -i "s#/var/www/html#/var/www/web#g" /etc/apache2/sites-enabled/000-default.conf \
