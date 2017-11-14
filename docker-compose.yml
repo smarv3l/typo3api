@@ -17,7 +17,7 @@ services:
       PLATFORM: Docker
       TYPO3_CONTEXT: Development
   db:
-    image: mysql:5.7
+    image: mariadb:10.3
     volumes:
       - database:/var/lib/mysql
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql
