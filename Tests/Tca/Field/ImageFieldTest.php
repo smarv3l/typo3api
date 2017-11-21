@@ -36,8 +36,15 @@ class ImageFieldTest extends FileFieldTest
                     'minitems' => 0,
                     'maxitems' => 100,
                     'appearance' => [
+                        'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference',
                         'collapseAll' => true,
-                        'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:images.addFileReference'
+                        'showPossibleLocalizationRecords' => true,
+                        'showRemovedLocalizationRecords' => true,
+                        'showAllLocalizationLink' => true,
+                        'showSynchronizationLink' => true,
+                        'enabledControls' => [
+                            'localize' => true
+                        ],
                     ],
                     'overrideChildTca' => [
                         'types' => [
