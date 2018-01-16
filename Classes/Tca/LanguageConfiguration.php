@@ -34,6 +34,11 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
                     'default' => 0
                 ]
             ],
+            // TODO, wrong localization fieldnames, what is l18n supposed to mean?
+            // l10n = localization
+            // i18n = internationalization
+            // l18n = ?
+            // it should be l10n like with the source field but that would be a breaking change for a future release
         ];
     }
 
