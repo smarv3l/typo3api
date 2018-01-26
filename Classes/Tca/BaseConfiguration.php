@@ -13,7 +13,7 @@ class BaseConfiguration implements TcaConfigurationInterface
 {
     public function modifyCtrl(array &$ctrl, string $tableName)
     {
-        $ctrl['deleted'] = 'deleted';
+        $ctrl['delete'] = 'deleted';
         $ctrl['tstamp'] = 'tstamp';
         $ctrl['crdate'] = 'crdate';
         $ctrl['cruser_id'] = 'cruser_id';
