@@ -83,8 +83,13 @@ class FileField extends AbstractField
                 'maxitems' => $this->getOption('maxitems'),
                 'appearance' => [
                     'collapseAll' => $this->getOption('collapseAll'),
+                    'showPossibleLocalizationRecords' => $this->getOption('localize'),
+                    'showRemovedLocalizationRecords' => $this->getOption('localize'),
+                    'showAllLocalizationLink' => $this->getOption('localize'),
+                    'showSynchronizationLink' => $this->getOption('localize'),
                     'enabledControls' => [
-                        'hide' => $this->getOption('allowHide')
+                        'hide' => $this->getOption('allowHide'),
+                        'localize' => $this->getOption('localize'),
                     ]
                 ]
             ],

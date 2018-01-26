@@ -22,6 +22,13 @@ class FileFieldTest extends AbstractFieldTest
                     'maxitems' => 100,
                     'appearance' => [
                         'collapseAll' => true,
+                        'showPossibleLocalizationRecords' => true,
+                        'showRemovedLocalizationRecords' => true,
+                        'showAllLocalizationLink' => true,
+                        'showSynchronizationLink' => true,
+                        'enabledControls' => [
+                            'localize' => true
+                        ]
                     ]
                 ])
             ]
