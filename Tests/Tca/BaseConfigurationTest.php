@@ -14,7 +14,7 @@ class BaseConfigurationTest extends TestCase
 
     const BASE_TCA = [
         'ctrl' => [
-            'deleted' => 'deleted',
+            'delete' => 'deleted',
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
             'cruser_id' => 'cruser_id',
