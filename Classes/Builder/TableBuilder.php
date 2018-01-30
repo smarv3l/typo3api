@@ -76,7 +76,14 @@ class TableBuilder implements TcaBuilderInterface
      */
     public static function createFullyNamed(string $name, string $typeName = '1'): TableBuilder
     {
-        return new TableBuilder($name, $typeName);
+        $tableBuilder = new TableBuilder($name, $typeName);
+        if (!$tableBuilder->getTitle()) {
+            $title = preg_replace('#tx_[^_]+_#su', '', $name);
+            $title = str_replace('_', ' ', $title);
+            $title = ucfirst($title);
+            $tableBuilder->setTitle($title);
+        }
+        return $tableBuilder;
     }
 
     /**

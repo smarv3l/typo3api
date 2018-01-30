@@ -19,6 +19,7 @@ class BaseConfigurationTest extends TestCase
             'crdate' => 'crdate',
             'cruser_id' => 'cruser_id',
             'origUid' => 'origUid',
+            'title' => 'Test table'
         ],
         'interface' => [
             'showRecordFieldList' => '',
