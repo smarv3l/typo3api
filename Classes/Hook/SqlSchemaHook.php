@@ -40,6 +40,7 @@ class SqlSchemaHook implements SingletonInterface
         }
 
         self::$tableConfigurations[$tableName][] = $configuration;
+        self::attach();
     }
 
     /**

@@ -46,7 +46,6 @@ class TableBuilder implements TcaBuilderInterface
     {
         $this->tableName = $tableName;
         $this->typeName = $typeName;
-        SqlSchemaHook::attach();
         $this->configureTableIfNotPresent();
     }
 
