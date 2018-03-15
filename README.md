@@ -2,7 +2,6 @@
 [![Latest Stable Version](https://poser.pugx.org/nemo64/typo3api/v/stable)](https://packagist.org/packages/nemo64/typo3api)
 [![Total Downloads](https://poser.pugx.org/nemo64/typo3api/downloads)](https://packagist.org/packages/nemo64/typo3api)
 [![License](https://poser.pugx.org/nemo64/typo3api/license)](https://packagist.org/packages/nemo64/typo3api)
-[![Dependency Status](https://www.versioneye.com/user/projects/5a17d6760fb24f212afb2bdc/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5a17d6760fb24f212afb2bdc)
 
 # apis for easier typo3 handling
 
