@@ -31,7 +31,7 @@
     },
     "require": {
         "php": "^7.0",
-        "typo3/cms": "8.7.*",
+        "typo3/cms-core": "8.7.*",
         "symfony/options-resolver": "^2.6 || ^3.0 || ^4.0",
         "symfony/polyfill-mbstring": "^1.2"
     },
