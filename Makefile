@@ -51,5 +51,5 @@ stop:
 
 # END OF Hn\Typo3Environment\Generator\MakefileGenerator
 
-test:
+test: install
 	$(LOCAL_DOCKER_COMPOSE) run --rm --no-deps php vendor/bin/phpunit Tests
