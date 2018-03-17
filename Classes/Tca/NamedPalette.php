@@ -3,20 +3,26 @@
 namespace Typo3Api\Tca;
 
 
-/**
- * @deprecated use the NamedPalette instead
- */
-class Palette extends CompoundTcaConfiguration
+class NamedPalette extends CompoundTcaConfiguration
 {
     /**
      * @var string
      */
     private $name;
 
-    public function __construct(string $name, array $children)
+    public function __construct(string $name, array $children = [])
     {
-        $this->name = $name;
+        if (preg_match('/[,;]/', $name)){
+            throw new \RuntimeException("The name of a palette must not contain comma or semicolon, got $name");
+        }
+
         parent::__construct($children);
+        $this->name = $name;
+    }
+
+    public function getPaletteName(string $tableName)
+    {
+        return preg_replace('/\W+/', '_', parent::getShowItemString($tableName));
     }
 
     public function getPalettes(string $tableName): array
@@ -28,7 +34,7 @@ class Palette extends CompoundTcaConfiguration
         }
 
         $palettes = [
-            $this->name => [
+            $this->getPaletteName($tableName) => [
                 'showitem' => implode(', ', array_filter($showItems))
             ]
         ];
@@ -44,6 +50,6 @@ class Palette extends CompoundTcaConfiguration
 
     public function getShowItemString(string $tableName): string
     {
-        return '--palette--;; ' . $this->name;
+        return "--palette--; {$this->name}; " . $this->getPaletteName($tableName);
     }
 }
