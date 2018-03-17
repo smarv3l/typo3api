@@ -3,42 +3,17 @@
 namespace Typo3Api\Tca;
 
 
-class Palette implements TcaConfigurationInterface
+class Palette extends CompoundTcaConfiguration
 {
     /**
      * @var string
      */
     private $name;
 
-    /**
-     * @var TcaConfigurationInterface[]
-     */
-    private $children;
-
     public function __construct(string $name, array $children)
     {
         $this->name = $name;
-        $this->children = $children;
-    }
-
-    public function modifyCtrl(array &$ctrl, string $tableName)
-    {
-        foreach ($this->children as $child) {
-            $child->modifyCtrl($ctrl, $tableName);
-        }
-    }
-
-    public function getColumns(string $tableName): array
-    {
-        $columns = [];
-
-        foreach ($this->children as $child) {
-            foreach ($child->getColumns($tableName) as $columnName => $columnDefinition) {
-                $columns[$columnName] = $columnDefinition;
-            }
-        }
-
-        return $columns;
+        parent::__construct($children);
     }
 
     public function getPalettes(string $tableName): array
@@ -67,24 +42,5 @@ class Palette implements TcaConfigurationInterface
     public function getShowItemString(string $tableName): string
     {
         return '--palette--;; ' . $this->name;
-    }
-
-    public function getDbTableDefinitions(string $tableName): array
-    {
-        $tableDefinitions = [];
-
-        foreach ($this->children as $child) {
-            foreach ($child->getDbTableDefinitions($tableName) as $table => $columns) {
-                if (!isset($tableDefinitions[$table])) {
-                    $tableDefinitions[$table] = $columns;
-                } else {
-                    foreach ($columns as $column) {
-                        $tableDefinitions[$table][] = $column;
-                    }
-                }
-            }
-        }
-
-        return $tableDefinitions;
     }
 }

@@ -12,6 +12,7 @@ namespace Typo3Api\Builder;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Typo3Api\Hook\SqlSchemaHook;
 use Typo3Api\Tca\BaseConfiguration;
+use Typo3Api\Tca\CompoundTcaConfiguration;
 use Typo3Api\Tca\DefaultTabInterface;
 use Typo3Api\Tca\TcaConfigurationInterface;
 
@@ -126,8 +127,7 @@ class TableBuilder implements TcaBuilderInterface
 
         $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
         $this->addShowItemToTab($tca, $configuration, $tab);
-        $this->addPalettes($tca, $configuration);
-        $this->addColumns($tca, $configuration);
+        $this->addPalettesAndColumns($tca, $configuration);
 
         return $this;
     }
@@ -143,10 +143,21 @@ class TableBuilder implements TcaBuilderInterface
 
         $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
         $this->addShowItemAtPosition($tca, $configuration, $position);
-        $this->addPalettes($tca, $configuration);
-        $this->addColumns($tca, $configuration);
+        $this->addPalettesAndColumns($tca, $configuration);
 
         return $this;
+    }
+
+    private function addPalettesAndColumns(array &$tca, TcaConfigurationInterface $configuration)
+    {
+        $this->addPalettes($tca, $configuration);
+        if ($configuration instanceof CompoundTcaConfiguration) {
+            foreach ($configuration as $item) {
+                $this->addPalettesAndColumns($tca, $item);
+            }
+        } else {
+            $this->addColumns($tca, $configuration);
+        }
     }
 
     /**
@@ -292,7 +303,17 @@ class TableBuilder implements TcaBuilderInterface
 
             SqlSchemaHook::addTableConfiguration($this->getTableName(), $configuration);
         } else if (count($missingColumns) > 0) {
-            throw new \RuntimeException("Partial configuration of a child type is not possible");
+            $confClass = get_class($configuration);
+            $definedColumns = implode(', ', array_keys($columns));
+            $alreadyDefinedColumns = implode(', ', array_intersect(array_keys($existingColumns), array_keys($columns)));
+            $notDefinedColumns = implode(', ', $missingColumns);
+            $msg = "The $confClass defined the database columns $definedColumns.\n";
+            $msg .= "However, the columns $alreadyDefinedColumns are already defined.\n";
+            $msg .= "But the columns $notDefinedColumns are not.\n";
+            $msg .= "This means the definitions would need to be merged.\n";
+            $msg .= "This is currently not implemented because of all the special cases like relations that would need to be handled.\n";
+            $msg .= "Therefor partial configuration of a child type is currently not possible.";
+            throw new \RuntimeException($msg);
         } else {
             // all columns are already defined so define overrides, just in case something changed.
             foreach ($columns as $columnName => $columnDefinition) {
