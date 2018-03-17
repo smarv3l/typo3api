@@ -1,38 +1,46 @@
-version: "2"
-
+version: '2'
 services:
+  db:
+    command: 'mysqld --log-error-verbosity=2 --sql-mode=NO_ENGINE_SUBSTITUTION --character-set-server=utf8 --collation-server=utf8_general_ci'
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=database
+    image: 'mysql:5.7'
+    ports:
+      - '8081:3306'
+    volumes:
+      - 'database:/var/lib/mysql'
   php:
     build:
+      dockerfile: Dockerfile-php
       context: .
-      dockerfile: Dockerfile
-    working_dir: /var/www
-    volumes:
-      - .:/var/www:cached
-      - typo3temp:/var/www/web/typo3temp
-    ports:
-      - 8080:80
+    environment:
+      - MYSQL_DATABASE=database
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_HOST=db
+      - MAIL_TRANSPORT
+      - MAIL_SENDMAIL_COMMAND
+      - MAIL_SMTP_ENCRYPT
+      - MAIL_SMTP_PASSWORD
+      - MAIL_SMTP_SERVER
+      - MAIL_SMTP_PORT
+      - MAIL_SMTP_USERNAME
+      - IMAGE_PROCESSOR=ImageMagick
+      - IMAGE_PROCESSOR_COLORSPACE=sRGB
+      - IMAGE_PROCESSOR_PATH=/usr/bin/
+      - PLATFORM=Docker
+      - TYPO3_CONTEXT=Development
+      - LOG_DEPRECATION
     links:
       - db
-    environment:
-      PLATFORM: Docker
-      TYPO3_CONTEXT: Development
-  db:
-    image: mariadb:10.3
-    volumes:
-      - database:/var/lib/mysql
-      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
     ports:
-      - 3306:3306
-    command: mysqld --sql-mode=NO_ENGINE_SUBSTITUTION --character-set-server=utf8 --collation-server=utf8_general_ci
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: database
-
+      - '8080:80'
+    tmpfs:
+      - '/var/www/web/typo3temp:uid=33,gid=33,size=1G'
+    user: 'root:www-data'
+    volumes:
+      - '.:/var/www:cached'
+    working_dir: /var/www
 volumes:
-  database:
-  typo3temp:
-    driver: local
-    driver_opts:
-      type: tmpfs
-      device: tmpfs
-      o: noowners
+  database: {  }

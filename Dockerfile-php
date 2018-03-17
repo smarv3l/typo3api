@@ -1,0 +1,19 @@
+FROM chialab/php:7.1-apache
+
+RUN echo deb http://deb.debian.org/debian stretch main >> /etc/apt/sources.list.d/stretch.list \
+ && echo "Package: libpcre3" >> /etc/apt/preferences.d/stretch \
+ && echo "Pin: release a=stretch" >> /etc/apt/preferences.d/stretch \
+ && echo "Pin-Priority: 1000" >> /etc/apt/preferences.d/stretch \
+ && echo "Package: *" >> /etc/apt/preferences.d/stretch \
+ && echo "Pin: release a=stretch" >> /etc/apt/preferences.d/stretch \
+ && echo "Pin-Priority: 1" >> /etc/apt/preferences.d/stretch \
+ && apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y imagemagick libpcre3 \
+ && rm -r /var/lib/apt/lists/*
+
+RUN sed -i 's#/var/www/html#/var/www/web#g' /etc/apache2/sites-enabled/000-default.conf \
+ && a2enmod alias deflate expires headers rewrite \
+ && echo 'max_execution_time=240' >> /usr/local/etc/php/conf.d/php.ini \
+ && echo 'max_input_vars=1500' >> /usr/local/etc/php/conf.d/php.ini \
+ && echo 'opcache.enable_file_override=On' >> /usr/local/etc/php/conf.d/php.ini \
+ && echo 'opcache.revalidate_freq=0' >> /usr/local/etc/php/conf.d/php.ini
