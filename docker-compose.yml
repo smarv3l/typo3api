@@ -40,7 +40,7 @@ services:
       - '/var/www/web/typo3temp:uid=33,gid=33,size=1G'
     user: 'root:www-data'
     volumes:
-      - '.:/var/www:cached'
+      - '.:/var/www:delegated'
     working_dir: /var/www
 volumes:
   database: {  }
