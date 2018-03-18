@@ -1,4 +1,4 @@
-FROM chialab/php:7.1-apache
+FROM chialab/php:7.0-apache
 
 RUN echo deb http://deb.debian.org/debian stretch main >> /etc/apt/sources.list.d/stretch.list \
  && echo "Package: libpcre3" >> /etc/apt/preferences.d/stretch \

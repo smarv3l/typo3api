@@ -70,7 +70,7 @@
     "require-dev": {
         "phpunit/phpunit": "^6.4",
         "helhum/typo3-console": "^5.1",
-        "hn/typo3-environment": "1.0.0-RC9",
+        "hn/typo3-environment": "1.0.0-RC10",
         "typo3/cms-tstemplate": "*",
         "typo3/cms-lowlevel": "*",
         "typo3/cms-info-pagetsconfig": "*"
@@ -79,6 +79,11 @@
         "psr-4": {
             "Typo3Api\\": "Tests",
             "Hn\\HnTemplate\\": "web/typo3conf/ext/hn_template/Classes"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "7.0.28"
         }
     }
 }

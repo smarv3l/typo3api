@@ -37,12 +37,12 @@ cc: start
 
 clean: stop
 	$(LOCAL_DOCKER_COMPOSE) down -v
-	rm -rf 'vendor'
-	rm -f 'web/FIRST_INSTALL'
-	rm -f 'web/typo3conf/ENABLE_INSTALL_TOOL'
-	rm -rf 'web/typo3temp'
-	rm -f 'web/typo3conf/LocalConfiguration.php'
-	rm -f 'web/typo3conf/PackageStates.php'
+	rm -rf vendor
+	rm -rf web/FIRST_INSTALL
+	rm -rf web/typo3conf/ENABLE_INSTALL_TOOL
+	rm -rf web/typo3temp/*
+	rm -rf web/typo3conf/LocalConfiguration.php
+	rm -rf web/typo3conf/PackageStates.php
 
 
 stop:
@@ -51,5 +51,6 @@ stop:
 
 # END OF Hn\Typo3Environment\Generator\MakefileGenerator
 
+test: DIR?=Tests
 test: install
-	$(LOCAL_DOCKER_COMPOSE) run --rm --no-deps php vendor/bin/phpunit Tests
+	$(LOCAL_DOCKER_COMPOSE) run --rm --no-deps php vendor/bin/phpunit $(DIR)
