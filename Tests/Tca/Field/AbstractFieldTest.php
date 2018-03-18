@@ -267,4 +267,21 @@ class AbstractFieldTest extends TestCase
         $field->modifyCtrl($ctrl, 'some_table');
         $this->assertEquals('other_field, ' . $fieldName, $ctrl['searchFields']);
     }
+
+    /**
+     * @dataProvider validNameProvider
+     * @param string $fieldName
+     */
+    public function testLabel(string $fieldName)
+    {
+        $field = $this->createFieldInstance($fieldName, ['useAsLabel' => false]);
+        $ctrl = ['label' => 'uid'];
+        $field->modifyCtrl($ctrl, 'some_table');
+        $this->assertEquals('uid', $ctrl['label']);
+
+        $field = $this->createFieldInstance($fieldName, ['useAsLabel' => true]);
+        $ctrl = ['label' => 'uid'];
+        $field->modifyCtrl($ctrl, 'some_table');
+        $this->assertEquals($fieldName, $ctrl['label']);
+    }
 }

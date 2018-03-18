@@ -18,6 +18,7 @@ class BaseConfiguration implements TcaConfigurationInterface
         $ctrl['crdate'] = 'crdate';
         $ctrl['cruser_id'] = 'cruser_id';
         $ctrl['origUid'] = 'origUid';
+        $ctrl['label'] = 'uid';
     }
 
     public function getColumns(string $tableName): array

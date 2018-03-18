@@ -127,7 +127,7 @@ abstract class AbstractField implements TcaConfigurationInterface
         $fieldName = $this->getOption('name');
 
         if ($this->getOption('useAsLabel')) {
-            if (!isset($ctrl['label'])) {
+            if (!isset($ctrl['label']) || $ctrl['label'] === 'uid') {
                 $ctrl['label'] = $fieldName;
             } else {
                 if (!isset($ctrl['label_alt'])) {
