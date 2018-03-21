@@ -72,7 +72,7 @@ class AbstractFieldTest extends TestCase
     {
         $fieldName = $field->getName();
         $this->assertEquals(
-            ['stub_table' => ["`$fieldName` " . self::STUB_DB_TYPE]],
+            ['stub_table' => ["`$fieldName` " . static::STUB_DB_TYPE]],
             $field->getDbTableDefinitions('stub_table')
         );
     }
@@ -153,7 +153,7 @@ class AbstractFieldTest extends TestCase
         $this->assertEquals(
             [
                 'some_table' => [
-                    "`$fieldName` " . self::STUB_DB_TYPE,
+                    "`$fieldName` " . static::STUB_DB_TYPE,
                     "INDEX `$fieldName`(`$fieldName`)"
                 ]
             ],
