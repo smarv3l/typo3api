@@ -9,10 +9,6 @@ class SelectFieldTest extends AbstractFieldTest
 
     protected function createFieldInstance(string $name, array $options = []): AbstractField
     {
-        if (!isset($options['values']) && !isset($options['items'])) {
-            $options['values'] = [];
-        }
-
         return new SelectField($name, $options);
     }
 
@@ -48,7 +44,11 @@ class SelectFieldTest extends AbstractFieldTest
             'items' => $items
         ]);
 
-        $this->assertEquals(['value', 'value2'], $field->getOption('values'));
+        $this->assertEquals([
+            ['label', 'value'],
+            ['divider', '--div--'],
+            ['label2', 'value2'],
+        ], $field->getColumns('stub_table')['some_field']['config']['items']);
     }
 
     public function testValues()
@@ -56,11 +56,6 @@ class SelectFieldTest extends AbstractFieldTest
         $field = $this->createFieldInstance('some_field', [
             'values' => ['value', 'value2']
         ]);
-
-        $this->assertEquals([
-            ['Value', 'value'],
-            ['Value2', 'value2'],
-        ], $field->getOption('items'));
 
         $this->assertEquals([
             ['Value', 'value'],
@@ -74,14 +69,6 @@ class SelectFieldTest extends AbstractFieldTest
             'values' => ['value', 'value2'],
             'required' => false
         ]);
-
-        $this->assertEquals(['', 'value', 'value2'], $field->getOption('values'));
-
-        $this->assertEquals([
-            ['', ''],
-            ['Value', 'value'],
-            ['Value2', 'value2'],
-        ], $field->getOption('items'));
 
         $this->assertEquals([
             ['', ''],

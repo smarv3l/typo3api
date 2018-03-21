@@ -19,22 +19,7 @@ class SelectField extends AbstractField
         $resolver->setDefaults([
             // values is just a list of possible values
             // you can use it instead of items if you don't want/need to define labels for your options
-            'values' => function (Options $options) {
-                $values = [];
-                foreach ($options['items'] as $item) {
-                    if (!isset($item[1])) {
-                        continue;
-                    }
-
-                    if ($item[1] === '--div--') {
-                        continue;
-                    }
-
-                    $values[] = $item[1];
-                }
-
-                return $values;
-            },
+            'values' => [],
             // items is the normal typo3 compatible item list
             // if not defined, it will be generated from the value list
             'items' => function (Options $options) {
@@ -48,7 +33,7 @@ class SelectField extends AbstractField
             'required' => true,
 
             'dbType' => function (Options $options) {
-                $possibleValues = $options['values'] ?: [''];
+                $possibleValues = static::getValuesFromItems($options['items']);
                 $defaultValue = addslashes(reset($possibleValues));
 
                 $maxChars = max(1, ...array_map('mb_strlen', $possibleValues));
@@ -80,26 +65,39 @@ class SelectField extends AbstractField
                 array_unshift($items, ['', '']);
             }
 
-            return $items;
-        });
-
-        /** @noinspection PhpUnusedParameterInspection */
-        $resolver->setNormalizer('values', function (Options $options, $values) {
-            if (empty($values) || ($options['required'] === false && $values[0] !== '')) {
-                array_unshift($values, '');
-            }
-
-            foreach ($values as $value) {
-
+            foreach ($items as $value) {
                 // the documentation says these chars are invalid
                 // https://docs.typo3.org/typo3cms/TCAReference/ColumnsConfig/Type/Select.html#items
-                if (preg_match('/[|,;]/', $value)) {
+                if (preg_match('/[|,;]/', $value[1])) {
                     throw new InvalidOptionsException("The value in an select must not contain the chars '|,;'.");
                 }
             }
 
-            return $values;
+            return $items;
         });
+    }
+
+    private static function getValuesFromItems(array $items)
+    {
+        $values = [];
+
+        foreach ($items as $item) {
+            if (!isset($item[1])) {
+                continue;
+            }
+
+            if ($item[1] === '--div--') {
+                continue;
+            }
+
+            $values[] = $item[1];
+        }
+
+        if (empty($values)) {
+            $values[] = '';
+        }
+
+        return $values;
     }
 
     public function getFieldTcaConfig(string $tableName)
