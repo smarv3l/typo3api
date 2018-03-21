@@ -76,7 +76,7 @@ class SelectField extends AbstractField
 
         $resolver->setNormalizer('items', function (Options $options, $items) {
             // ensure at least one value, or an empty value if not required
-            if (empty($items) || $options['required'] === false) {
+            if (empty($items) || ($options['required'] === false && $items[0][1] !== '')) {
                 array_unshift($items, ['', '']);
             }
 
@@ -85,6 +85,10 @@ class SelectField extends AbstractField
 
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('values', function (Options $options, $values) {
+            if (empty($values) || ($options['required'] === false && $values[0] !== '')) {
+                array_unshift($values, '');
+            }
+
             foreach ($values as $value) {
 
                 // the documentation says these chars are invalid

@@ -61,5 +61,32 @@ class SelectFieldTest extends AbstractFieldTest
             ['Value', 'value'],
             ['Value2', 'value2'],
         ], $field->getOption('items'));
+
+        $this->assertEquals([
+            ['Value', 'value'],
+            ['Value2', 'value2'],
+        ], $field->getColumns('stub_table')['some_field']['config']['items']);
+    }
+
+    public function testRequired()
+    {
+        $field = $this->createFieldInstance('some_field', [
+            'values' => ['value', 'value2'],
+            'required' => false
+        ]);
+
+        $this->assertEquals(['', 'value', 'value2'], $field->getOption('values'));
+
+        $this->assertEquals([
+            ['', ''],
+            ['Value', 'value'],
+            ['Value2', 'value2'],
+        ], $field->getOption('items'));
+
+        $this->assertEquals([
+            ['', ''],
+            ['Value', 'value'],
+            ['Value2', 'value2'],
+        ], $field->getColumns('stub_table')['some_field']['config']['items']);
     }
 }
