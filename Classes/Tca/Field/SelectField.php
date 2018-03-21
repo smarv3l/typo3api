@@ -20,10 +20,19 @@ class SelectField extends AbstractField
             // values is just a list of possible values
             // you can use it instead of items if you don't want/need to define labels for your options
             'values' => function (Options $options) {
-                $values = array_column($options['items'], 1);
-                $values = array_filter($values, function ($value) {
-                    return $value !== '--div--';
-                });
+                $values = [];
+                foreach ($options['items'] as $item) {
+                    if (!isset($item[1])) {
+                        continue;
+                    }
+
+                    if ($item[1] === '--div--') {
+                        continue;
+                    }
+
+                    $values[] = $item[1];
+                }
+
                 return $values;
             },
             // items is the normal typo3 compatible item list
@@ -39,10 +48,10 @@ class SelectField extends AbstractField
             'required' => true,
 
             'dbType' => function (Options $options) {
-                $possibleValues = $options['values'];
+                $possibleValues = $options['values'] ?: [''];
                 $defaultValue = addslashes(reset($possibleValues));
 
-                $maxChars = max(array_map('mb_strlen', $possibleValues));
+                $maxChars = max(1, ...array_map('mb_strlen', $possibleValues));
                 if ($maxChars > 191) {
                     // Why 191 characters?
                     // Because mysql indexes can only store 767 bytes and I want to enforce a usefull limit.
