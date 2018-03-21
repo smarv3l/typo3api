@@ -20,6 +20,7 @@ class TextareaField extends AbstractField
                 $calculatedSpace = floor($options['max'] / $realCols);
                 return min((int)$calculatedSpace, 10);
             },
+            'placeholder' => null,
             'required' => false,
             'trim' => true,
             'dbType' => function (Options $options) {
@@ -61,6 +62,7 @@ class TextareaField extends AbstractField
         $resolver->setAllowedTypes('max', 'int');
         $resolver->setAllowedTypes('cols', 'int');
         $resolver->setAllowedTypes('rows', 'int');
+        $resolver->setAllowedTypes('placeholder', ['null', 'string']);
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
 
@@ -76,7 +78,7 @@ class TextareaField extends AbstractField
 
     public function getFieldTcaConfig(string $tableName)
     {
-        return [
+        $config = [
             'type' => 'text',
             'max' => $this->getOption('max'),
             'rows' => $this->getOption('rows'),
@@ -86,5 +88,11 @@ class TextareaField extends AbstractField
                 // i'd love to define null here, but this will render a checkbox which i don't want
             ])),
         ];
+
+        if ($this->getOption('placeholder') !== null) {
+            $config['placeholder'] = $this->getOption('placeholder');
+        }
+
+        return $config;
     }
 }
