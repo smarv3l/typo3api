@@ -23,6 +23,7 @@ class InputField extends AbstractField
                 return $options['max'];
             },
             'default' => '',
+            'placeholder' => null,
             'required' => false,
             'trim' => true,
             'charset' => null,
@@ -57,6 +58,7 @@ class InputField extends AbstractField
         $resolver->setAllowedTypes('max', 'int');
         $resolver->setAllowedTypes('size', 'int');
         $resolver->setAllowedTypes('default', 'string');
+        $resolver->setAllowedTypes('placeholder', ['null', 'string']);
         $resolver->setAllowedTypes('required', 'bool');
         $resolver->setAllowedTypes('trim', 'bool');
         $resolver->setAllowedValues('charset', [null, 'alpha', 'alphanum', 'alphanum_x']);
@@ -83,10 +85,11 @@ class InputField extends AbstractField
             'size' => (int)($this->getOption('size') / 2), // adjust the size to fit the character count better
             'max' => $this->getOption('max'),
             'eval' => implode(',', $this->getEvals()),
+            'default' => $this->getOption('default'),
         ];
 
-        if ($this->getOption('default')) {
-            $config['default'] = $this->getOption('default');
+        if ($this->getOption('placeholder') !== null) {
+            $config['placeholder'] = $this->getOption('placeholder');
         }
 
         if ($this->getOption('is_in')) {

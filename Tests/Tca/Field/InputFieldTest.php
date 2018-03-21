@@ -33,7 +33,8 @@ class InputFieldTest extends AbstractFieldTest
                     'type' => 'input',
                     'size' => 25,
                     'max' => 50,
-                    'eval' => 'trim'
+                    'eval' => 'trim',
+                    'default' => '',
                 ]
             ]
         ], $field->getColumns('some_table'));
@@ -62,19 +63,37 @@ class InputFieldTest extends AbstractFieldTest
         $this->assertEquals("`$fieldName` VARCHAR($size) DEFAULT '' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
     }
 
-    /**
-     * @dataProvider validNameProvider
-     * @param string $fieldName
-     */
-    public function testDefault(string $fieldName)
+    public function testDefault()
     {
-        $default = 'some default';
-        $field = $this->createFieldInstance($fieldName, [
-            'default' => $default
-        ], false);
+        $fieldName = 'some_field';
 
+        $default = 'some default';
+        $field = $this->createFieldInstance($fieldName, ['default' => $default], false);
         $this->assertBasicCtrlChange($field);
         $this->assertEquals($default, $field->getColumns('t')[$fieldName]['config']['default']);
         $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '$default' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
+
+        $field = $this->createFieldInstance($fieldName, ['default' => ''], false);
+        $this->assertBasicCtrlChange($field);
+        $this->assertEquals('', $field->getColumns('t')[$fieldName]['config']['default']);
+        $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
+    }
+
+    public function testPlaceholder()
+    {
+        $fieldName = 'some_field';
+
+        $field = $this->createFieldInstance($fieldName, ['placeholder' => 'eg. Some Street']);
+        $this->assertBasicCtrlChange($field);
+        $this->assertEquals('eg. Some Street', $field->getColumns('t')[$fieldName]['config']['placeholder']);
+
+        $field = $this->createFieldInstance($fieldName, ['placeholder' => '']);
+        $this->assertBasicCtrlChange($field);
+        $this->assertEquals('', $field->getColumns('t')[$fieldName]['config']['placeholder']);
+
+        $field = $this->createFieldInstance($fieldName, ['placeholder' => null]);
+        $this->assertBasicCtrlChange($field);
+        $this->assertArrayNotHasKey('placeholder', $field->getColumns('t')[$fieldName]['config']);
+
     }
 }
