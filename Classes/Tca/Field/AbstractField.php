@@ -196,7 +196,7 @@ abstract class AbstractField implements TcaConfigurationInterface
         $definition = [$tableName => ["`$name` " . $this->getOption('dbType')]];
 
         if ($this->getOption('index')) {
-            // TODO I'd really like multi field indexes that are somehow namable
+            // TODO I'd really like multi field indexes that are somehow nameable
             $definition[$tableName][] = "INDEX `$name`(`$name`)";
         }
 
