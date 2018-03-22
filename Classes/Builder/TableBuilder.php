@@ -10,6 +10,7 @@ namespace Typo3Api\Builder;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Typo3Api\Hook\SqlSchemaHook;
 use Typo3Api\Tca\BaseConfiguration;
 use Typo3Api\Tca\CompoundTcaConfiguration;
@@ -58,8 +59,9 @@ class TableBuilder implements TcaBuilderInterface
      */
     public static function create(string $extkey, string $name, string $typeName = '1'): TableBuilder
     {
+        /** @var TableBuilder $tableBuilder */
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $tableBuilder = new static($extPrefix . $name, $typeName);
+        $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $extPrefix . $name, $typeName);
 
         // define a name for the table if not already present
         if (!$tableBuilder->getTitle()) {
@@ -76,7 +78,8 @@ class TableBuilder implements TcaBuilderInterface
      */
     public static function createFullyNamed(string $name, string $typeName = '1'): TableBuilder
     {
-        $tableBuilder = new TableBuilder($name, $typeName);
+        /** @var TableBuilder $tableBuilder */
+        $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $name, $typeName);
         if (!$tableBuilder->getTitle()) {
             $title = preg_replace('#tx_[^_]+_#su', '', $name);
             $title = str_replace('_', ' ', $title);
@@ -95,8 +98,9 @@ class TableBuilder implements TcaBuilderInterface
      */
     public static function createForType(string $extkey, string $name, string $typeName): TableBuilder
     {
+        /** @var TableBuilder $tableBuilder */
         $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $tableBuilder = new static($extPrefix . $name, $typeName);
+        $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $extPrefix . $name, $typeName);
         return $tableBuilder;
     }
 

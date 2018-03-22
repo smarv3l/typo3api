@@ -10,6 +10,7 @@ namespace Typo3Api\Builder;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Typo3Api\Tca\ShowitemConfiguration;
 use Typo3Api\Tca\TcaConfigurationInterface;
 
@@ -32,7 +33,8 @@ class ContentElementBuilder implements TcaBuilderInterface
      */
     public static function create(string $extKey, string $cType, string $section = 'common'): ContentElementBuilder
     {
-        return new static($extKey, $cType, $section);
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return GeneralUtility::makeInstance(get_called_class(), $extKey, $cType, $section);
     }
 
     public function __construct(string $extKey, string $cType, string $section = 'common')
