@@ -76,4 +76,17 @@ class SelectFieldTest extends AbstractFieldTest
             ['Value2', 'value2'],
         ], $field->getColumns('stub_table')['some_field']['config']['items']);
     }
+
+    public function testItemProcFieldType()
+    {
+        $field = $this->createFieldInstance('some_field', [
+            'itemsProcFunc' => 'some-func'
+        ]);
+        $this->assertEquals(
+            [
+                'some_table' => ["`some_field` VARCHAR(30) DEFAULT '' NOT NULL"]
+            ],
+            $field->getDbTableDefinitions('some_table')
+        );
+    }
 }

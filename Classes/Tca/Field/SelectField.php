@@ -29,14 +29,17 @@ class SelectField extends AbstractField
                     return [$label, $value];
                 }, $options['values']);
             },
+            'itemsProcFunc' => null,
 
-            'required' => true,
+            'required' => true, // TODO i somehow want this to be false now since having an empty option is nice
 
             'dbType' => function (Options $options) {
                 $possibleValues = static::getValuesFromItems($options['items']);
                 $defaultValue = addslashes(reset($possibleValues));
 
-                $maxChars = max(1, ...array_map('mb_strlen', $possibleValues));
+                $minimumChars = $options['itemsProcFunc'] ? 30 : 1;
+                $maxChars = max($minimumChars, ...array_map('mb_strlen', $possibleValues));
+
                 if ($maxChars > 191) {
                     // Why 191 characters?
                     // Because mysql indexes can only store 767 bytes and I want to enforce a usefull limit.
@@ -57,6 +60,7 @@ class SelectField extends AbstractField
 
         $resolver->setAllowedTypes('values', 'array');
         $resolver->setAllowedTypes('items', 'array');
+        $resolver->setAllowedTypes('itemsProcFunc', ['null', 'string']);
         $resolver->setAllowedTypes('required', 'bool');
 
         $resolver->setNormalizer('items', function (Options $options, $items) {
@@ -102,10 +106,16 @@ class SelectField extends AbstractField
 
     public function getFieldTcaConfig(string $tableName)
     {
-        return [
+        $config = [
             'type' => 'select',
             'renderType' => 'selectSingle',
             'items' => $this->getOption('items'),
         ];
+
+        if ($this->getOption('itemsProcFunc') !== null) {
+            $config['itemsProcFunc'] = $this->getOption('itemsProcFunc');
+        }
+
+        return $config;
     }
 }
