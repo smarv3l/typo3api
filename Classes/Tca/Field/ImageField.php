@@ -46,6 +46,10 @@ class ImageField extends FileField
                 return null;
             }
 
+            if (!isset($cropVariants['default'])) {
+                throw new \LogicException("You'll want to define a 'default' crop variant or else the editor will break.");
+            }
+
             $parsedCropVariants = [];
             foreach ($cropVariants as $name => $aspectRatios) {
                 if (is_string($aspectRatios)) {
