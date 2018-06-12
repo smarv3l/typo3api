@@ -6,14 +6,14 @@
  * Time: 21:03
  */
 
-namespace Typo3Api\Hook;
+namespace Nemo64\Typo3Api\Hook;
 
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
-use Typo3Api\Tca\TcaConfigurationInterface;
+use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
 class SqlSchemaHook implements SingletonInterface
 {

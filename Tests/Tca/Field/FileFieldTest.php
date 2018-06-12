@@ -1,6 +1,6 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;

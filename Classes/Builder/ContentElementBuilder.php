@@ -6,13 +6,13 @@
  * Time: 22:12
  */
 
-namespace Typo3Api\Builder;
+namespace Nemo64\Typo3Api\Builder;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Typo3Api\Tca\ShowitemConfiguration;
-use Typo3Api\Tca\TcaConfigurationInterface;
+use Nemo64\Typo3Api\Tca\ShowitemConfiguration;
+use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
 class ContentElementBuilder implements TcaBuilderInterface
 {

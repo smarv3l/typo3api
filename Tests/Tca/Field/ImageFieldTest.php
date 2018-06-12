@@ -1,11 +1,11 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Typo3Api\PreparationForTypo3;
+use Nemo64\Typo3Api\PreparationForTypo3;
 
 class ImageFieldTest extends FileFieldTest
 {

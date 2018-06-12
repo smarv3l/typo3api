@@ -1,6 +1,6 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 use PHPUnit\Framework\TestCase;
 
@@ -102,7 +102,7 @@ class AbstractFieldTest extends TestCase
     }
 
     /**
-     * @expectedException \Typo3Api\Exception\TcaFieldException
+     * @expectedException \Nemo64\Typo3Api\Exception\TcaFieldException
      * @dataProvider invalidNameProvider
      * @param mixed $name
      */

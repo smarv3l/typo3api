@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Typo3Api\Hook;
+namespace Nemo64\Typo3Api\Hook;
 
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;

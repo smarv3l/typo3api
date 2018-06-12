@@ -65,7 +65,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Typo3Api\\": "Classes"
+            "Nemo64\\Typo3Api\\": "Classes"
         }
     },
     "require-dev": {
@@ -78,7 +78,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Typo3Api\\": "Tests",
+            "Nemo64\\Typo3Api\\": "Tests",
             "Hn\\HnTemplate\\": "web/typo3conf/ext/hn_template/Classes"
         }
     },

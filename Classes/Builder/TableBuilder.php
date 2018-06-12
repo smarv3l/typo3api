@@ -6,16 +6,16 @@
  * Time: 20:13
  */
 
-namespace Typo3Api\Builder;
+namespace Nemo64\Typo3Api\Builder;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Typo3Api\Hook\SqlSchemaHook;
-use Typo3Api\Tca\BaseConfiguration;
-use Typo3Api\Tca\CompoundTcaConfiguration;
-use Typo3Api\Tca\DefaultTabInterface;
-use Typo3Api\Tca\TcaConfigurationInterface;
+use Nemo64\Typo3Api\Hook\SqlSchemaHook;
+use Nemo64\Typo3Api\Tca\BaseConfiguration;
+use Nemo64\Typo3Api\Tca\CompoundTcaConfiguration;
+use Nemo64\Typo3Api\Tca\DefaultTabInterface;
+use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
 class TableBuilder implements TcaBuilderInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Typo3Api\Utility\IntlItemsProcFunc;
+use Nemo64\Typo3Api\Utility\IntlItemsProcFunc;
 
 class CountryField extends SelectField
 {

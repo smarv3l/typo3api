@@ -1,13 +1,13 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Typo3Api\Exception\TcaFieldException;
-use Typo3Api\Tca\TcaConfigurationInterface;
+use Nemo64\Typo3Api\Exception\TcaFieldException;
+use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
 abstract class AbstractField implements TcaConfigurationInterface
 {

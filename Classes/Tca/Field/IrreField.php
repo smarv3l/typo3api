@@ -1,14 +1,14 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Typo3Api\Builder\TableBuilder;
-use Typo3Api\Utility\DbFieldDefinition;
+use Nemo64\Typo3Api\Builder\TableBuilder;
+use Nemo64\Typo3Api\Utility\DbFieldDefinition;
 
 class IrreField extends AbstractField
 {

@@ -6,10 +6,10 @@
  * Time: 22:13
  */
 
-namespace Typo3Api\Builder;
+namespace Nemo64\Typo3Api\Builder;
 
 
-use Typo3Api\Tca\TcaConfigurationInterface;
+use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
 interface TcaBuilderInterface
 {

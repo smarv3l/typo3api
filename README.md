@@ -22,14 +22,14 @@ Create the tca file in your extension like `Configuration/TCA/tx_ext_person.php`
 Than, instead of returning the a tca array, you can use the TableBuilder.
 
 ```PHP
-\Typo3Api\Builder\TableBuilder::createFullyNamed('tx_ext_person')
-    ->configure(new \Typo3Api\Tca\LanguageConfiguration())
-    ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
-    ->configure(new \Typo3Api\Tca\SortingConfiguration())
-    ->configure(new \Typo3Api\Tca\Field\InputField('first_name', ['required' => true, 'localize' => false]))
-    ->configure(new \Typo3Api\Tca\Field\InputField('last_name', ['required' => true, 'localize' => false]))
-    ->configure(new \Typo3Api\Tca\Field\DateField('birthday'))
-    ->configure(new \Typo3Api\Tca\Field\TextareaField('notice'))
+\Nemo64\Typo3Api\Builder\TableBuilder::createFullyNamed('tx_ext_person')
+    ->configure(new \Nemo64\Typo3Api\Tca\LanguageConfiguration())
+    ->configure(new \Nemo64\Typo3Api\Tca\EnableColumnsConfiguration())
+    ->configure(new \Nemo64\Typo3Api\Tca\SortingConfiguration())
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\InputField('first_name', ['required' => true, 'localize' => false]))
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\InputField('last_name', ['required' => true, 'localize' => false]))
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\DateField('birthday'))
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\TextareaField('notice'))
 ;
 ```
 
@@ -299,15 +299,15 @@ So you only have to tell the api what you want and it will abstract all the junk
 This is an extension of the TableBuilder. It will also do some magic to create content elements.
 
 ```PHP
-\Typo3Api\Builder\ContentElementBuilder::create($_EXTKEY, 'vcard')
+\Nemo64\Typo3Api\Builder\ContentElementBuilder::create($_EXTKEY, 'vcard')
     ->setTitle("VCard")
     ->setDescription("Shows information about a tx_ext_person")
     // reuse the header palette
-    ->configure(new \Typo3Api\Tca\ShowitemConfiguration(
+    ->configure(new \Nemo64\Typo3Api\Tca\ShowitemConfiguration(
         '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header'
     ))
     // this field is new and doesn't exist on tt_content yet
-    ->configure(new \Typo3Api\Tca\Field\SelectRelationField('tx_ext_person', [
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\SelectRelationField('tx_ext_person', [
         'label' => 'Person',
         'foreign_table' => 'tx_ext_person'
     ]))

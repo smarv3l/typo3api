@@ -1,6 +1,6 @@
 <?php
 
-namespace Typo3Api\Tca;
+namespace Nemo64\Typo3Api\Tca;
 
 
 class NamedPaletteTest extends CompoundTcaConfigurationTest

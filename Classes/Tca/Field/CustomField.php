@@ -1,6 +1,6 @@
 <?php
 
-namespace Typo3Api\Tca\Field;
+namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * This type can be used if the correct configuration isn't (correctly) implemented.
  * Example:
  *
- * ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
+ * ->configure(new \Nemo64\Typo3Api\Tca\Field\CustomField('favourite_color', [
  *     'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
  *     'localize' => false,
  *     'config' => [
