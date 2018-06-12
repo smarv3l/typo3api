@@ -23,36 +23,6 @@
     "extra": {
         "typo3/cms": {
             "web-dir": "web"
-        },
-        "helhum/typo3-console": {
-            "install-extension-dummy": false
-        },
-        "hauptsache/typo3-environment": {
-            "Hn\\Typo3Environment\\Generator\\BowerGenerator": false,
-            "Hn\\Typo3Environment\\Generator\\DeploymentGenerator": false,
-            "db_port": 8081,
-            "db_version": "5.7",
-            "deployment_test_urls": ["/"],
-            "deployments": {
-
-            },
-            "generate_local_extension": {
-                "hn_template": true
-            },
-            "htaccess_domain_production": "^www\\.",
-            "htaccess_domain_staging": "\\.hauptsache\\.net$|test|alpha|beta|staging",
-            "ignore_local_configuration": true,
-            "php_environment": {
-                "PLATFORM": "Docker",
-                "TYPO3_CONTEXT": "Development"
-            },
-            "php_ini": {
-                "max_execution_time": "240",
-                "max_input_vars": "1500",
-                "opcache.enable_file_override": "On",
-                "opcache.revalidate_freq": "0"
-            },
-            "web_port": 8080
         }
     },
     "require": {
@@ -69,12 +39,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.4",
-        "helhum/typo3-console": "^5.1",
-        "hn/typo3-environment": "1.0.0-RC11",
-        "typo3/cms-tstemplate": "*",
-        "typo3/cms-lowlevel": "*",
-        "typo3/cms-info-pagetsconfig": "*"
+        "phpunit/phpunit": "^6.4"
     },
     "autoload-dev": {
         "psr-4": {

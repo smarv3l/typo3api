@@ -360,16 +360,7 @@ mod.wizards.newContentElement.wizardItems.$this->section.show := addToList(vcard
 
 Checkout this repo and install the composer dependencies using `composer update`.
 I don't ship a `composer.lock` since this library must run with the newest dependencies.
-If you don't have composer locally use `make install` (or use it anyways). 
 
 ## run the unit tests
 
-run `make test`
-
-## run the shipped typo3 instance
-
-Some features can't easily be tested without a running typo3 instance and simply looking at the result.
-To test the interface use the included typo3 instance.
-
-Run `make serve` and then access `localhost:8080` (opens automatically on mac).
-You can then modyfy the hn_template extension
+run `vendor/bin/phpuniz`
