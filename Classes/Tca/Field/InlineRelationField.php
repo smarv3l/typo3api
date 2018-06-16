@@ -10,7 +10,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Nemo64\Typo3Api\Builder\TableBuilder;
 use Nemo64\Typo3Api\Utility\DbFieldDefinition;
 
-class IrreField extends AbstractField
+class InlineRelationField extends AbstractField
 {
     protected function configureOptions(OptionsResolver $resolver)
     {
