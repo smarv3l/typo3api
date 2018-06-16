@@ -16,14 +16,20 @@ class CacheTagConfiguration implements TcaConfigurationInterface
      */
     private $tag;
 
-    public function __construct(string $tag)
+    /**
+     * @var string
+     */
+    private $group;
+
+    public function __construct(string $tag, string $group = 'pages')
     {
         $this->tag = $tag;
+        $this->group = $group;
     }
 
-    public function modifyCtrl(array &$ctrl, string $tableName, string $group = 'pages')
+    public function modifyCtrl(array &$ctrl, string $tableName)
     {
-        $ctrl['EXT']['typo3api']['cache_tags'][$group][$this->tag] = $this->tag;
+        $ctrl['EXT']['typo3api']['cache_tags'][$this->group][$this->tag] = $this->tag;
     }
 
     public function getColumns(string $tableName): array
