@@ -5,3 +5,4 @@ if (!defined('TYPO3_MODE')) {
 }
 
 \Nemo64\Typo3Api\Hook\SqlSchemaHook::attach();
+\Nemo64\Typo3Api\Hook\CacheTagHook::attach();
