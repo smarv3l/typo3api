@@ -305,7 +305,10 @@ class TableBuilder implements TcaBuilderInterface
                 $tca['columns'][$columnName] = $columnDefinition;
             }
 
-            SqlSchemaHook::addTableConfiguration($this->getTableName(), $configuration);
+            $tca['ctrl']['EXT']['typo3api']['sql'] = array_merge_recursive(
+                $tca['ctrl']['EXT']['typo3api']['sql'] ?? [],
+                $configuration->getDbTableDefinitions($this->getTableName())
+            );
         } else if (count($missingColumns) > 0) {
             $confClass = get_class($configuration);
             $definedColumns = implode(', ', array_keys($columns));

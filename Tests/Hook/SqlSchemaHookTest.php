@@ -41,9 +41,8 @@ class SqlSchemaHookTest extends TestCase
     public function testCreateTable()
     {
         $fieldDefinition = '`title` VARCHAR(32) DEFAULT "" NOT NULL';
-        SqlSchemaHook::addTableConfiguration('test_table', new CustomConfiguration([
-            'dbTableDefinition' => ['test_table' => [$fieldDefinition]]
-        ]));
+        $configuration = new CustomConfiguration(['dbTableDefinition' => ['test_table' => [$fieldDefinition]]]);
+        $GLOBALS['TCA']['test_table']['ctrl']['EXT']['typo3api']['sql'] = $configuration->getDbTableDefinitions('test_table');
 
         $schemaHook = new SqlSchemaHook();
         $sql = $schemaHook->modifyTablesDefinitionString([]);
@@ -54,9 +53,8 @@ class SqlSchemaHookTest extends TestCase
     {
         $previousDefinition = "CREATE TABLE `test_table` (uid int(11) NOT NULL auto_increment, PRIMARY KEY (uid));";
         $fieldDefinition = '`title` VARCHAR(32) DEFAULT "" NOT NULL';
-        SqlSchemaHook::addTableConfiguration('test_table', new CustomConfiguration([
-            'dbTableDefinition' => ['test_table' => [$fieldDefinition]]
-        ]));
+        $configuration = new CustomConfiguration(['dbTableDefinition' => ['test_table' => [$fieldDefinition]]]);
+        $GLOBALS['TCA']['test_table']['ctrl']['EXT']['typo3api']['sql'] = $configuration->getDbTableDefinitions('test_table');
 
         $schemaHook = new SqlSchemaHook();
         $sql = $schemaHook->modifyTablesDefinitionString([$previousDefinition]);

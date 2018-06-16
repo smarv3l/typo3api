@@ -13,35 +13,14 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
-use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
 class SqlSchemaHook implements SingletonInterface
 {
-    /**
-     * @var array
-     */
-    private static $tableConfigurations = [];
 
     /**
      * @var bool
      */
     private static $eventAttached = false;
-
-    /**
-     * Add a configuration to the hook for attaching when the schema is compared.
-     *
-     * @param string $tableName
-     * @param TcaConfigurationInterface $configuration
-     */
-    public static function addTableConfiguration(string $tableName, TcaConfigurationInterface $configuration)
-    {
-        if (!isset(self::$tableConfigurations[$tableName])) {
-            self::$tableConfigurations[$tableName] = [];
-        }
-
-        self::$tableConfigurations[$tableName][] = $configuration;
-        self::attach();
-    }
 
     /**
      * Attach to the event hook.
@@ -71,7 +50,6 @@ class SqlSchemaHook implements SingletonInterface
     public static function reset()
     {
         self::$eventAttached = false;
-        self::$tableConfigurations = [];
     }
 
     /**
@@ -84,18 +62,18 @@ class SqlSchemaHook implements SingletonInterface
     {
         $map = [];
 
-        foreach (self::$tableConfigurations as $tableName => $tableConfiguration) {
-            /** @var TcaConfigurationInterface $configuration */
-            foreach ($tableConfiguration as $configuration) {
-                $tableDefinitions = $configuration->getDbTableDefinitions($tableName);
-                foreach ($tableDefinitions as $table => $fieldDefinitions) {
-                    if (!isset($map[$table])) {
-                        $map[$table] = [];
-                    }
+        foreach ($GLOBALS['TCA'] as $tableDefinition) {
+            if (!isset($tableDefinition['ctrl']['EXT']['typo3api']['sql'])) {
+                continue;
+            }
 
-                    foreach ($fieldDefinitions as $fieldDefinition) {
-                        $map[$table][] = $fieldDefinition;
-                    }
+            foreach ($tableDefinition['ctrl']['EXT']['typo3api']['sql'] as $table => $fieldDefinitions) {
+                if (!isset($map[$table])) {
+                    $map[$table] = [];
+                }
+
+                foreach ($fieldDefinitions as $fieldDefinition) {
+                    $map[$table][] = $fieldDefinition;
                 }
             }
         }
