@@ -11,7 +11,6 @@ namespace Nemo64\Typo3Api\Builder;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Nemo64\Typo3Api\Hook\SqlSchemaHook;
 use Nemo64\Typo3Api\Tca\BaseConfiguration;
 use Nemo64\Typo3Api\Tca\CompoundTcaConfiguration;
 use Nemo64\Typo3Api\Tca\DefaultTabInterface;
@@ -57,26 +56,7 @@ class TableBuilder implements TcaBuilderInterface
      * @param string $typeName
      * @return TableBuilder
      */
-    public static function create(string $extkey, string $name, string $typeName = '1'): TableBuilder
-    {
-        /** @var TableBuilder $tableBuilder */
-        $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $extPrefix . $name, $typeName);
-
-        // define a name for the table if not already present
-        if (!$tableBuilder->getTitle()) {
-            $tableBuilder->setTitle(ucfirst(str_replace('_', ' ', $name)));
-        }
-
-        return $tableBuilder;
-    }
-
-    /**
-     * @param string $name
-     * @param string $typeName
-     * @return TableBuilder
-     */
-    public static function createFullyNamed(string $name, string $typeName = '1'): TableBuilder
+    public static function create(string $name, string $typeName = '1'): TableBuilder
     {
         /** @var TableBuilder $tableBuilder */
         $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $name, $typeName);
@@ -90,18 +70,15 @@ class TableBuilder implements TcaBuilderInterface
     }
 
     /**
-     * @param string $extkey
      * @param string $name
      * @param string $typeName
      * @return TableBuilder
-     * @deprecated use create instead
+     * @deprecated use #create instead
      */
-    public static function createForType(string $extkey, string $name, string $typeName): TableBuilder
+    public static function createFullyNamed(string $name, string $typeName = '1'): TableBuilder
     {
-        /** @var TableBuilder $tableBuilder */
-        $extPrefix = 'tx_' . str_replace('_', '', $extkey) . '_';
-        $tableBuilder = GeneralUtility::makeInstance(get_called_class(), $extPrefix . $name, $typeName);
-        return $tableBuilder;
+        trigger_error("TableBuilder::createFullyNamed is deprecated, use ::create instead", E_USER_DEPRECATED);
+        return static::create($name, $typeName);
     }
 
     /**
