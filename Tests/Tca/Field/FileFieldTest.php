@@ -3,6 +3,7 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class FileFieldTest extends AbstractFieldTest
@@ -14,6 +15,8 @@ class FileFieldTest extends AbstractFieldTest
 
     protected function assertBasicColumns(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $this->assertEquals([
             $field->getName() => [
                 'label' => $field->getOption('label'),
@@ -32,7 +35,7 @@ class FileFieldTest extends AbstractFieldTest
                     ]
                 ])
             ]
-        ], $field->getColumns('stub_table'));
+        ], $field->getColumns($stubTable));
     }
 
     /**
@@ -40,10 +43,12 @@ class FileFieldTest extends AbstractFieldTest
      */
     protected function assertBasicDatabase(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $fieldName = $field->getName();
         $this->assertEquals(
             ['stub_table' => ["`$fieldName` TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL"]],
-            $field->getDbTableDefinitions('stub_table')
+            $field->getDbTableDefinitions($stubTable)
         );
     }
 
@@ -53,6 +58,7 @@ class FileFieldTest extends AbstractFieldTest
      */
     public function testIndex(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $field = $this->createFieldInstance($fieldName, ['index' => true]);
 
         $this->assertBasicCtrlChange($field);
@@ -61,12 +67,12 @@ class FileFieldTest extends AbstractFieldTest
         $this->assertBasicShowItem($field);
         $this->assertEquals(
             [
-                'some_table' => [
+                'stub_table' => [
                     "`$fieldName` TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL",
                     "INDEX `$fieldName`(`$fieldName`)"
                 ]
             ],
-            $field->getDbTableDefinitions('some_table')
+            $field->getDbTableDefinitions($stubTable)
         );
     }
 

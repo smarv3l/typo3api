@@ -3,6 +3,8 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -49,29 +51,29 @@ class CustomConfiguration implements TcaConfigurationInterface
         return $this->options[$option];
     }
 
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         foreach ($this->getOption('ctrl') as $key => $value) {
             $ctrl[$key] = $value;
         }
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         return $this->getOption('columns');
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return $this->getOption('palettes');
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return $this->getOption('showitem');
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return $this->getOption('dbTableDefinition');
     }

@@ -3,10 +3,11 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Nemo64\Typo3Api\Builder\TableBuilder;
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use Nemo64\Typo3Api\Utility\ForeignTableUtility;
 
 
@@ -32,13 +33,13 @@ class MultiSelectRelationField extends AbstractField
             'localize' => false,
         ]);
 
-        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilder::class]);
+        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilderContext::class]);
         $resolver->setAllowedTypes('foreign_table_where', 'string');
         $resolver->setAllowedTypes('items', 'array');
 
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
-            if ($foreignTable instanceof TableBuilder) {
+            if ($foreignTable instanceof TableBuilderContext) {
                 return $foreignTable->getTableName();
             }
 
@@ -69,14 +70,19 @@ class MultiSelectRelationField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
     {
+        if (!$tcaBuilder instanceof TableBuilderContext) {
+            $type = is_object($tcaBuilder) ? get_class($tcaBuilder) : gettype($tcaBuilder);
+            throw new \RuntimeException("Expected " . TableBuilderContext::class . ", got $type");
+        }
+
         return [
             'type' => 'select',
             'renderType' => 'selectMultipleSideBySide',
             'foreign_table' => $this->getOption('foreign_table'),
             'foreign_table_where' => $this->getOption('foreign_table_where'),
-            'MM' => $this->getMnTableName($tableName),
+            'MM' => $this->getMnTableName($tcaBuilder),
             'items' => $this->getOption('items'),
             'size' => $this->getOption('size'),
             'minitems' => $this->getOption('minitems'),
@@ -85,9 +91,9 @@ class MultiSelectRelationField extends AbstractField
         ];
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
-        $columns = parent::getColumns($tableName);
+        $columns = parent::getColumns($tcaBuilder);
 
         if ($this->getOption('localize') === false) {
             // remove the l10n display options
@@ -98,11 +104,11 @@ class MultiSelectRelationField extends AbstractField
         return $columns;
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
-        $dbTableDefinitions = parent::getDbTableDefinitions($tableName);
+        $dbTableDefinitions = parent::getDbTableDefinitions($tableBuilder);
 
-        $dbTableDefinitions[$this->getMnTableName($tableName)] = [
+        $dbTableDefinitions[$this->getMnTableName($tableBuilder)] = [
             "uid_local int(11) DEFAULT '0' NOT NULL",
             "uid_foreign int(11) DEFAULT '0' NOT NULL",
             "sorting int(11) DEFAULT '0' NOT NULL",
@@ -121,12 +127,13 @@ class MultiSelectRelationField extends AbstractField
     }
 
     /**
-     * @param string $tableName
+     * @param TableBuilderContext $tableBuilder
+     *
      * @return string
      */
-    protected function getMnTableName(string $tableName)
+    protected function getMnTableName(TableBuilderContext $tableBuilder)
     {
-        return $tableName . '_' . $this->getOption('name') . '_mm';
+        return $tableBuilder->getTableName() . '_' . $this->getOption('name') . '_mm';
     }
 
 }

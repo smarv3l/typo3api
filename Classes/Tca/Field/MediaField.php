@@ -3,6 +3,7 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -30,9 +31,9 @@ class MediaField extends FileField
         ]);
     }
 
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
     {
-        $config = parent::getFieldTcaConfig($tableName);
+        $config = parent::getFieldTcaConfig($tcaBuilder);
 
         // copy the column overrides from the image type in tt_content
         // i don't want to copy paste all that definition stuff

@@ -3,6 +3,7 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -46,7 +47,7 @@ class Double2Field extends AbstractField
         $resolver->setAllowedTypes('required', 'bool');
     }
 
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
     {
         return [
             'type' => 'input',

@@ -3,6 +3,10 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+
+
 /**
  * This simple configuration just passes though the showitem string passed during construct.
  * It can be used to easily reuse fields that have already been defined (for example while creating a new type).
@@ -31,26 +35,26 @@ class ShowitemConfiguration implements TcaConfigurationInterface
         $this->showitem = $showitem;
     }
 
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
     }
 
-    public function getColumns(string $tableName): array
-    {
-        return [];
-    }
-
-    public function getPalettes(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
+    {
+        return [];
+    }
+
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return $this->showitem;
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return [];
     }

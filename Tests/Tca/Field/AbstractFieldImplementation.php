@@ -3,11 +3,12 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AbstractFieldImplementation extends AbstractField
 {
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaContext)
     {
         return [];
     }

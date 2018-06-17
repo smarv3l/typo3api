@@ -3,6 +3,9 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+
+
 class NamedPalette extends CompoundTcaConfiguration
 {
     /**
@@ -20,27 +23,27 @@ class NamedPalette extends CompoundTcaConfiguration
         $this->name = $name;
     }
 
-    public function getPaletteName(string $tableName)
+    public function getPaletteName(TcaBuilderContext $tcaBuilder)
     {
-        return preg_replace('/\W+/', '_', parent::getShowItemString($tableName));
+        return preg_replace('/\W+/', '_', parent::getShowItemString($tcaBuilder));
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         $showItems = [];
 
         foreach ($this->children as $child) {
-            $showItems[] = $child->getShowItemString($tableName);
+            $showItems[] = $child->getShowItemString($tcaBuilder);
         }
 
         $palettes = [
-            $this->getPaletteName($tableName) => [
+            $this->getPaletteName($tcaBuilder) => [
                 'showitem' => implode(', ', array_filter($showItems))
             ]
         ];
 
         foreach ($this->children as $child) {
-            foreach ($child->getPalettes($tableName) as $paletteName => $paletteDefinition) {
+            foreach ($child->getPalettes($tcaBuilder) as $paletteName => $paletteDefinition) {
                 $palettes[$paletteName] = $paletteDefinition;
             }
         }
@@ -48,8 +51,8 @@ class NamedPalette extends CompoundTcaConfiguration
         return $palettes;
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
-        return "--palette--; {$this->name}; " . $this->getPaletteName($tableName);
+        return "--palette--; {$this->name}; " . $this->getPaletteName($tcaBuilder);
     }
 }

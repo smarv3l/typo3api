@@ -3,9 +3,13 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+
+
 class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         if (!isset($ctrl['enablecolumns'])) {
             $ctrl['enablecolumns'] = [];
@@ -18,7 +22,7 @@ class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTa
         $ctrl['editlock'] = 'editlock';
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'hidden' => $GLOBALS['TCA']['tt_content']['columns']['hidden'],
@@ -29,7 +33,7 @@ class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTa
         ];
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'hidden' => [
@@ -50,7 +54,7 @@ class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTa
         ];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return implode(', ', [
             '--palette--;;hidden',
@@ -58,10 +62,10 @@ class EnableColumnsConfiguration implements TcaConfigurationInterface, DefaultTa
         ]);
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return [
-            $tableName => [
+            $tableBuilder->getTableName() => [
                 "hidden tinyint(1) DEFAULT '0' NOT NULL",
                 "starttime int(11) unsigned DEFAULT '0' NOT NULL",
                 "endtime int(11) unsigned DEFAULT '0' NOT NULL",

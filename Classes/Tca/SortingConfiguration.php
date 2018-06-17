@@ -3,14 +3,18 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+
+
 class SortingConfiguration implements TcaConfigurationInterface
 {
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         $ctrl['sortby'] = 'sorting';
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'sorting' => [
@@ -21,20 +25,20 @@ class SortingConfiguration implements TcaConfigurationInterface
         ];
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return '';
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return [
-            $tableName => [
+            $tableBuilder->getTableName() => [
                 "sorting int(11) DEFAULT '0' NOT NULL",
 
                 // sorting is always local to the pid so putting that in the index might help a lot

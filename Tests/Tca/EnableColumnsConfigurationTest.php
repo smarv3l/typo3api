@@ -14,9 +14,22 @@ class EnableColumnsConfigurationTest extends TestCase
 
     public function testConfigure()
     {
-        TableBuilder::createFullyNamed('test_table')
+        TableBuilder::create('test_table')
             ->configure(new EnableColumnsConfiguration())
         ;
+
+        $sql = [
+            "test_table" => array_merge(
+                BaseConfigurationTest::BASE_SQL,
+                [
+                    "hidden tinyint(1) DEFAULT '0' NOT NULL",
+                    "starttime int(11) unsigned DEFAULT '0' NOT NULL",
+                    "endtime int(11) unsigned DEFAULT '0' NOT NULL",
+                    "fe_group varchar(100) DEFAULT '0' NOT NULL",
+                    "editlock tinyint(1) DEFAULT '0' NOT NULL",
+                ]
+            )
+        ];
 
         $this->assertEquals(array_replace_recursive(
             BaseConfigurationTest::BASE_TCA,
@@ -29,6 +42,11 @@ class EnableColumnsConfigurationTest extends TestCase
                         'endtime' => 'endtime',
                         'fe_group' => 'fe_group',
                     ],
+                    'EXT' => [
+                        'typo3api' => [
+                            'sql' => $sql
+                        ]
+                    ]
                 ],
                 'columns' => [
                     'hidden' => $GLOBALS['TCA']['tt_content']['columns']['hidden'],
@@ -66,17 +84,6 @@ class EnableColumnsConfigurationTest extends TestCase
             ]
         ), $GLOBALS['TCA']['test_table']);
 
-        $this->assertSqlInserted([
-            "test_table" => array_merge(
-                BaseConfigurationTest::BASE_SQL,
-                [
-                    "hidden tinyint(1) DEFAULT '0' NOT NULL",
-                    "starttime int(11) unsigned DEFAULT '0' NOT NULL",
-                    "endtime int(11) unsigned DEFAULT '0' NOT NULL",
-                    "fe_group varchar(100) DEFAULT '0' NOT NULL",
-                    "editlock tinyint(1) DEFAULT '0' NOT NULL",
-                ]
-            )
-        ]);
+        $this->assertSqlInserted($sql);
     }
 }

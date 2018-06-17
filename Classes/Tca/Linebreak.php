@@ -3,28 +3,32 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+
+
 class Linebreak implements TcaConfigurationInterface
 {
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
     }
 
-    public function getColumns(string $tableName): array
-    {
-        return [];
-    }
-
-    public function getPalettes(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
+    {
+        return [];
+    }
+
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return '--linebreak--';
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tcaBuilder): array
     {
         return [];
     }

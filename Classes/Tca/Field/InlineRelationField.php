@@ -3,11 +3,12 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Nemo64\Typo3Api\Builder\TableBuilder;
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use Nemo64\Typo3Api\Utility\DbFieldDefinition;
 
 class InlineRelationField extends AbstractField
@@ -34,14 +35,14 @@ class InlineRelationField extends AbstractField
             },
         ]);
 
-        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilder::class]);
+        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilderContext::class]);
         $resolver->setAllowedTypes('foreign_field', 'string');
         $resolver->setAllowedTypes('minitems', 'int');
         $resolver->setAllowedTypes('maxitems', 'int');
 
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
-            if ($foreignTable instanceof TableBuilder) {
+            if ($foreignTable instanceof TableBuilderContext) {
                 return $foreignTable->getTableName();
             }
 
@@ -68,7 +69,7 @@ class InlineRelationField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
     {
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
@@ -129,9 +130,9 @@ class InlineRelationField extends AbstractField
         ];
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
-        $columns = parent::getColumns($tableName);
+        $columns = parent::getColumns($tcaBuilder);
 
         if ($this->getOption('localize') === false) {
             // remove the l10n display options
@@ -142,9 +143,9 @@ class InlineRelationField extends AbstractField
         return $columns;
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
-        $tableDefinitions = parent::getDbTableDefinitions($tableName);
+        $tableDefinitions = parent::getDbTableDefinitions($tableBuilder);
 
         // define the field on the other side
         // TODO somewhere it should be checked if this field is already defined

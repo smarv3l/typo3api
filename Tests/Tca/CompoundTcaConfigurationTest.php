@@ -2,6 +2,7 @@
 
 namespace Nemo64\Typo3Api\Tca;
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use PHPUnit\Framework\TestCase;
 use Nemo64\Typo3Api\Builder\TableBuilder;
 use Nemo64\Typo3Api\Hook\SqlSchemaHookUtil;
@@ -24,18 +25,19 @@ class CompoundTcaConfigurationTest extends TestCase
 
     public function testAddingTwoFields()
     {
+        $testTable = new TableBuilderContext('test_table', '1');
         $field1 = new InputField('field_1');
         $field2 = new InputField('field_2');
 
-        $tableBuilder = TableBuilder::createFullyNamed('test_table');
+        $tableBuilder = TableBuilder::create($testTable->getTableName());
         $tableBuilder->configure($this->createInstance($field1, $field2));
 
         $this->assertEquals(
-            $field1->getColumns('test_table')['field_1'],
+            $field1->getColumns($testTable)['field_1'],
             $GLOBALS['TCA']['test_table']['columns']['field_1']
         );
         $this->assertEquals(
-            $field2->getColumns('test_table')['field_2'],
+            $field2->getColumns($testTable)['field_2'],
             $GLOBALS['TCA']['test_table']['columns']['field_2']
         );
         $this->assertSqlInserted([
@@ -48,21 +50,22 @@ class CompoundTcaConfigurationTest extends TestCase
 
     public function testMergeTwoFields()
     {
+        $testTable = new TableBuilderContext('test_table', '1');
         $field1 = new InputField('field_1');
         $field2 = new InputField('field_2');
 
-        $tableBuilder = TableBuilder::createFullyNamed('test_table', 'alt_type');
+        $tableBuilder = TableBuilder::create('test_table', 'alt_type');
         $tableBuilder->configure($field1);
 
-        $tableBuilder = TableBuilder::createFullyNamed('test_table');
+        $tableBuilder = TableBuilder::create('test_table');
         $tableBuilder->configure($this->createInstance($field1, $field2));
 
         $this->assertEquals(
-            $field1->getColumns('test_table')['field_1'],
+            $field1->getColumns($testTable)['field_1'],
             $GLOBALS['TCA']['test_table']['columns']['field_1']
         );
         $this->assertEquals(
-            $field2->getColumns('test_table')['field_2'],
+            $field2->getColumns($testTable)['field_2'],
             $GLOBALS['TCA']['test_table']['columns']['field_2']
         );
         $this->assertEquals(

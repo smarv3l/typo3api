@@ -3,9 +3,13 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+
+
 class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInterface
 {
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         $ctrl['languageField'] = 'sys_language_uid';
         $ctrl['translationSource'] = 'l10n_source';
@@ -13,8 +17,13 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
         $ctrl['transOrigDiffSourceField'] = 'l18n_diffsource';
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
+        if (!$tcaBuilder instanceof TableBuilderContext) {
+            throw new \LogicException("LanguageConfiguration only possible on database tables");
+        }
+
+        $tableName = $tcaBuilder->getTableName();
         return [
             'sys_language_uid' => $GLOBALS['TCA']['tt_content']['columns']['sys_language_uid'],
             'l10n_source' => $GLOBALS['TCA']['tt_content']['columns']['l10n_source'],
@@ -42,7 +51,7 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
         ];
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return [
             'language' => [
@@ -54,15 +63,15 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
         ];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return "--palette--;;language";
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return [
-            $tableName => [
+            $tableBuilder->getTableName() => [
                 "sys_language_uid int(11) DEFAULT '0' NOT NULL",
                 "l10n_source int(11) DEFAULT '0' NOT NULL",
                 "l18n_diffsource mediumtext",

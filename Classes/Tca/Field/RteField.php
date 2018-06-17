@@ -3,6 +3,7 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RteField extends AbstractField
@@ -19,7 +20,7 @@ class RteField extends AbstractField
         $resolver->setAllowedTypes('richtextConfiguration', 'string');
     }
 
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
     {
         return [
             'type' => 'text',

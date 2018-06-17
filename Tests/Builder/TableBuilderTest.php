@@ -11,7 +11,7 @@ class TableBuilderTest extends TestCase
 
     public function testCreateTable()
     {
-        TableBuilder::createFullyNamed('test_table');
+        TableBuilder::create('test_table');
         $this->assertArrayHasKey('ctrl', $GLOBALS['TCA']['test_table']);
         $this->assertArrayHasKey('interface', $GLOBALS['TCA']['test_table']);
         $this->assertArrayHasKey('columns', $GLOBALS['TCA']['test_table']);

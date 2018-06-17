@@ -3,6 +3,8 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+
 class SelectFieldTest extends AbstractFieldTest
 {
     const STUB_DB_TYPE = "VARCHAR(1) DEFAULT '' NOT NULL";
@@ -17,6 +19,8 @@ class SelectFieldTest extends AbstractFieldTest
      */
     protected function assertBasicColumns(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $this->assertEquals([
             $field->getName() => [
                 'label' => $field->getOption('label'),
@@ -30,11 +34,13 @@ class SelectFieldTest extends AbstractFieldTest
                 'l10n_mode' => 'exclude',
                 'l10n_display' => 'defaultAsReadonly',
             ]
-        ], $field->getColumns('stub_table'));
+        ], $field->getColumns($stubTable));
     }
 
     public function testItems()
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $items = [
             ['label', 'value'],
             ['divider', '--div--'],
@@ -48,11 +54,13 @@ class SelectFieldTest extends AbstractFieldTest
             ['label', 'value'],
             ['divider', '--div--'],
             ['label2', 'value2'],
-        ], $field->getColumns('stub_table')['some_field']['config']['items']);
+        ], $field->getColumns($stubTable)['some_field']['config']['items']);
     }
 
     public function testValues()
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance('some_field', [
             'values' => ['value', 'value2']
         ]);
@@ -60,11 +68,13 @@ class SelectFieldTest extends AbstractFieldTest
         $this->assertEquals([
             ['Value', 'value'],
             ['Value2', 'value2'],
-        ], $field->getColumns('stub_table')['some_field']['config']['items']);
+        ], $field->getColumns($stubTable)['some_field']['config']['items']);
     }
 
     public function testRequired()
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance('some_field', [
             'values' => ['value', 'value2'],
             'required' => false
@@ -74,11 +84,13 @@ class SelectFieldTest extends AbstractFieldTest
             ['', ''],
             ['Value', 'value'],
             ['Value2', 'value2'],
-        ], $field->getColumns('stub_table')['some_field']['config']['items']);
+        ], $field->getColumns($stubTable)['some_field']['config']['items']);
     }
 
     public function testItemProcType()
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance('some_field', [
             'itemsProcFunc' => 'some-func'
         ]);
@@ -89,13 +101,13 @@ class SelectFieldTest extends AbstractFieldTest
                 'type' => 'select',
                 'renderType' => 'selectSingle'
             ],
-            $field->getFieldTcaConfig('some_table')
+            $field->getFieldTcaConfig($stubTable)
         );
         $this->assertEquals(
             [
-                'some_table' => ["`some_field` VARCHAR(30) DEFAULT '' NOT NULL"]
+                'stub_table' => ["`some_field` VARCHAR(30) DEFAULT '' NOT NULL"]
             ],
-            $field->getDbTableDefinitions('some_table')
+            $field->getDbTableDefinitions($stubTable)
         );
     }
 }

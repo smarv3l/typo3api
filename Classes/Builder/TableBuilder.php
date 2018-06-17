@@ -9,6 +9,7 @@
 namespace Nemo64\Typo3Api\Builder;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Nemo64\Typo3Api\Tca\BaseConfiguration;
@@ -19,14 +20,9 @@ use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 class TableBuilder implements TcaBuilderInterface
 {
     /**
-     * @var string
+     * @var TableBuilderContext
      */
-    private $tableName;
-
-    /**
-     * @var string
-     */
-    private $typeName;
+    private $context;
 
     /**
      * This is a list of default tabs.
@@ -39,14 +35,15 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * TableBuilder constructor.
+     *
      * @param string $tableName
      * @param string $typeName
+     *
      * @internal param string $name
      */
     public function __construct(string $tableName, string $typeName)
     {
-        $this->tableName = $tableName;
-        $this->typeName = $typeName;
+        $this->context = new TableBuilderContext($tableName, $typeName);
         $this->configureTableIfNotPresent();
     }
 
@@ -54,6 +51,7 @@ class TableBuilder implements TcaBuilderInterface
      * @param string $extkey
      * @param string $name
      * @param string $typeName
+     *
      * @return TableBuilder
      */
     public static function create(string $name, string $typeName = '1'): TableBuilder
@@ -72,6 +70,7 @@ class TableBuilder implements TcaBuilderInterface
     /**
      * @param string $name
      * @param string $typeName
+     *
      * @return TableBuilder
      * @deprecated use #create instead
      */
@@ -83,6 +82,7 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param TcaConfigurationInterface $configuration
+     *
      * @return $this
      */
     public function configure(TcaConfigurationInterface $configuration): TcaBuilderInterface
@@ -100,13 +100,14 @@ class TableBuilder implements TcaBuilderInterface
     /**
      * @param string $tab
      * @param TcaConfigurationInterface $configuration
+     *
      * @return $this
      */
     public function configureInTab(string $tab, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
-        $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
+        $configuration->modifyCtrl($tca['ctrl'], $this->context);
         $this->addShowItemToTab($tca, $configuration, $tab);
         $this->addPalettesAndColumns($tca, $configuration);
 
@@ -116,13 +117,14 @@ class TableBuilder implements TcaBuilderInterface
     /**
      * @param string $position
      * @param TcaConfigurationInterface $configuration
+     *
      * @return $this
      */
     public function configureAtPosition(string $position, TcaConfigurationInterface $configuration): TcaBuilderInterface
     {
         $tca =& $GLOBALS['TCA'][$this->getTableName()];
 
-        $configuration->modifyCtrl($tca['ctrl'], $this->getTableName());
+        $configuration->modifyCtrl($tca['ctrl'], $this->context);
         $this->addShowItemAtPosition($tca, $configuration, $position);
         $this->addPalettesAndColumns($tca, $configuration);
 
@@ -143,6 +145,7 @@ class TableBuilder implements TcaBuilderInterface
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function inheritConfigurationFromType(string $type): TcaBuilderInterface
@@ -164,6 +167,7 @@ class TableBuilder implements TcaBuilderInterface
     /**
      * @param string $tab
      * @param string $otherTab
+     *
      * @return $this
      */
     public function addOrMoveTabInFrontOfTab(string $tab, string $otherTab): TcaBuilderInterface
@@ -193,7 +197,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     public function getTableName(): string
     {
-        return $this->tableName;
+        return $this->context->getTableName();
     }
 
     /**
@@ -201,7 +205,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     public function getTypeName(): string
     {
-        return $this->typeName;
+        return $this->context->getTypeName();
     }
 
     public function getTitle(): string
@@ -250,12 +254,11 @@ class TableBuilder implements TcaBuilderInterface
      */
     protected function addPalettes(array &$tca, TcaConfigurationInterface $configuration)
     {
-        $tableName = $this->getTableName();
-        $palettes = $configuration->getPalettes($tableName);
+        $palettes = $configuration->getPalettes($this->context);
         foreach ($palettes as $paletteName => $paletteDefinition) {
             if (isset($tca['palettes'][$paletteName])) {
                 if ($paletteDefinition !== $tca['palettes'][$paletteName]) {
-                    $msg = "The palette $paletteName is already defined in $tableName but isn't compatible.";
+                    $msg = "The palette $paletteName is already defined in {$this->context} but isn't compatible.";
                     $msg .= " If you can rename the palette than that would be an easy fix for the problem.";
                     throw new \RuntimeException($msg);
                 }
@@ -273,7 +276,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     protected function addColumns(array &$tca, TcaConfigurationInterface $configuration)
     {
-        $columns = $configuration->getColumns($this->getTableName());
+        $columns = $configuration->getColumns($this->context);
         $existingColumns = $tca['columns'];
         $missingColumns = array_diff(array_keys($columns), array_keys($existingColumns));
 
@@ -284,44 +287,46 @@ class TableBuilder implements TcaBuilderInterface
 
             $tca['ctrl']['EXT']['typo3api']['sql'] = array_merge_recursive(
                 $tca['ctrl']['EXT']['typo3api']['sql'] ?? [],
-                $configuration->getDbTableDefinitions($this->getTableName())
+                $configuration->getDbTableDefinitions($this->context)
             );
-        } else if (count($missingColumns) > 0) {
-            $confClass = get_class($configuration);
-            $definedColumns = implode(', ', array_keys($columns));
-            $alreadyDefinedColumns = implode(', ', array_intersect(array_keys($existingColumns), array_keys($columns)));
-            $notDefinedColumns = implode(', ', $missingColumns);
-            $msg = "The $confClass defined the database columns $definedColumns.\n";
-            $msg .= "However, the columns $alreadyDefinedColumns are already defined.\n";
-            $msg .= "But the columns $notDefinedColumns are not.\n";
-            $msg .= "This means the definitions would need to be merged.\n";
-            $msg .= "This is currently not implemented because of all the special cases like relations that would need to be handled.\n";
-            $msg .= "Therefor partial configuration of a child type is currently not possible.";
-            throw new \RuntimeException($msg);
         } else {
-            // all columns are already defined so define overrides, just in case something changed.
-            foreach ($columns as $columnName => $columnDefinition) {
+            if (count($missingColumns) > 0) {
+                $confClass = get_class($configuration);
+                $definedColumns = implode(', ', array_keys($columns));
+                $alreadyDefinedColumns = implode(', ', array_intersect(array_keys($existingColumns), array_keys($columns)));
+                $notDefinedColumns = implode(', ', $missingColumns);
+                $msg = "The $confClass defined the database columns $definedColumns.\n";
+                $msg .= "However, the columns $alreadyDefinedColumns are already defined.\n";
+                $msg .= "But the columns $notDefinedColumns are not.\n";
+                $msg .= "This means the definitions would need to be merged.\n";
+                $msg .= "This is currently not implemented because of all the special cases like relations that would need to be handled.\n";
+                $msg .= "Therefor partial configuration of a child type is currently not possible.";
+                throw new \RuntimeException($msg);
+            } else {
+                // all columns are already defined so define overrides, just in case something changed.
+                foreach ($columns as $columnName => $columnDefinition) {
 
-                // don't overwrite if both arrays are identical
-                $existingColumnDefinition = $tca['columns'][$columnName];
-                if ($existingColumnDefinition === $columnDefinition) {
-                    continue;
+                    // don't overwrite if both arrays are identical
+                    $existingColumnDefinition = $tca['columns'][$columnName];
+                    if ($existingColumnDefinition === $columnDefinition) {
+                        continue;
+                    }
+
+                    // prevent accidental type changes
+                    $existingColumnType = $existingColumnDefinition['config']['type'];
+                    $newColumnType = $columnDefinition['config']['type'];
+                    if ($newColumnType !== $existingColumnType) {
+                        $tableName = $this->getTableName();
+                        $typeName = $this->getTypeName();
+                        $msg = "Column $columnName is already defined in table $tableName but as type $existingColumnType.";
+                        $msg .= " Tried to change the type in type $typeName with $newColumnType.";
+                        $msg .= " It is not possible to change the field type in different render types.";
+                        $msg .= " Use another field name or use another table entirely.";
+                        throw new \RuntimeException($msg);
+                    }
+
+                    $tca['types'][$this->getTypeName()]['columnsOverrides'][$columnName] = $columnDefinition;
                 }
-
-                // prevent accidental type changes
-                $existingColumnType = $existingColumnDefinition['config']['type'];
-                $newColumnType = $columnDefinition['config']['type'];
-                if ($newColumnType !== $existingColumnType) {
-                    $tableName = $this->getTableName();
-                    $typeName = $this->getTypeName();
-                    $msg = "Column $columnName is already defined in table $tableName but as type $existingColumnType.";
-                    $msg .= " Tried to change the type in type $typeName with $newColumnType.";
-                    $msg .= " It is not possible to change the field type in different render types.";
-                    $msg .= " Use another field name or use another table entirely.";
-                    throw new \RuntimeException($msg);
-                }
-
-                $tca['types'][$this->getTypeName()]['columnsOverrides'][$columnName] = $columnDefinition;
             }
         }
     }
@@ -338,7 +343,7 @@ class TableBuilder implements TcaBuilderInterface
         }
         $type =& $tca['types'][$this->getTypeName()];
 
-        $showItemString = $configuration->getShowItemString($this->getTableName());
+        $showItemString = $configuration->getShowItemString($this->context);
         if ($showItemString === '') {
             return;
         }
@@ -378,7 +383,7 @@ class TableBuilder implements TcaBuilderInterface
      */
     protected function addShowItemAtPosition(array &$tca, TcaConfigurationInterface $configuration, string $position)
     {
-        $showItemString = $configuration->getShowItemString($this->getTableName());
+        $showItemString = $configuration->getShowItemString($this->context);
         if ($showItemString === '') {
             return;
         }

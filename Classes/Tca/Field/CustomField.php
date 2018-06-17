@@ -3,6 +3,7 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -29,7 +30,7 @@ class CustomField extends AbstractField
         $resolver->setAllowedTypes('config', 'array');
     }
 
-    public function getFieldTcaConfig(string $tableName)
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
     {
         return $this->getOption('config');
     }

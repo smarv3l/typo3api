@@ -3,6 +3,8 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -122,7 +124,7 @@ abstract class AbstractField implements TcaConfigurationInterface
         return $this->options[$name];
     }
 
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         $fieldName = $this->getOption('name');
 
@@ -148,7 +150,7 @@ abstract class AbstractField implements TcaConfigurationInterface
 
         if ($this->getOption('useForRecordType')) {
             if (isset($ctrl['type'])) {
-                $msg = "Only one field can specify the record type for table $tableName.";
+                $msg = "Only one field can specify the record type for table $tcaBuilder.";
                 $msg .= " Tried using field " . $fieldName . " as type field.";
                 $msg .= " Field " . $ctrl['type'] . " is already defined as type field.";
                 throw new \RuntimeException($msg);
@@ -158,11 +160,11 @@ abstract class AbstractField implements TcaConfigurationInterface
         }
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         $column = [
             'label' => $this->getOption('label'),
-            'config' => $this->getFieldTcaConfig($tableName),
+            'config' => $this->getFieldTcaConfig($tcaBuilder),
         ];
 
         if ($this->getOption('exclude')) {
@@ -183,27 +185,27 @@ abstract class AbstractField implements TcaConfigurationInterface
         ];
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    abstract public function getFieldTcaConfig(string $tableName);
+    abstract public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder);
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         $name = addslashes($this->getOption('name'));
-        $definition = [$tableName => ["`$name` " . $this->getOption('dbType')]];
+        $definition = [$tableBuilder->getTableName() => ["`$name` " . $this->getOption('dbType')]];
 
         if ($this->getOption('index')) {
             // TODO I'd really like multi field indexes that are somehow nameable
-            $definition[$tableName][] = "INDEX `$name`(`$name`)";
+            $definition[$tableBuilder->getTableName()][] = "INDEX `$name`(`$name`)";
         }
 
         return $definition;
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return $this->getOption('name');
     }

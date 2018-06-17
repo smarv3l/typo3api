@@ -3,6 +3,8 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+
 class InputFieldTest extends AbstractFieldTest
 {
     public function createFieldInstance(string $name, array $options = [], $extendDefaults = true): AbstractField
@@ -16,8 +18,9 @@ class InputFieldTest extends AbstractFieldTest
 
     public function assertBasicCtrlChange(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $ctrl = [];
-        $field->modifyCtrl($ctrl, 'stub_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals([
             'searchFields' => $field->getName(),
             'label' => $field->getName(),
@@ -26,6 +29,7 @@ class InputFieldTest extends AbstractFieldTest
 
     protected function assertBasicColumns(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $this->assertEquals([
             $field->getName() => [
                 'label' => $field->getOption('label'),
@@ -37,7 +41,7 @@ class InputFieldTest extends AbstractFieldTest
                     'default' => '',
                 ]
             ]
-        ], $field->getColumns('some_table'));
+        ], $field->getColumns($stubTable));
     }
 
     public static function differentSizeProvider()
@@ -56,44 +60,47 @@ class InputFieldTest extends AbstractFieldTest
      */
     public function testDifferentSizes(int $size)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $fieldName = 'test_field_1';
         $field = $this->createFieldInstance($fieldName, ['max' => $size], false);
-        $this->assertEquals($size, $field->getColumns('t')[$fieldName]['config']['max']);
-        $this->assertEquals($size / 2, $field->getColumns('t')[$fieldName]['config']['size']);
-        $this->assertEquals("`$fieldName` VARCHAR($size) DEFAULT '' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
+        $this->assertEquals($size, $field->getColumns($stubTable)[$fieldName]['config']['max']);
+        $this->assertEquals($size / 2, $field->getColumns($stubTable)[$fieldName]['config']['size']);
+        $this->assertEquals("`$fieldName` VARCHAR($size) DEFAULT '' NOT NULL", $field->getDbTableDefinitions($stubTable)[$stubTable->getTableName()][0]);
     }
 
     public function testDefault()
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $fieldName = 'some_field';
 
         $default = 'some default';
         $field = $this->createFieldInstance($fieldName, ['default' => $default], false);
         $this->assertBasicCtrlChange($field);
-        $this->assertEquals($default, $field->getColumns('t')[$fieldName]['config']['default']);
-        $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '$default' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
+        $this->assertEquals($default, $field->getColumns($stubTable)[$fieldName]['config']['default']);
+        $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '$default' NOT NULL", $field->getDbTableDefinitions($stubTable)[$stubTable->getTableName()][0]);
 
         $field = $this->createFieldInstance($fieldName, ['default' => ''], false);
         $this->assertBasicCtrlChange($field);
-        $this->assertEquals('', $field->getColumns('t')[$fieldName]['config']['default']);
-        $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '' NOT NULL", $field->getDbTableDefinitions('t')['t'][0]);
+        $this->assertEquals('', $field->getColumns($stubTable)[$fieldName]['config']['default']);
+        $this->assertEquals("`$fieldName` VARCHAR(50) DEFAULT '' NOT NULL", $field->getDbTableDefinitions($stubTable)[$stubTable->getTableName()][0]);
     }
 
     public function testPlaceholder()
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $fieldName = 'some_field';
 
         $field = $this->createFieldInstance($fieldName, ['placeholder' => 'eg. Some Street']);
         $this->assertBasicCtrlChange($field);
-        $this->assertEquals('eg. Some Street', $field->getColumns('t')[$fieldName]['config']['placeholder']);
+        $this->assertEquals('eg. Some Street', $field->getColumns($stubTable)[$fieldName]['config']['placeholder']);
 
         $field = $this->createFieldInstance($fieldName, ['placeholder' => '']);
         $this->assertBasicCtrlChange($field);
-        $this->assertEquals('', $field->getColumns('t')[$fieldName]['config']['placeholder']);
+        $this->assertEquals('', $field->getColumns($stubTable)[$fieldName]['config']['placeholder']);
 
         $field = $this->createFieldInstance($fieldName, ['placeholder' => null]);
         $this->assertBasicCtrlChange($field);
-        $this->assertArrayNotHasKey('placeholder', $field->getColumns('t')[$fieldName]['config']);
+        $this->assertArrayNotHasKey('placeholder', $field->getColumns($stubTable)[$fieldName]['config']);
 
     }
 }

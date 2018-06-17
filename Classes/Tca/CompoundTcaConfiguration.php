@@ -1,7 +1,10 @@
 <?php
 
 namespace Nemo64\Typo3Api\Tca;
-use Traversable;
+
+
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 
 
 /**
@@ -38,19 +41,19 @@ class CompoundTcaConfiguration implements TcaConfigurationInterface, \IteratorAg
         }
     }
 
-    final public function modifyCtrl(array &$ctrl, string $tableName)
+    final public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         foreach ($this->children as $child) {
-            $child->modifyCtrl($ctrl, $tableName);
+            $child->modifyCtrl($ctrl, $tcaBuilder);
         }
     }
 
-    final public function getColumns(string $tableName): array
+    final public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         $columns = [];
 
         foreach ($this->children as $child) {
-            foreach ($child->getColumns($tableName) as $columnName => $columnDefinition) {
+            foreach ($child->getColumns($tcaBuilder) as $columnName => $columnDefinition) {
                 $columns[$columnName] = $columnDefinition;
             }
         }
@@ -58,12 +61,12 @@ class CompoundTcaConfiguration implements TcaConfigurationInterface, \IteratorAg
         return $columns;
     }
 
-    final public function getDbTableDefinitions(string $tableName): array
+    final public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         $tableDefinitions = [];
 
         foreach ($this->children as $child) {
-            foreach ($child->getDbTableDefinitions($tableName) as $table => $columns) {
+            foreach ($child->getDbTableDefinitions($tableBuilder) as $table => $columns) {
                 if (!isset($tableDefinitions[$table])) {
                     $tableDefinitions[$table] = $columns;
                 } else {
@@ -77,15 +80,15 @@ class CompoundTcaConfiguration implements TcaConfigurationInterface, \IteratorAg
         return $tableDefinitions;
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
-        return implode(',', array_map(function (TcaConfigurationInterface $configuration) use ($tableName) {
-            return $configuration->getShowItemString($tableName);
+        return implode(',', array_map(function (TcaConfigurationInterface $configuration) use ($tcaBuilder) {
+            return $configuration->getShowItemString($tcaBuilder);
         }, $this->children));
     }
 }

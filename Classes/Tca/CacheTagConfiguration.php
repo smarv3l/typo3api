@@ -3,6 +3,10 @@
 namespace Nemo64\Typo3Api\Tca;
 
 
+use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+
+
 /**
  * Class CacheTagConfiguration
  *
@@ -27,27 +31,27 @@ class CacheTagConfiguration implements TcaConfigurationInterface
         $this->group = $group;
     }
 
-    public function modifyCtrl(array &$ctrl, string $tableName)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
         $ctrl['EXT']['typo3api']['cache_tags'][$this->group][$this->tag] = $this->tag;
     }
 
-    public function getColumns(string $tableName): array
+    public function getColumns(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    public function getPalettes(string $tableName): array
+    public function getPalettes(TcaBuilderContext $tcaBuilder): array
     {
         return [];
     }
 
-    public function getShowItemString(string $tableName): string
+    public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
         return '';
     }
 
-    public function getDbTableDefinitions(string $tableName): array
+    public function getDbTableDefinitions(TableBuilderContext $tableBuilder): array
     {
         return [];
     }

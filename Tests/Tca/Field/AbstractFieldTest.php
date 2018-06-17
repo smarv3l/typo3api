@@ -2,6 +2,7 @@
 
 namespace Nemo64\Typo3Api\Tca\Field;
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use PHPUnit\Framework\TestCase;
 
 class AbstractFieldTest extends TestCase
@@ -31,8 +32,11 @@ class AbstractFieldTest extends TestCase
      */
     protected function assertBasicCtrlChange(AbstractField $field)
     {
+        $testTable = new TableBuilderContext('stub_table', '1');
+
         $ctrl = [];
-        $field->modifyCtrl($ctrl, 'stub_table');
+        $field->modifyCtrl($ctrl, $testTable);
+        unset($ctrl['EXT']); // remove extension
         $this->assertEmpty($ctrl, "No modification to ctrl is done");
     }
 
@@ -41,12 +45,14 @@ class AbstractFieldTest extends TestCase
      */
     protected function assertBasicColumns(AbstractField $field)
     {
+        $testTable = new TableBuilderContext('stub_table', '1');
+
         $this->assertEquals([
             $field->getName() => [
                 'label' => $field->getOption('label'),
                 'config' => [],
             ]
-        ], $field->getColumns('stub_table'));
+        ], $field->getColumns($testTable));
     }
 
     /**
@@ -54,7 +60,8 @@ class AbstractFieldTest extends TestCase
      */
     protected function assertBasicPalette(AbstractField $field)
     {
-        $this->assertEmpty($field->getPalettes('stub_table'));
+        $testTable = new TableBuilderContext('stub_table', '1');
+        $this->assertEmpty($field->getPalettes($testTable));
     }
 
     /**
@@ -62,7 +69,8 @@ class AbstractFieldTest extends TestCase
      */
     protected function assertBasicShowItem(AbstractField $field)
     {
-        $this->assertEquals($field->getName(), $field->getShowItemString('stub_table'));
+        $testTable = new TableBuilderContext('stub_table', '1');
+        $this->assertEquals($field->getName(), $field->getShowItemString($testTable));
     }
 
     /**
@@ -70,10 +78,11 @@ class AbstractFieldTest extends TestCase
      */
     protected function assertBasicDatabase(AbstractField $field)
     {
+        $testTable = new TableBuilderContext('stub_table', '1');
         $fieldName = $field->getName();
         $this->assertEquals(
             ['stub_table' => ["`$fieldName` " . static::STUB_DB_TYPE]],
-            $field->getDbTableDefinitions('stub_table')
+            $field->getDbTableDefinitions($testTable)
         );
     }
 
@@ -144,6 +153,7 @@ class AbstractFieldTest extends TestCase
      */
     public function testIndex(string $fieldName)
     {
+        $testTable = new TableBuilderContext('stub_table', '1');
         $field = $this->createFieldInstance($fieldName, ['index' => true]);
 
         $this->assertBasicCtrlChange($field);
@@ -152,12 +162,12 @@ class AbstractFieldTest extends TestCase
         $this->assertBasicShowItem($field);
         $this->assertEquals(
             [
-                'some_table' => [
+                'stub_table' => [
                     "`$fieldName` " . static::STUB_DB_TYPE,
                     "INDEX `$fieldName`(`$fieldName`)"
                 ]
             ],
-            $field->getDbTableDefinitions('some_table')
+            $field->getDbTableDefinitions($testTable)
         );
     }
 
@@ -167,15 +177,17 @@ class AbstractFieldTest extends TestCase
      */
     public function testExclude(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance($fieldName, ['exclude' => false]);
-        $this->assertArrayNotHasKey('exclude', $field->getColumns('stb_table')[$fieldName]);
+        $this->assertArrayNotHasKey('exclude', $field->getColumns($stubTable)[$fieldName]);
         $this->assertBasicCtrlChange($field);
         $this->assertBasicPalette($field);
         $this->assertBasicShowItem($field);
         $this->assertBasicDatabase($field);
 
         $field = $this->createFieldInstance($fieldName, ['exclude' => true]);
-        $this->assertEquals(1, $field->getColumns('stb_table')[$fieldName]['exclude']);
+        $this->assertEquals(1, $field->getColumns($stubTable)[$fieldName]['exclude']);
         $this->assertBasicCtrlChange($field);
         $this->assertBasicPalette($field);
         $this->assertBasicShowItem($field);
@@ -188,18 +200,20 @@ class AbstractFieldTest extends TestCase
      */
     public function testLocalize(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance($fieldName, ['localize' => true]);
         $this->assertBasicCtrlChange($field);
-        $this->assertArrayNotHasKey('l10n_mode', $field->getColumns('stb_table')[$fieldName]);
-        $this->assertArrayNotHasKey('l10n_display', $field->getColumns('stb_table')[$fieldName]);
+        $this->assertArrayNotHasKey('l10n_mode', $field->getColumns($stubTable)[$fieldName]);
+        $this->assertArrayNotHasKey('l10n_display', $field->getColumns($stubTable)[$fieldName]);
         $this->assertBasicPalette($field);
         $this->assertBasicShowItem($field);
         $this->assertBasicDatabase($field);
 
         $field = $this->createFieldInstance($fieldName, ['localize' => false]);
         $this->assertBasicCtrlChange($field);
-        $this->assertEquals('exclude', $field->getColumns('stb_table')[$fieldName]['l10n_mode']);
-        $this->assertEquals('defaultAsReadonly', $field->getColumns('stb_table')[$fieldName]['l10n_display']);
+        $this->assertEquals('exclude', $field->getColumns($stubTable)[$fieldName]['l10n_mode']);
+        $this->assertEquals('defaultAsReadonly', $field->getColumns($stubTable)[$fieldName]['l10n_display']);
         $this->assertBasicPalette($field);
         $this->assertBasicShowItem($field);
         $this->assertBasicDatabase($field);
@@ -211,9 +225,11 @@ class AbstractFieldTest extends TestCase
      */
     public function testDisplayCondition(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance($fieldName, ['displayCond' => 'some condition']);
         $this->assertBasicCtrlChange($field);
-        $this->assertEquals('some condition', $field->getColumns('stb_table')[$fieldName]['displayCond']);
+        $this->assertEquals('some condition', $field->getColumns($stubTable)[$fieldName]['displayCond']);
         $this->assertBasicPalette($field);
         $this->assertBasicShowItem($field);
         $this->assertBasicDatabase($field);
@@ -225,10 +241,11 @@ class AbstractFieldTest extends TestCase
      */
     public function testUseAsLabel(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $field = $this->createFieldInstance($fieldName, ['useAsLabel' => true]);
 
         $ctrl = [];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals($fieldName, $ctrl['label']);
         $this->assertBasicColumns($field);
         $this->assertBasicPalette($field);
@@ -236,12 +253,12 @@ class AbstractFieldTest extends TestCase
         $this->assertBasicDatabase($field);
 
         $ctrl = ['label' => 'other_field'];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals('other_field', $ctrl['label']);
         $this->assertEquals($fieldName, $ctrl['label_alt']);
 
         $ctrl = ['label' => 'other_field_1', 'label_alt' => 'other_field_2'];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals('other_field_1', $ctrl['label']);
         $this->assertEquals('other_field_2, ' . $fieldName, $ctrl['label_alt']);
     }
@@ -252,19 +269,21 @@ class AbstractFieldTest extends TestCase
      */
     public function testSearchField(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance($fieldName, ['searchField' => false]);
         $ctrl = [];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertArrayNotHasKey('search_field', $ctrl);
 
         $field = $this->createFieldInstance($fieldName, ['searchField' => true]);
         $ctrl = [];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals($fieldName, $ctrl['searchFields']);
 
         $field = $this->createFieldInstance($fieldName, ['searchField' => true]);
         $ctrl = ['searchFields' => 'other_field'];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals('other_field, ' . $fieldName, $ctrl['searchFields']);
     }
 
@@ -274,14 +293,16 @@ class AbstractFieldTest extends TestCase
      */
     public function testLabel(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $field = $this->createFieldInstance($fieldName, ['useAsLabel' => false]);
         $ctrl = ['label' => 'uid'];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals('uid', $ctrl['label']);
 
         $field = $this->createFieldInstance($fieldName, ['useAsLabel' => true]);
         $ctrl = ['label' => 'uid'];
-        $field->modifyCtrl($ctrl, 'some_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals($fieldName, $ctrl['label']);
     }
 }

@@ -3,6 +3,7 @@
 namespace Nemo64\Typo3Api\Tca\Field;
 
 
+use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use Nemo64\Typo3Api\PreparationForTypo3;
@@ -20,8 +21,10 @@ class ImageFieldTest extends FileFieldTest
 
     protected function assertBasicCtrlChange(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $ctrl = [];
-        $field->modifyCtrl($ctrl, 'stub_table');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals([
             'thumbnail' => $field->getName()
         ], $ctrl, "ctrl change");
@@ -29,6 +32,8 @@ class ImageFieldTest extends FileFieldTest
 
     protected function assertBasicColumns(AbstractField $field)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
+
         $this->assertEquals([
             $field->getName() => [
                 'label' => $field->getOption('label'),
@@ -82,7 +87,7 @@ class ImageFieldTest extends FileFieldTest
                     ]
                 ], 'gif,jpg,jpeg,tif,tiff,png')
             ]
-        ], $field->getColumns('stub_table'));
+        ], $field->getColumns($stubTable));
     }
 
     /**
@@ -91,31 +96,32 @@ class ImageFieldTest extends FileFieldTest
      */
     public function testThumbnail(string $fieldName)
     {
+        $stubTable = new TableBuilderContext('stub_table', '1');
         $altFieldName = $fieldName . '_2';
 
         $ctrl = [];
         $field = $this->createFieldInstance($fieldName, ['useAsThumbnail' => false]);
-        $field->modifyCtrl($ctrl, 'stub_table1');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEmpty($ctrl, "No thumbnail modified");
 
         $ctrl = [];
         $field = $this->createFieldInstance($fieldName, ['useAsThumbnail' => true]);
-        $field->modifyCtrl($ctrl, 'stub_table1');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals(['thumbnail' => $fieldName], $ctrl, "thumbnail added");
 
         $ctrl = [];
         $field = $this->createFieldInstance($fieldName);
-        $field->modifyCtrl($ctrl, 'stub_table1');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals(['thumbnail' => $fieldName], $ctrl, "thumbnail added even if not specified");
 
         // $ctrl = []; // left out on purpose
         $field = $this->createFieldInstance($altFieldName);
-        $field->modifyCtrl($ctrl, 'stub_table1');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals(['thumbnail' => $fieldName], $ctrl, "thumbnail not overwritten");
 
         // $ctrl = []; // left out on purpose
         $field = $this->createFieldInstance($altFieldName, ['useAsThumbnail' => 'force']);
-        $field->modifyCtrl($ctrl, 'stub_table1');
+        $field->modifyCtrl($ctrl, $stubTable);
         $this->assertEquals(['thumbnail' => $altFieldName], $ctrl, "thumbnail force overwritten");
 
 
