@@ -97,7 +97,8 @@ class InlineRelationField extends AbstractField
             $GLOBALS['TCA'][$foreignTable]['ctrl']['hideTable'] = true;
 
             // since this table can't normally be created anymore, remove creation restrictions
-            ExtensionManagementUtility::allowTableOnStandardPages($foreignTable);
+            // ExtensionManagementUtility::allowTableOnStandardPages($foreignTable);
+            $GLOBALS['TCA']['pages']['ctrl']['EXT']['typo3api']['allow_tables'][] = $foreignTable;
         }
 
         return [
