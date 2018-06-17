@@ -4,6 +4,7 @@ namespace Nemo64\Typo3Api\Tca\Field;
 
 
 use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+use Nemo64\Typo3Api\Builder\TableBuilder;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,13 +34,13 @@ class MultiSelectRelationField extends AbstractField
             'localize' => false,
         ]);
 
-        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilderContext::class]);
+        $resolver->setAllowedTypes('foreign_table', ['string', TableBuilder::class]);
         $resolver->setAllowedTypes('foreign_table_where', 'string');
         $resolver->setAllowedTypes('items', 'array');
 
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('foreign_table', function (Options $options, $foreignTable) {
-            if ($foreignTable instanceof TableBuilderContext) {
+            if ($foreignTable instanceof TableBuilder) {
                 return $foreignTable->getTableName();
             }
 
