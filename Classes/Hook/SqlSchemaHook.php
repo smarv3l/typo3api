@@ -16,40 +16,20 @@ use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
 
 class SqlSchemaHook implements SingletonInterface
 {
-
-    /**
-     * @var bool
-     */
-    private static $eventAttached = false;
-
     /**
      * Attach to the event hook.
      */
     public static function attach()
     {
-        if (self::$eventAttached) {
-            return;
-        }
-
         /** @var Dispatcher $signalSlotDispatcher */
         $dispatcherClass = Dispatcher::class;
         $signalSlotDispatcher = GeneralUtility::makeInstance($dispatcherClass);
         $signalSlotDispatcher->connect(
             SqlExpectedSchemaService::class,
             'tablesDefinitionIsBeingBuilt',
-            SqlSchemaHook::class,
+            static::class,
             'modifyTablesDefinitionString'
         );
-        self::$eventAttached = true;
-    }
-
-    /**
-     * Reset all attached definitions.
-     * Mostly useful for testing.
-     */
-    public static function reset()
-    {
-        self::$eventAttached = false;
     }
 
     /**

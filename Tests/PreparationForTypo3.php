@@ -34,7 +34,6 @@ trait PreparationForTypo3
 
     public function tearDown()
     {
-        SqlSchemaHook::reset();
         GeneralUtility::purgeInstances();
         unset($GLOBALS['TCA']);
     }
