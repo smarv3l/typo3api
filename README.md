@@ -35,73 +35,28 @@ Than, instead of returning the a tca array, you can use the TableBuilder.
 
 That is all. You can now start using the tx_ext_person table.
 
-## ContentElementBuilder
+## ContentElement
 
-This is an extension of the TableBuilder. It will also do some magic to create content elements.
+To Create a content element, use the TableBuilder inside `Configuration/TCA/Override/tt_content.php`.
 
 ```PHP
-\Nemo64\Typo3Api\Builder\ContentElementBuilder::create($_EXTKEY, 'vcard')
-    ->setTitle("VCard")
-    ->setDescription("Shows information about a tx_ext_person")
-    // reuse the header palette
-    ->configure(new \Nemo64\Typo3Api\Tca\ShowitemConfiguration(
-        '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header'
-    ))
-    // this field is new and doesn't exist on tt_content yet
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\SelectRelationField('tx_ext_person', [
-        'label' => 'Person',
-        'foreign_table' => 'tx_ext_person'
+\Nemo64\Typo3Api\Builder\TableBuilder::create('tt_content', 'carousel')
+    ->configure(new \Nemo64\Typo3Api\Tca\ContentElement())
+    // add more fields as you like
+;
+```
+Or with more options.
+```PHP
+\Nemo64\Typo3Api\Builder\TableBuilder::create('tt_content', 'quote')
+    ->configure(new \Nemo64\Typo3Api\Tca\ContentElement([
+        'name' => 'Quote element',
+        'description' => 'Tell what other peaple are saying',
+        'icon' => 'content-quote',
+        'headline' => 'hidden', // adds only the headline field
     ]))
 ;
 ```
 
-So this will extend the `tt_content` TCA similar to this.
-
-```PHP
-$GLOBALS['TCA']['tt_content']['columns']['tx_ext_person'] => [
-    'label' => 'Person',
-    'config' => [
-        'foreign_table' => 'tx_ext_person',
-        'foreign_table_where' => 'AND tx_ext_person.sys_language_uid IN (0, -1) ORDER BY tx_ext_person.sorting',
-        'items' => [],
-        'renderType' => 'selectSingle',
-        'type' => 'select',
-    ],
-    'l10n_display' => 'defaultAsReadonly',
-    'l10n_mode' => 'exclude'
-];
-$GLOBALS['TCA']['tt_content']['types']['vcard'] = [
-    'showitem' => '--div--; LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general, --palette--;LLL:EXT:cms/locallang_ttc.xlf:palette.general;general,--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header,tx_ext_person, --div--; LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:language, --palette--;;language, --div--; LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access, --palette--;;hidden, --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.access;access, --div--; LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:categories, categories, --div--; LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:notes, rowDescription'
-];
-$GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = ['VCard', 'vcard', 'content-text'];
-```
-
-The it'll add the one new column
-
-```SQL
-ALTER TABLE `tt_content` ADD `tx_ext_person` INT DEFAULT 0 NOT NULL
-```
-
-And it will also add some tsconfig to add the content element to the create wizard
-
-```
-mod.wizards.newContentElement.wizardItems.$this->section.elements.vcard {
-    iconIdentifier = content-text
-    title = VCard
-    description = Shows information about a tx_ext_person
-    tt_content_defValues {
-        CType = vcard
-    }
-}
-mod.wizards.newContentElement.wizardItems.$this->section.show := addToList(vcard)
-```
- 
-
-# how to contribute
-
-Checkout this repo and install the composer dependencies using `composer update`.
-I don't ship a `composer.lock` since this library must run with the newest dependencies.
-
 ## run the unit tests
 
-run `vendor/bin/phpuniz`
+run `vendor/bin/phpunit`
