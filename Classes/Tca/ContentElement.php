@@ -7,7 +7,6 @@ use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class ContentElement implements TcaConfigurationInterface
 {
@@ -50,6 +49,12 @@ class ContentElement implements TcaConfigurationInterface
         'content-textpic',
     ];
 
+    const HEADLINE = [
+        'normal' => '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.headers;headers',
+        'no_sub' => '--palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.header;header',
+        'hidden' => 'header;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header.ALT.html_formlabel',
+    ];
+
     /**
      * @var array
      */
@@ -81,11 +86,13 @@ class ContentElement implements TcaConfigurationInterface
                 }, static::ICONS);
                 $icons = array_column($icons, 'name', 'diff');
                 ksort($icons);
-                \TYPO3\CMS\Core\Utility\DebugUtility::debug($icons);
                 return reset($icons);
             },
             'section' => 'common',
+            'headline' => 'normal',
         ]);
+
+        $this->optionsResolver->setAllowedValues('headline', array_keys(self::HEADLINE));
 
         // these options will be passed by #getOptions
         $this->optionsResolver->setRequired('typeName');
@@ -96,16 +103,23 @@ class ContentElement implements TcaConfigurationInterface
         return $this->optionsResolver->resolve($this->options + ['typeName' => $context->getTypeName()]);
     }
 
-    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    protected function testContext(TcaBuilderContext $context): TableBuilderContext
     {
-        if (!$tcaBuilder instanceof TableBuilderContext) {
-            $type = is_object($tcaBuilder) ? get_class($tcaBuilder) : gettype($tcaBuilder);
+        if (!$context instanceof TableBuilderContext) {
+            $type = is_object($context) ? get_class($context) : gettype($context);
             throw new \RuntimeException("Expected " . TableBuilderContext::class . ", got $type");
         }
 
-        if ($tcaBuilder->getTableName() !== 'tt_content') {
+        if ($context->getTableName() !== 'tt_content') {
             throw new \RuntimeException("Content elements can only be configured for the tt_content table.");
         }
+
+        return $context;
+    }
+
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
+    {
+        $tcaBuilder = $this->testContext($tcaBuilder);
 
         $options = $this->getOptions($tcaBuilder);
         $ctrl['EXT']['typo3api']['content_elements'][$options['section']][] = [
@@ -122,6 +136,10 @@ class ContentElement implements TcaConfigurationInterface
 
         // add new type to select choices
         // TODO allow to define a position in dropdown
+        if (!isset($GLOBALS['TCA']['tt_content']['columns']['CType']['extended'])) {
+            $GLOBALS['TCA']['tt_content']['columns']['CType']['extended'] = true;
+            $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = ['Extended', '--div--'];
+        }
         $newSelectItem = [$options['name'], $options['typeName'], $options['icon']];
         $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = $newSelectItem;
     }
@@ -138,8 +156,12 @@ class ContentElement implements TcaConfigurationInterface
 
     public function getShowItemString(TcaBuilderContext $tcaBuilder): string
     {
+        $tcaBuilder = $this->testContext($tcaBuilder);
+        $options = $this->getOptions($tcaBuilder);
+
         return '
             --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.general;general,
+            ' . static::HEADLINE[$options['headline']] . ',
             --div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.appearance,
                 --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.frames;frames,
                 --palette--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:palette.appearanceLinks;appearanceLinks,
