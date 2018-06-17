@@ -14,6 +14,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Nemo64\Typo3Api\Tca\ShowitemConfiguration;
 use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
 
+/**
+ * Class ContentElementBuilder
+ * @deprecated use the normal TableBuilder instead and define the content element using the ContentElementConfiguration
+ * @see \Nemo64\Typo3Api\Builder\TableBuilder
+ * @see \Nemo64\Typo3Api\Tca\ContentElement
+ */
 class ContentElementBuilder implements TcaBuilderInterface
 {
     /**
