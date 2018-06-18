@@ -18,7 +18,7 @@ use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
  * Class ContentElementBuilder
  * @deprecated use the normal TableBuilder instead and define the content element using the ContentElementConfiguration
  * @see \Nemo64\Typo3Api\Builder\TableBuilder
- * @see \Nemo64\Typo3Api\Tca\ContentElement
+ * @see \Nemo64\Typo3Api\Tca\ContentElementConfiguration
  */
 class ContentElementBuilder implements TcaBuilderInterface
 {

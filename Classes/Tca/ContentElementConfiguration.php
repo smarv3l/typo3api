@@ -8,7 +8,7 @@ use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ContentElement implements TcaConfigurationInterface
+class ContentElementConfiguration implements TcaConfigurationInterface
 {
     const ICONS = [
         'content-accordion',

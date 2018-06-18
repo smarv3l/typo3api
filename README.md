@@ -41,14 +41,14 @@ To Create a content element, use the TableBuilder inside `Configuration/TCA/Over
 
 ```PHP
 \Nemo64\Typo3Api\Builder\TableBuilder::create('tt_content', 'carousel')
-    ->configure(new \Nemo64\Typo3Api\Tca\ContentElement())
+    ->configure(new \Nemo64\Typo3Api\Tca\ContentElementConfiguration())
     // add more fields as you like
 ;
 ```
 Or with more options.
 ```PHP
 \Nemo64\Typo3Api\Builder\TableBuilder::create('tt_content', 'quote')
-    ->configure(new \Nemo64\Typo3Api\Tca\ContentElement([
+    ->configure(new \Nemo64\Typo3Api\Tca\ContentElementConfiguration([
         'name' => 'Quote element',
         'description' => 'Tell what other peaple are saying',
         'icon' => 'content-quote',
