@@ -5,7 +5,7 @@
 
 # apis for easier typo3 handling
 
-This library abstracts some of the array configuration nessesary to get things done in typo3. This will result in faster, easier and less annoying workflows. 
+This library abstracts some of the array configuration necessary to get things done in typo3. This will result in faster, easier and less annoying workflows. 
 
 # how to install
 
