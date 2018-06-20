@@ -26,10 +26,31 @@ Than, instead of returning the a tca array, you can use the TableBuilder.
     ->configure(new \Nemo64\Typo3Api\Tca\LanguageConfiguration())
     ->configure(new \Nemo64\Typo3Api\Tca\EnableColumnsConfiguration())
     ->configure(new \Nemo64\Typo3Api\Tca\SortingConfiguration())
+    
+    // configure cache clearing so you don't need to provide cache clear capabilities to your backend users
+    ->configure(new \Nemo64\Typo3Api\Tca\CacheTagConfiguration('tx_ext_person_###UID###'))
+    ->configure(new \Nemo64\Typo3Api\Tca\CacheTagConfiguration('tx_ext_person'))
+    
+    // the actual fields
     ->configure(new \Nemo64\Typo3Api\Tca\Field\InputField('first_name', ['required' => true, 'localize' => false]))
     ->configure(new \Nemo64\Typo3Api\Tca\Field\InputField('last_name', ['required' => true, 'localize' => false]))
     ->configure(new \Nemo64\Typo3Api\Tca\Field\DateField('birthday'))
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\TextareaField('notice'))
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\EmailField('email'))
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\ImageField('image', ['cropVariants' => ['default' => ['1:1']]]))
+    
+    // easily allow multiple phone numbers
+    ->configure(new \Nemo64\Typo3Api\Tca\Field\InlineRelationField('phone_numbers', [
+        'foreign_table' => \Nemo64\Typo3Api\Builder\TableBuilder::create('tx_ext_person_phone')
+            ->configure(new \Nemo64\Typo3Api\Tca\SortingConfiguration())
+            ->configure(new \Nemo64\Typo3Api\Tca\Field\SelectField('type', ['values' => ['business', 'private', 'other']]))
+            ->configure(new \Nemo64\Typo3Api\Tca\Field\PhoneField('value'))
+    ]))
+    
+    // use or create complex configurations and reuse them across tables
+    ->configure(new \Nemo64\Typo3Api\Tca\Util\Address('Address'))
+    
+    // create new tabs (aka --div--) on the fly
+    ->configureInTab('Notice', new \Nemo64\Typo3Api\Tca\Field\TextareaField('notice'))
 ;
 ```
 
