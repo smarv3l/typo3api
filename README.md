@@ -5,21 +5,20 @@
 
 # apis for easier typo3 handling
 
-This library abstracts some of the array configuration necessary to get things done in typo3. This will result in faster, easier and less annoying workflows. 
+This extension abstracts some of the array configuration necessary to get things done in typo3. This will result in faster, easier and less annoying workflows. 
 
 # how to install
 
-Install the library via composer using `composer require nemo64/typo3api` and you are done. This is a library and it doesn't require an extension installation.
+Use `composer require nemo64/typo3api` to install this extension. For anyone not using composer: make your project use composer first. Seriously, this extension is to ease your workflow but if you are still using the none-composer mode you have bigger workflow problems. 
 
 # how to use
 
-This library expects you to create your own extensions. Currently there are 2 apis.
-The `TableBuilder` and the `ContentElementBuilder`.
+Replace your TCA array with the `Nemo64\Typo3Api\Builder\TableBuilder`.
 
 ## TableBuilder
 
-Create the tca file in your extension like `Configuration/TCA/tx_ext_person.php`.
-Than, instead of returning the a tca array, you can use the TableBuilder.
+Create the TCA file in your extension like `Configuration/TCA/tx_ext_person.php`.
+Then, instead of returning the a TCA array, you can use the TableBuilder.
 
 ```PHP
 \Nemo64\Typo3Api\Builder\TableBuilder::create('tx_ext_person')
