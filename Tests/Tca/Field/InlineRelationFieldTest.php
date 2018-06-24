@@ -145,7 +145,7 @@ class InlineRelationFieldTest extends AbstractFieldTest
         $field = $this->createFieldInstance($fieldName, ['localize' => false]);
         $this->assertBasicCtrlChange($field);
         $this->assertEquals('exclude', $field->getColumns($stubTable)[$fieldName]['l10n_mode']);
-        $this->assertNull($field->getColumns($stubTable)[$fieldName]['l10n_display']);
+        $this->assertFalse(isset($field->getColumns($stubTable)[$fieldName]['l10n_display']));
         $this->assertBasicPalette($field);
         $this->assertBasicShowItem($field);
         $this->assertBasicDatabase($field);
