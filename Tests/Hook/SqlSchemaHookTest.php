@@ -3,9 +3,6 @@
 namespace Typo3Api\Hook;
 
 use PHPUnit\Framework\TestCase;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
 use Typo3Api\Builder\Context\TableBuilderContext;
 use Typo3Api\PreparationForTypo3;
 use Typo3Api\Tca\CustomConfiguration;
@@ -13,24 +10,6 @@ use Typo3Api\Tca\CustomConfiguration;
 class SqlSchemaHookTest extends TestCase
 {
     use PreparationForTypo3;
-
-    public function testAttach()
-    {
-        /** @var Dispatcher $signalSlotDispatcher */
-        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $slots = $signalSlotDispatcher->getSlots(SqlExpectedSchemaService::class, 'tablesDefinitionIsBeingBuilt');
-        $this->assertCount(0, $slots, "Expect no slot being defined by default");
-
-        SqlSchemaHook::attach();
-
-        $slots = $signalSlotDispatcher->getSlots(SqlExpectedSchemaService::class, 'tablesDefinitionIsBeingBuilt');
-        $this->assertCount(1, $slots, "Slot must be defined");
-
-        SqlSchemaHook::attach();
-
-        $slots = $signalSlotDispatcher->getSlots(SqlExpectedSchemaService::class, 'tablesDefinitionIsBeingBuilt');
-        $this->assertCount(1, $slots, "Slot must only be defined once");
-    }
 
     public function testEmptyModify()
     {
