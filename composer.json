@@ -27,11 +27,12 @@
     },
     "require": {
         "php": "^7.0",
-        "typo3/cms-core": "~8.7.8",
-        "typo3/cms-frontend": "~8.7.8",
+        "symfony/intl": ">= 2.3, < 5.0",
         "symfony/options-resolver": ">= 2.6, < 5.0",
         "symfony/polyfill-mbstring": "^1.2",
-        "symfony/intl": ">= 2.3, < 5.0"
+        "typo3/cms-core": "~8.7.8",
+        "typo3/cms-extbase": "~8.7.8",
+        "typo3/cms-frontend": "~8.7.8"
     },
     "autoload": {
         "psr-4": {
