@@ -75,7 +75,10 @@ class InlineRelationField extends AbstractField
 
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
-            throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder");
+            $msg = "Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder.";
+            $msg .= "\nThis can also be a loading order issue of tca files. You can try to put the inline relation into TCA/Overrides.";
+            $msg .= "\nIf you just need the foreign table in this relation, you might also consider configuring it inline here.";
+            throw new \RuntimeException($msg);
         }
 
         $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];
