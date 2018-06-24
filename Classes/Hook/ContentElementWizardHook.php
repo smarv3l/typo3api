@@ -7,11 +7,6 @@ use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
 
 class ContentElementWizardHook implements NewContentElementWizardHookInterface
 {
-    public static function attach()
-    {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms']['db_new_content_el']['wizardItemsHook'][] = static::class;
-    }
-
     /**
      * Modifies WizardItems array
      *

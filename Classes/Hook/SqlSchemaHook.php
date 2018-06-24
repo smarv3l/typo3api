@@ -10,28 +10,9 @@ namespace Typo3Api\Hook;
 
 
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
 
 class SqlSchemaHook implements SingletonInterface
 {
-    /**
-     * Attach to the event hook.
-     */
-    public static function attach()
-    {
-        /** @var Dispatcher $signalSlotDispatcher */
-        $dispatcherClass = Dispatcher::class;
-        $signalSlotDispatcher = GeneralUtility::makeInstance($dispatcherClass);
-        $signalSlotDispatcher->connect(
-            SqlExpectedSchemaService::class,
-            'tablesDefinitionIsBeingBuilt',
-            static::class,
-            'modifyTablesDefinitionString'
-        );
-    }
-
     /**
      * The actual hook method.
      *

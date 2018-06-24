@@ -8,12 +8,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CacheTagHook
 {
-    public static function attach()
-    {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc']['typo3api'] = static::class . '->clearCachePostProcess';
-        // TODO check if the event can also be attached to extbase to somehow clear the cache after persistAll
-    }
-
     /**
      * @param array $params
      *
