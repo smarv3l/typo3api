@@ -69,8 +69,10 @@ class InlineRelationField extends AbstractField
         });
     }
 
-    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    public function modifyCtrl(array &$ctrl, TcaBuilderContext $tcaBuilder)
     {
+        parent::modifyCtrl($ctrl, $tcaBuilder);
+
         $foreignTable = $this->getOption('foreign_table');
         if (!isset($GLOBALS['TCA'][$foreignTable])) {
             throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder");
@@ -78,12 +80,7 @@ class InlineRelationField extends AbstractField
 
         $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];
         $sortby = @$foreignTableDefinition['ctrl']['sortby'] ?: @$foreignTableDefinition['ctrl']['_sortby'];
-        $canBeSorted = (bool)$sortby;
-        $canLocalize = (bool)@$foreignTableDefinition['ctrl']['languageField'];
-        $canHide = (bool)@$foreignTableDefinition['columns']['hidden'];
 
-        // this is the takeover part... it will modify globals which isn't so nice
-        // TODO create a better spot to modify globals.. this doesn't fit here
         if ($this->getOption('foreignTakeover')) {
             // the doc states that sortby should be disabled if the table is exclusive for this relation
             // https://docs.typo3.org/typo3cms/TCAReference/8-dev/ColumnsConfig/Type/Inline.html#foreign-sortby
@@ -99,6 +96,20 @@ class InlineRelationField extends AbstractField
             // ExtensionManagementUtility::allowTableOnStandardPages($foreignTable);
             $GLOBALS['TCA']['pages']['ctrl']['EXT']['typo3api']['allow_tables'][] = $foreignTable;
         }
+    }
+
+    public function getFieldTcaConfig(TcaBuilderContext $tcaBuilder)
+    {
+        $foreignTable = $this->getOption('foreign_table');
+        if (!isset($GLOBALS['TCA'][$foreignTable])) {
+            throw new \RuntimeException("Configure $foreignTable before adding it in the irre configuraiton of $tcaBuilder");
+        }
+
+        $foreignTableDefinition = $GLOBALS['TCA'][$foreignTable];
+        $sortby = @$foreignTableDefinition['ctrl']['sortby'] ?: @$foreignTableDefinition['ctrl']['_sortby'];
+        $canBeSorted = (bool)$sortby;
+        $canLocalize = (bool)@$foreignTableDefinition['ctrl']['languageField'];
+        $canHide = (bool)@$foreignTableDefinition['columns']['hidden'];
 
         return [
             'type' => 'inline',
