@@ -1,6 +1,6 @@
 <?php
 
-namespace Nemo64\Typo3Api\Utility;
+namespace Typo3Api\Utility;
 
 
 use Symfony\Component\Intl\Intl;

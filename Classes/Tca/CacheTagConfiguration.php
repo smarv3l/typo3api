@@ -1,17 +1,17 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
-use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Typo3Api\Builder\Context\TableBuilderContext;
+use Typo3Api\Builder\Context\TcaBuilderContext;
 
 
 /**
  * Class CacheTagConfiguration
  *
- * ->configure(mew \Nemo64\Typo3Api\Tca\CacheTagConfiguration('tx_myextension'))
- * ->configure(mew \Nemo64\Typo3Api\Tca\CacheTagConfiguration('tx_myextension_table_####uid###'))
+ * ->configure(mew \Typo3Api\Tca\CacheTagConfiguration('tx_myextension'))
+ * ->configure(mew \Typo3Api\Tca\CacheTagConfiguration('tx_myextension_table_####uid###'))
  */
 class CacheTagConfiguration implements TcaConfigurationInterface
 {

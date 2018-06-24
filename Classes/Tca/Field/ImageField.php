@@ -6,13 +6,13 @@
  * Time: 13:17
  */
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Typo3Api\Builder\Context\TcaBuilderContext;
 
 class ImageField extends FileField
 {

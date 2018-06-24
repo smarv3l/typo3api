@@ -6,19 +6,19 @@
  * Time: 22:12
  */
 
-namespace Nemo64\Typo3Api\Builder;
+namespace Typo3Api\Builder;
 
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Nemo64\Typo3Api\Tca\ShowitemConfiguration;
-use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
+use Typo3Api\Tca\ShowitemConfiguration;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
 /**
  * Class ContentElementBuilder
  * @deprecated use the normal TableBuilder instead and define the content element using the ContentElementConfiguration
- * @see \Nemo64\Typo3Api\Builder\TableBuilder
- * @see \Nemo64\Typo3Api\Tca\ContentElementConfiguration
+ * @see \Typo3Api\Builder\TableBuilder
+ * @see \Typo3Api\Tca\ContentElementConfiguration
  */
 class ContentElementBuilder implements TcaBuilderInterface
 {

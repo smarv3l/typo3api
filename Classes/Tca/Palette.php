@@ -1,9 +1,9 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
+use Typo3Api\Builder\Context\TcaBuilderContext;
 
 
 /**

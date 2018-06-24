@@ -13,7 +13,7 @@ Use `composer require nemo64/typo3api` to install this extension. For anyone not
 
 # how to use
 
-Replace your TCA array with the `Nemo64\Typo3Api\Builder\TableBuilder`.
+Replace your TCA array with the `Typo3Api\Builder\TableBuilder`.
 
 ## TableBuilder
 
@@ -21,35 +21,35 @@ Create the TCA file in your extension like `Configuration/TCA/tx_ext_person.php`
 Then, instead of returning the a TCA array, you can use the TableBuilder.
 
 ```PHP
-\Nemo64\Typo3Api\Builder\TableBuilder::create('tx_ext_person')
-    ->configure(new \Nemo64\Typo3Api\Tca\LanguageConfiguration())
-    ->configure(new \Nemo64\Typo3Api\Tca\EnableColumnsConfiguration())
-    ->configure(new \Nemo64\Typo3Api\Tca\SortingConfiguration())
+\Typo3Api\Builder\TableBuilder::create('tx_ext_person')
+    ->configure(new \Typo3Api\Tca\LanguageConfiguration())
+    ->configure(new \Typo3Api\Tca\EnableColumnsConfiguration())
+    ->configure(new \Typo3Api\Tca\SortingConfiguration())
     
     // configure cache clearing so you don't need to provide cache clear capabilities to your backend users
-    ->configure(new \Nemo64\Typo3Api\Tca\CacheTagConfiguration('tx_ext_person_###UID###'))
-    ->configure(new \Nemo64\Typo3Api\Tca\CacheTagConfiguration('tx_ext_person'))
+    ->configure(new \Typo3Api\Tca\CacheTagConfiguration('tx_ext_person_###UID###'))
+    ->configure(new \Typo3Api\Tca\CacheTagConfiguration('tx_ext_person'))
     
     // the actual fields
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\InputField('first_name', ['required' => true, 'localize' => false]))
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\InputField('last_name', ['required' => true, 'localize' => false]))
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\DateField('birthday'))
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\EmailField('email'))
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\ImageField('image', ['cropVariants' => ['default' => ['1:1']]]))
+    ->configure(new \Typo3Api\Tca\Field\InputField('first_name', ['required' => true, 'localize' => false]))
+    ->configure(new \Typo3Api\Tca\Field\InputField('last_name', ['required' => true, 'localize' => false]))
+    ->configure(new \Typo3Api\Tca\Field\DateField('birthday'))
+    ->configure(new \Typo3Api\Tca\Field\EmailField('email'))
+    ->configure(new \Typo3Api\Tca\Field\ImageField('image', ['cropVariants' => ['default' => ['1:1']]]))
     
     // easily allow multiple phone numbers
-    ->configure(new \Nemo64\Typo3Api\Tca\Field\InlineRelationField('phone_numbers', [
-        'foreign_table' => \Nemo64\Typo3Api\Builder\TableBuilder::create('tx_ext_person_phone')
-            ->configure(new \Nemo64\Typo3Api\Tca\SortingConfiguration())
-            ->configure(new \Nemo64\Typo3Api\Tca\Field\SelectField('type', ['values' => ['business', 'private', 'other']]))
-            ->configure(new \Nemo64\Typo3Api\Tca\Field\PhoneField('value'))
+    ->configure(new \Typo3Api\Tca\Field\InlineRelationField('phone_numbers', [
+        'foreign_table' => \Typo3Api\Builder\TableBuilder::create('tx_ext_person_phone')
+            ->configure(new \Typo3Api\Tca\SortingConfiguration())
+            ->configure(new \Typo3Api\Tca\Field\SelectField('type', ['values' => ['business', 'private', 'other']]))
+            ->configure(new \Typo3Api\Tca\Field\PhoneField('value'))
     ]))
     
     // use or create complex configurations and reuse them across tables
-    ->configure(new \Nemo64\Typo3Api\Tca\Util\Address('Address'))
+    ->configure(new \Typo3Api\Tca\Util\Address('Address'))
     
     // create new tabs (aka --div--) on the fly
-    ->configureInTab('Notice', new \Nemo64\Typo3Api\Tca\Field\TextareaField('notice'))
+    ->configureInTab('Notice', new \Typo3Api\Tca\Field\TextareaField('notice'))
 ;
 ```
 
@@ -60,15 +60,15 @@ That is all. You can now start using the tx_ext_person table.
 To Create a content element, use the TableBuilder inside `Configuration/TCA/Override/tt_content.php`.
 
 ```PHP
-\Nemo64\Typo3Api\Builder\TableBuilder::create('tt_content', 'carousel')
-    ->configure(new \Nemo64\Typo3Api\Tca\ContentElementConfiguration())
+\Typo3Api\Builder\TableBuilder::create('tt_content', 'carousel')
+    ->configure(new \Typo3Api\Tca\ContentElementConfiguration())
     // add more fields as you like
 ;
 ```
 Or with more options.
 ```PHP
-\Nemo64\Typo3Api\Builder\TableBuilder::create('tt_content', 'quote')
-    ->configure(new \Nemo64\Typo3Api\Tca\ContentElementConfiguration([
+\Typo3Api\Builder\TableBuilder::create('tt_content', 'quote')
+    ->configure(new \Typo3Api\Tca\ContentElementConfiguration([
         'name' => 'Quote element',
         'description' => 'Tell what other peaple are saying',
         'icon' => 'content-quote',

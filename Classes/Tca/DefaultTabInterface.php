@@ -1,6 +1,6 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
 interface DefaultTabInterface extends TcaConfigurationInterface

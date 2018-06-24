@@ -1,9 +1,9 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
-use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
+use Typo3Api\Builder\Context\TableBuilderContext;
 
 class SelectFieldTest extends AbstractFieldTest
 {

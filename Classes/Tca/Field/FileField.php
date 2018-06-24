@@ -1,14 +1,14 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Nemo64\Typo3Api\Utility\DbFieldDefinition;
+use Typo3Api\Builder\Context\TcaBuilderContext;
+use Typo3Api\Utility\DbFieldDefinition;
 
 class FileField extends AbstractField
 {

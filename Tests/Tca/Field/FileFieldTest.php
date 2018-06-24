@@ -1,10 +1,10 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
-use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use Typo3Api\Builder\Context\TableBuilderContext;
 
 class FileFieldTest extends AbstractFieldTest
 {

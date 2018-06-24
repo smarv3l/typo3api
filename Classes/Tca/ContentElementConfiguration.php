@@ -1,12 +1,12 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca;
+namespace Typo3Api\Tca;
 
 
-use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Typo3Api\Builder\Context\TableBuilderContext;
+use Typo3Api\Builder\Context\TcaBuilderContext;
 
 class ContentElementConfiguration implements TcaConfigurationInterface
 {

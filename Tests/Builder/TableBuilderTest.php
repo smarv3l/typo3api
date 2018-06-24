@@ -1,9 +1,9 @@
 <?php
 
-namespace Nemo64\Typo3Api\Builder;
+namespace Typo3Api\Builder;
 
 use PHPUnit\Framework\TestCase;
-use Nemo64\Typo3Api\PreparationForTypo3;
+use Typo3Api\PreparationForTypo3;
 
 class TableBuilderTest extends TestCase
 {

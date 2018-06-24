@@ -1,12 +1,12 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Util;
+namespace Typo3Api\Tca\Util;
 
 
-use Nemo64\Typo3Api\Tca\Field\InputField;
-use Nemo64\Typo3Api\Tca\Field\SelectField;
-use Nemo64\Typo3Api\Tca\Linebreak;
-use Nemo64\Typo3Api\Tca\NamedPalette;
+use Typo3Api\Tca\Field\InputField;
+use Typo3Api\Tca\Field\SelectField;
+use Typo3Api\Tca\Linebreak;
+use Typo3Api\Tca\NamedPalette;
 
 class FullName extends NamedPalette
 {

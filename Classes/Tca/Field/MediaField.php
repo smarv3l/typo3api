@@ -1,11 +1,11 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Typo3Api\Builder\Context\TcaBuilderContext;
 
 class MediaField extends FileField
 {
@@ -15,7 +15,7 @@ class MediaField extends FileField
      * all the audio formats you see basically shouldn't be used
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility
      *
-     * @see \Nemo64\Typo3Api\Tca\Field\ImageField::BLACKLISTED_FORMATS
+     * @see \Typo3Api\Tca\Field\ImageField::BLACKLISTED_FORMATS
      */
     const BLACKLISTED_FORMATS = ['wav', 'ogg', 'flac', 'opus', 'webm'];
 

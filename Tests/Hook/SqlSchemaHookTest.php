@@ -1,14 +1,14 @@
 <?php
 
-namespace Nemo64\Typo3Api\Hook;
+namespace Typo3Api\Hook;
 
-use Nemo64\Typo3Api\Builder\Context\TableBuilderContext;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Install\Service\SqlExpectedSchemaService;
-use Nemo64\Typo3Api\PreparationForTypo3;
-use Nemo64\Typo3Api\Tca\CustomConfiguration;
+use Typo3Api\Builder\Context\TableBuilderContext;
+use Typo3Api\PreparationForTypo3;
+use Typo3Api\Tca\CustomConfiguration;
 
 class SqlSchemaHookTest extends TestCase
 {

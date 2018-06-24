@@ -6,7 +6,7 @@
  * Time: 21:03
  */
 
-namespace Nemo64\Typo3Api\Hook;
+namespace Typo3Api\Hook;
 
 
 use TYPO3\CMS\Core\SingletonInterface;

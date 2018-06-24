@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Nemo64\Typo3Api;
+namespace Typo3Api;
 
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use Nemo64\Typo3Api\Hook\SqlSchemaHook;
 
 trait PreparationForTypo3
 {

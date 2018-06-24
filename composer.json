@@ -35,7 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Nemo64\\Typo3Api\\": "Classes"
+            "Typo3Api\\": "Classes"
         }
     },
     "require-dev": {
@@ -43,7 +43,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Nemo64\\Typo3Api\\": "Tests"
+            "Typo3Api\\": "Tests"
         }
     },
     "config": {

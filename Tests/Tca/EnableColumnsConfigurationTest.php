@@ -1,11 +1,11 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca;
+namespace Typo3Api\Tca;
 
 use PHPUnit\Framework\TestCase;
-use Nemo64\Typo3Api\Builder\TableBuilder;
-use Nemo64\Typo3Api\Hook\SqlSchemaHookUtil;
-use Nemo64\Typo3Api\PreparationForTypo3;
+use Typo3Api\Builder\TableBuilder;
+use Typo3Api\Hook\SqlSchemaHookUtil;
+use Typo3Api\PreparationForTypo3;
 
 class EnableColumnsConfigurationTest extends TestCase
 {

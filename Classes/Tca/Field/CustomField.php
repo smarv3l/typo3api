@@ -1,16 +1,16 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
-use Nemo64\Typo3Api\Builder\Context\TcaBuilderContext;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Typo3Api\Builder\Context\TcaBuilderContext;
 
 /**
  * This type can be used if the correct configuration isn't (correctly) implemented.
  * Example:
  *
- * ->configure(new \Nemo64\Typo3Api\Tca\Field\CustomField('favourite_color', [
+ * ->configure(new \Typo3Api\Tca\Field\CustomField('favourite_color', [
  *     'dbType' => "VARCHAR(7) DEFAULT '#000000' NOT NULL",
  *     'localize' => false,
  *     'config' => [

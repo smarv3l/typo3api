@@ -1,10 +1,10 @@
 <?php
 
-namespace Nemo64\Typo3Api\Tca\Field;
+namespace Typo3Api\Tca\Field;
 
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Nemo64\Typo3Api\Utility\IntlItemsProcFunc;
+use Typo3Api\Utility\IntlItemsProcFunc;
 
 class LanguageField extends SelectField
 {

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Nemo64\Typo3Api\Builder;
+namespace Typo3Api\Builder;
 
 
 interface TableBuilderInterface extends TcaBuilderInterface

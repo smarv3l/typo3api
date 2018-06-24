@@ -1,10 +1,10 @@
 <?php
 
-namespace Nemo64\Typo3Api\Exception;
+namespace Typo3Api\Exception;
 
 
 use Throwable;
-use Nemo64\Typo3Api\Tca\TcaConfigurationInterface;
+use Typo3Api\Tca\TcaConfigurationInterface;
 
 class TcaConfigurationException extends \RuntimeException
 {

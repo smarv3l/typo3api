@@ -1,6 +1,6 @@
 <?php
 
-namespace Nemo64\Typo3Api\Hook;
+namespace Typo3Api\Hook;
 
 
 use TYPO3\CMS\Core\Cache\CacheManager;
