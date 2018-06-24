@@ -48,8 +48,6 @@
         }
     },
     "config": {
-        "platform": {
-            "php": "7.0.28"
-        }
+        "sort-packages": true
     }
 }
