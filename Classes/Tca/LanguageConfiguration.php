@@ -25,11 +25,36 @@ class LanguageConfiguration implements TcaConfigurationInterface, DefaultTabInte
 
         $tableName = $tcaBuilder->getTableName();
         return [
-            'sys_language_uid' => $GLOBALS['TCA']['tt_content']['columns']['sys_language_uid'],
-            'l10n_source' => $GLOBALS['TCA']['tt_content']['columns']['l10n_source'],
-            'l18n_diffsource' => $GLOBALS['TCA']['tt_content']['columns']['l18n_diffsource'],
+            'sys_language_uid' => [
+                'exclude' => false,
+                'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.language',
+                'config' => [
+                    'type' => 'select',
+                    'renderType' => 'selectSingle',
+                    'special' => 'languages',
+                    'items' => [
+                        [
+                            'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
+                            -1,
+                            'flags-multiple'
+                        ],
+                    ],
+                    'default' => 0,
+                ]
+            ],
+            'l10n_source' => [
+                'config' => [
+                    'type' => 'passthrough'
+                ]
+            ],
+            'l18n_diffsource' => [
+                'config' => [
+                    'type' => 'passthrough',
+                    'default' => ''
+                ]
+            ],
             'l18n_parent' => [
-                'exclude' => true,
+                'exclude' => false,
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
                 'label' => 'LLL:EXT:lang/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
