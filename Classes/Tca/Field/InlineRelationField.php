@@ -89,7 +89,7 @@ class InlineRelationField extends AbstractField
             // https://docs.typo3.org/typo3cms/TCAReference/8-dev/ColumnsConfig/Type/Inline.html#foreign-sortby
             if ($sortby) {
                 $GLOBALS['TCA'][$foreignTable]['ctrl']['sortby'] = null;
-                $GLOBALS['TCA'][$foreignTable]['ctrl']['sortby_'] = $sortby;
+                $GLOBALS['TCA'][$foreignTable]['ctrl']['_sortby'] = $sortby;
             }
 
             // ensure only this relation sees the other table
