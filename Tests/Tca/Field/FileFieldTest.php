@@ -30,11 +30,11 @@ class FileFieldTest extends AbstractFieldTest
                         'showAllLocalizationLink' => true,
                         'showSynchronizationLink' => true,
                         'enabledControls' => [
-                            'localize' => true
-                        ]
-                    ]
-                ])
-            ]
+                            'localize' => true,
+                        ],
+                    ],
+                ]),
+            ],
         ], $field->getColumns($stubTable));
     }
 
@@ -54,6 +54,7 @@ class FileFieldTest extends AbstractFieldTest
 
     /**
      * @dataProvider validNameProvider
+     *
      * @param string $fieldName
      */
     public function testIndex(string $fieldName)
@@ -69,11 +70,21 @@ class FileFieldTest extends AbstractFieldTest
             [
                 'stub_table' => [
                     "`$fieldName` TINYINT(3) UNSIGNED DEFAULT '0' NOT NULL",
-                    "INDEX `$fieldName`(`$fieldName`)"
-                ]
+                    "INDEX `$fieldName`(`$fieldName`)",
+                ],
             ],
             $field->getDbTableDefinitions($stubTable)
         );
     }
 
+    public function testAllowedFileExt()
+    {
+        $testTable = new TableBuilderContext('stub_table', '1');
+
+        $field = $this->createFieldInstance('field', ['allowedFileExtensions' => 'jpg, png']);
+        $this->assertEquals('jpg,png', $field->getColumns($testTable)['field']['config']['filter'][0]['parameters']['allowedFileExtensions']);
+
+        $field = $this->createFieldInstance('field', ['allowedFileExtensions' => ['jpg', 'png']]);
+        $this->assertEquals('jpg,png', $field->getColumns($testTable)['field']['config']['filter'][0]['parameters']['allowedFileExtensions']);
+    }
 }

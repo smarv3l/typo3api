@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Typo3Api\Builder\Context\TcaBuilderContext;
 use Typo3Api\Utility\DbFieldDefinition;
 
@@ -39,23 +40,15 @@ class FileField extends AbstractField
         $resolver->setAllowedTypes('maxitems', 'int');
         $resolver->setAllowedTypes('allowHide', 'bool');
 
-        /** @noinspection PhpUnusedParameterInspection */
-        $resolver->setNormalizer('allowedFileExtensions', function (Options $options, $allowedFileExtensions) {
-            if (is_array($allowedFileExtensions)) {
-                $allowedFileExtensions = implode(',', array_filter($allowedFileExtensions, 'strlen'));
+        $normalizeFileExtensions = function (Options $options, $fileExtensions) {
+            if (is_string($fileExtensions)) {
+                $fileExtensions = GeneralUtility::trimExplode(',', $fileExtensions);
             }
 
-            return $allowedFileExtensions;
-        });
-
-        /** @noinspection PhpUnusedParameterInspection */
-        $resolver->setNormalizer('disallowedFileExtensions', function (Options $options, $disallowedFileExtensions) {
-            if (is_array($disallowedFileExtensions)) {
-                $disallowedFileExtensions = implode(',', array_filter($disallowedFileExtensions, 'strlen'));
-            }
-
-            return $disallowedFileExtensions;
-        });
+            return implode(',', array_filter($fileExtensions, 'strlen'));
+        };
+        $resolver->setNormalizer('allowedFileExtensions', $normalizeFileExtensions);
+        $resolver->setNormalizer('disallowedFileExtensions', $normalizeFileExtensions);
 
         /** @noinspection PhpUnusedParameterInspection */
         $resolver->setNormalizer('minitems', function (Options $options, $minitems) {
