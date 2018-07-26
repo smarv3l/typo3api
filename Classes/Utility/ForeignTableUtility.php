@@ -14,7 +14,7 @@ class ForeignTableUtility
 
     public static function normalizeForeignTableWhere(string $foreignTableName, string $where): string
     {
-        $foreignTable = $GLOBALS['TCA'][$foreignTableName];
+        $foreignTable = $GLOBALS['TCA'][$foreignTableName] ?? [];
 
         // append sys_language_uid if available
         if (isset($foreignTable['ctrl']['languageField'])) {
