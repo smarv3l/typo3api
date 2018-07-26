@@ -19,23 +19,20 @@ class ForeignTableUtility
         // append sys_language_uid if available
         if (isset($foreignTable['ctrl']['languageField'])) {
             $languageField = $foreignTableName . '.' . $foreignTable['ctrl']['languageField'];
-            $where = preg_replace(self::ORDER_BY_REGEX, "\\1AND $languageField IN (0, -1) \\2", $where, 1);
+            $where = preg_replace(self::ORDER_BY_REGEX, "\\1 AND $languageField IN (0, -1) \\2", $where, 1);
         }
 
         // append sorting if available
         if (isset($foreignTable['ctrl']['sortby'])) {
             $sortByField = $foreignTableName . '.' . $foreignTable['ctrl']['sortby'];
             $where = preg_replace_callback(self::ORDER_BY_REGEX, function ($match) use ($sortByField) {
-                if ($match[3]) {
-                    return $match[1] . 'ORDER BY' . $match[3] . ', ' . $sortByField;
+                if (isset($match[3])) {
+                    return ' ORDER BY' . $match[3] . ', ' . $sortByField;
                 }
 
-                return $match[1] . 'ORDER BY ' . $sortByField;
+                return ' ORDER BY ' . $sortByField;
             }, $where, 1);
-        }
-
-        // append default_sortby if available
-        if (isset($foreignTable['ctrl']['default_sortby'])) {
+        } else if (isset($foreignTable['ctrl']['default_sortby'])) {
             $sortByDefinitions = GeneralUtility::trimExplode(',', $foreignTable['ctrl']['default_sortby']);
             foreach ($sortByDefinitions as &$sortByDefinition) {
                 $sortByDefinition = $foreignTableName . '.' . $sortByDefinition;
@@ -43,14 +40,14 @@ class ForeignTableUtility
 
             $sortByStr = implode(', ', $sortByDefinitions);
             $where = preg_replace_callback(self::ORDER_BY_REGEX, function ($match) use ($sortByStr) {
-                if ($match[3]) {
-                    return $match[1] . 'ORDER BY' . $match[3] . ', ' . $sortByStr;
+                if (isset($match[3])) {
+                    return ' ORDER BY' . $match[3] . ', ' . $sortByStr;
                 }
 
-                return $match[1] . 'ORDER BY ' . $sortByStr;
+                return ' ORDER BY ' . $sortByStr;
             }, $where, 1);
         }
 
-        return $where;
+        return trim($where);
     }
 }
