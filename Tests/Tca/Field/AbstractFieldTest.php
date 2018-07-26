@@ -9,6 +9,20 @@ class AbstractFieldTest extends TestCase
 {
     const STUB_DB_TYPE = "VARCHAR(32) DEFAULT '' NOT NULL";
 
+    protected function setUp()
+    {
+        if (isset($GLOBALS['TCA'])) {
+            unset($GLOBALS['TCA']);
+        }
+    }
+
+    protected function tearDown()
+    {
+        if (isset($GLOBALS['TCA'])) {
+            unset($GLOBALS['TCA']);
+        }
+    }
+
     public static function validNameProvider()
     {
         return [

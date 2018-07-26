@@ -11,14 +11,10 @@ class InlineRelationFieldTest extends AbstractFieldTest
 
     public function setUp()
     {
+        parent::setUp();
         $GLOBALS['TCA']['tx_typo3api_foreign_table'] = [
             'ctrl' => [],
         ];
-    }
-
-    public function tearDown()
-    {
-        unset($GLOBALS['TCA']);
     }
 
     protected function createFieldInstance(string $name, array $options = []): AbstractField

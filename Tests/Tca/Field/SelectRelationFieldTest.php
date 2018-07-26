@@ -14,11 +14,6 @@ class SelectRelationFieldTest extends AbstractFieldTest
         return new SelectRelationField($name, $options + ['foreign_table' => 'tx_typo3api_foreign_table']);
     }
 
-    public function tearDown()
-    {
-        unset($GLOBALS['TCA']);
-    }
-
     protected function assertBasicColumns(AbstractField $field)
     {
         $testTable = new TableBuilderContext('stub_table', '1');
